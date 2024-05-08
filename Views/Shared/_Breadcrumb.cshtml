@@ -1,0 +1,31 @@
+﻿
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+<div class="" style="padding:10px 0px 0px 10px;border-left:5px solid #ffaf00;margin-bottom:15px;">
+    <!-- Breadcrumb -->
+    <nav class="d-flex"style="">
+        <h6 class="mb-1">         
+                <span style="font-size:30px;text-transform:capitalize;">
+                @ViewContext.RouteData.Values["controller"]  / @ViewContext.RouteData.Values["action"]
+                    </span>
+           
+        </h6>
+        @{
+            var action = ViewContext.RouteData.Values["action"].ToString();
+            if (action != "Index")
+            {
+                <button type="button" class="btn btn-outline-primary ms-auto">
+                    <i class="mdi mdi-arrow-left-bold-circle mdi-24" style=""> BACK</i>
+
+                </button>
+            }
+        }
+                                     
+    </nav>
+</div>
+ <!-- Breadcrumb -->
+
+
+

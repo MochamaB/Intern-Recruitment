@@ -1,0 +1,146 @@
+﻿body {
+}
+/* === LOGIN PAGE STYLES === */
+
+
+.auth .login-half-bg {
+    background: url("~/images/loginpic.png");
+    background-size: cover;
+}
+.auth .brand-logo img {
+    width: 350px; /* Adjust as needed */
+    height: auto; /* Adjust as needed */
+}
+.auth .auth-form-transparent .form-control, .auth .auth-form-transparent .asColorPicker-input, .auth .auth-form-transparent .dataTables_wrapper select, .dataTables_wrapper .auth .auth-form-transparent select, .auth .auth-form-transparent .select2-container--default .select2-selection--single, .select2-container--default .auth .auth-form-transparent .select2-selection--single, .auth .auth-form-transparent .select2-container--default .select2-selection--single .select2-search__field, .select2-container--default .select2-selection--single .auth .auth-form-transparent .select2-search__field, .auth .auth-form-transparent .typeahead, .auth .auth-form-transparent .tt-query, .auth .auth-form-transparent .tt-hint, .auth .auth-form-transparent .input-group-text {
+    border-color: #000;
+    line-height: 2;
+}
+span.input-group-text.bg-transparent.border-right-0 {
+    height: 51px;
+    border-right:none;
+}
+
+input.form-control.form-control-lg.border-left-0:focus {
+    border:3px solid #fcb900
+}
+
+/* === BUTTONS === */
+.btn, .ajax-upload-dragdrop .ajax-file-upload, .swal2-modal .swal2-buttonswrapper .swal2-styled, .swal2-modal .swal2-buttonswrapper .swal2-styled.swal2-confirm, .swal2-modal .swal2-buttonswrapper .swal2-styled.swal2-cancel {
+    display: inline-block;
+    font-weight: 600;
+    line-height: 1;
+    color: #1F1F1F;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    cursor: pointer;
+    user-select: none;
+    background-color: transparent;
+    border: 1px solid transparent;
+    padding: 0.875rem 1.5rem;
+    font-size: 0.875rem;
+    border-radius: 0rem;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #324721;
+    border-color: #324721;
+}
+
+    .btn-primary:hover {
+        color: #fff;
+        background-color: #fcb900;
+        border-color: #fcb900;
+    }
+.btn-outline-primary {
+    border: 1px solid #081031 !important;
+    color: #326408 !important;
+}
+    .btn-outline-primary:hover {
+        color: #fff;
+        background-color: #fcb900 !important;
+        border-color: #fcb900 !important;
+    }
+
+/* === TEXT === */
+
+.text-primary {
+    --bs-text-opacity: 1;
+    color: #324721 !important;
+}
+
+/* === SIDEBAR === */
+.sidebar {
+    min-height: calc(100vh - 97px);
+    background: #fff;
+    font-family: "Manrope", sans-serif;
+    font-weight: 500;
+    border-right: 2px solid #c8c8c9;
+    padding: 0;
+    width: 250px;
+    z-index: 11;
+    transition: width 0.25s ease, background 0.25s ease;
+    -webkit-transition: width 0.25s ease, background 0.25s ease;
+    -moz-transition: width 0.25s ease, background 0.25s ease;
+    -ms-transition: width 0.25s ease, background 0.25s ease;
+}
+
+    .sidebar .nav .nav-item.active {
+        border-radius: 0px 0px 0px 0px;
+        border-top: 1px solid #324721;
+        border-bottom: 1px solid #324721;
+        border-left: 10px solid #fcb900;
+        background-color: #326408 !important;
+    }
+        .sidebar .nav .nav-item.active > .nav-link {
+            border-radius: 0px 0px 0px 0px;
+            background: #326408;
+            position: relative;
+            font-weight: bold;
+            font-size: 13px;
+        }
+            .sidebar .nav .nav-item.active > .nav-link i, .sidebar .nav .nav-item.active > .nav-link .menu-title, .sidebar .nav .nav-item.active > .nav-link .menu-arrow {
+                color: #fcb900;
+            }
+
+
+.sidebar .nav .nav-item:hover > .nav-link i, .sidebar .nav .nav-item:hover > .nav-link .menu-title, .sidebar .nav .nav-item:hover > .nav-link .menu-arrow {
+    color: #326408;
+    font-weight: bold;
+}
+
+.sidebar .nav .nav-item .nav-link .menu-title {
+    color: inherit;
+    display: inline-block;
+    font-size: 13px;
+    line-height: 1;
+    vertical-align: middle;
+}
+.sidebar-icon-only .sidebar .nav .nav-item.active .nav-link i.menu-icon {
+    color: #fcb900;
+}
+@media (min-width: 992px) {
+    .sidebar-icon-only .sidebar .nav .nav-item .nav-link i.menu-icon {
+        margin-right: 0;
+        margin-left: 0;
+        margin-bottom: 0;
+        color: #326408;
+    }
+}
+
+/* === FOOTER === */
+.footer {
+    background: #F4F5F7;
+    color: color(dark);
+    padding: 10px 2.45rem;
+    transition: all 0.25s ease;
+    -moz-transition: all 0.25s ease;
+    -webkit-transition: all 0.25s ease;
+    -ms-transition: all 0.25s ease;
+    font-size: calc(0.812rem - 0.05rem);
+    font-family: "Manrope", sans-serif;
+    font-weight: 400;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+}

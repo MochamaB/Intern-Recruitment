@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AAAA,AACE,gBADc,AAAA,WAAW,CAAC,uBAAuB,GAAG,WAAW,CAC/D,aAAa,CAAC;EACZ,OAAO,EAAE,YAAY;CACtB;;AAHH,AAIE,gBAJc,AAAA,WAAW,CAAC,uBAAuB,GAAG,WAAW,CAI/D,gBAAgB,CAAC;EACf,KAAK,EAAE,IAAI;CACZ;;AAGH,AAAA,gBAAgB,CAAC,uBAAuB,GAAG,WAAW,CAAC,aAAa,CAAC,KAAK,CAAC;EACzE,KAAK,EAAE,IAAI;EACX,WAAW,EAAE,GAAG;EAChB,UAAU,EAAE,MAAM;EAClB,KAAK,EAAE,IAAI;CACZ",
+    "sources": [
+        "bootstrap-table-page-jump-to.scss"
+    ],
+    "names": [],
+    "file": "bootstrap-table-page-jump-to.css"
+}
