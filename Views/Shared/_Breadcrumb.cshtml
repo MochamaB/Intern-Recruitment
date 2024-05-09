@@ -16,10 +16,10 @@
             var action = ViewContext.RouteData.Values["action"].ToString();
             if (action != "Index")
             {
-                <button type="button" class="btn btn-outline-primary ms-auto">
+                <a class="btn btn-outline-primary ms-auto" asp-action="Index">
                     <i class="mdi mdi-arrow-left-bold-circle mdi-24" style=""> BACK</i>
 
-                </button>
+                </a>
             }
         }
                                      

@@ -63,13 +63,63 @@ input.form-control.form-control-lg.border-left-0:focus {
         background-color: #fcb900 !important;
         border-color: #fcb900 !important;
     }
+.table th {
+    border: none;
+}
+.table td {
+    border: none;
+}
+.table.table-bordered {
+    border-top: 1px solid #dee2e6;
+}
 
-/* === TEXT === */
+/* === INPUTS AND TEXT === */
 
 .text-primary {
     --bs-text-opacity: 1;
     color: #324721 !important;
 }
+
+.form-control, .asColorPicker-input, .dataTables_wrapper select, .select2-container--default .select2-selection--single, .select2-container--default .select2-selection--single .select2-search__field, .typeahead, .tt-query, .tt-hint {
+    border: 1px solid #dee2e6;
+    font-weight: 400;
+    font-size: 0.875rem;
+    border-radius: 0px;
+    height: 2.7rem;
+}
+
+/*------------------------ Style the search input field */
+input.form-control.form-control-sm.search-input {
+    border-radius: 0px;
+    border: 2px solid #b6b6b6;
+    color: #212121;
+    font-weight: 900;
+    text-transform: uppercase;
+    width: 400px;
+    transition: width 0.3s;
+    display: block !important;
+    /* Add a smooth transition effect for width changes */
+}
+
+    /* Style the placeholder text */
+    input.form-control.form-control-sm.search-input::placeholder {
+       
+        font-weight: normal;
+    }
+
+    /* Increase width on hover */
+    input.form-control.form-control-sm.search-input:hover {
+        border: 2px solid #fcb900;
+        width: 700px;
+        /* Set the desired width on hover */
+    }
+
+    /* Increase width when input is focused */
+    input.form-control.form-control-sm.search-input:focus {
+        border: 2px solid #03a84e;
+        width: 700px;
+        /* Set the desired width on hover */
+    }
 
 /* === SIDEBAR === */
 .sidebar {
