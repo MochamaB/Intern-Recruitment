@@ -1,13 +1,12 @@
-﻿@model IEnumerable<Workflows.Models.Intern>
+﻿@model IEnumerable<Workflows.Models.Requisition>
 
 @{
     ViewData["Title"] = "Index";
 }
 
 
-    <a asp-action="Create" class="btn btn-primary text-white mb-0 me-0  float-end">Create New</a>
+<a asp-action="Create" class="btn btn-primary text-white mb-0 me-0  float-end">Create New</a>
 <div style="clear: both;"></div>
-
 
 <table id="table"
        data-toggle="table"
@@ -27,22 +26,29 @@
        data-side-pagination="client"
        data-show-export="true"
        class="table">
+
     <thead>
         <tr>
             <th>
-               DEPARTMENT
+                @Html.DisplayNameFor(model => model.DepartmentCode)
             </th>
             <th>
-               NAME
+                @Html.DisplayNameFor(model => model.Intern_id)
             </th>
             <th>
-               EMAIL
+                @Html.DisplayNameFor(model => model.PayrollNo)
             </th>
             <th>
-                PHONE NUMBER
+                @Html.DisplayNameFor(model => model.Station)
             </th>
             <th>
-                STATUS
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Start_Date)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.End_Date)
             </th>
             <th></th>
         </tr>
@@ -51,25 +57,31 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                    @Html.DisplayFor(modelItem => item.DepartmentCode)
+                @Html.DisplayFor(modelItem => item.DepartmentCode)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Firstname)  @Html.DisplayFor(modelItem => item.Lastname)
+                @Html.DisplayFor(modelItem => item.Intern_id)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Email)
+                    @Html.DisplayFor(modelItem => item.PayrollNo)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.PhoneNumber)
+                @Html.DisplayFor(modelItem => item.Station)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Status)
             </td>
             <td>
-                    <a asp-action="Details" asp-route-id="@item.Id"><i class="mdi mdi-eye mdi-24px text-warning"></i></a>
-                    <a asp-action="Edit" asp-route-id="@item.Id"><i class="mdi mdi-lead-pencil mdi-24px text-primary"></i></a> 
-                    <a asp-action="Delete" asp-route-id="@item.Id"> <i class="mdi mdi-delete mdi-24px text-danger"></i></a>
+                @Html.DisplayFor(modelItem => item.Start_Date)
             </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.End_Date)
+            </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id"><i class="mdi mdi-eye mdi-24px text-warning"></i></a>
+                    <a asp-action="Edit" asp-route-id="@item.Id"><i class="mdi mdi-lead-pencil mdi-24px text-primary"></i></a>
+                    <a asp-action="Delete" asp-route-id="@item.Id"> <i class="mdi mdi-delete mdi-24px text-danger"></i></a>
+                </td>
         </tr>
 }
     </tbody>

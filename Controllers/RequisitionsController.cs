@@ -10,26 +10,22 @@ using Workflows.Models;
 
 namespace Workflows.Controllers
 {
-    public class InternsController : Controller
+    public class RequisitionsController : Controller
     {
         private readonly WorkflowsContext _context;
-        private readonly KtdaleaveContext _ktdaleavecontext;
 
-        public InternsController(WorkflowsContext context, KtdaleaveContext ktdaleavecontext)
+        public RequisitionsController(WorkflowsContext context)
         {
             _context = context;
-            _ktdaleavecontext = ktdaleavecontext ?? throw new ArgumentNullException(nameof(ktdaleavecontext));
         }
 
-        // GET: Interns
+        // GET: Requisitions
         public async Task<IActionResult> Index()
         {
-            // Get the list of departments
-           
-            return View(await _context.Intern.ToListAsync());
+            return View(await _context.Requisition.ToListAsync());
         }
 
-        // GET: Interns/Details/5
+        // GET: Requisitions/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -37,54 +33,39 @@ namespace Workflows.Controllers
                 return NotFound();
             }
 
-            var intern = await _context.Intern
+            var requisition = await _context.Requisition
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (intern == null)
+            if (requisition == null)
             {
                 return NotFound();
             }
 
-            return View(intern);
+            return View(requisition);
         }
 
-        // GET: Interns/Create
+        // GET: Requisitions/Create
         public IActionResult Create()
         {
-
-            using (var db = new KtdaleaveContext())
-            {
-                var departments = db.Departments.ToList();
-
-                // Create a SelectList from the departments
-                var departmentItems = new SelectList(departments, "DepartmentCode", "DepartmentName");
-
-                // Pass the SelectList to ViewBag
-                ViewBag.DepartmentItems = departmentItems;
-            }
-
-        //    ViewBag.Department_id = new SelectList(departments, "DepartmentID", "DepartmentName");
             return View();
         }
 
-        // POST: Interns/Create
+        // POST: Requisitions/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Department_id,Firstname,Lastname,Othernames,Email,PhoneNumber,Status,CreatedAt,UpdatedAt")] Intern intern)
+        public async Task<IActionResult> Create([Bind("Id,Department_id,Intern_id,AddedBy,Station,Status,Start_Date,End_Date,CreatedAt,UpdatedAt")] Requisition requisition)
         {
             if (ModelState.IsValid)
             {
-                intern.CreatedAt = DateTime.Now;
-                intern.UpdatedAt = DateTime.Now;
-                _context.Add(intern);
+                _context.Add(requisition);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(intern);
+            return View(requisition);
         }
 
-        // GET: Interns/Edit/5
+        // GET: Requisitions/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -92,22 +73,22 @@ namespace Workflows.Controllers
                 return NotFound();
             }
 
-            var intern = await _context.Intern.FindAsync(id);
-            if (intern == null)
+            var requisition = await _context.Requisition.FindAsync(id);
+            if (requisition == null)
             {
                 return NotFound();
             }
-            return View(intern);
+            return View(requisition);
         }
 
-        // POST: Interns/Edit/5
+        // POST: Requisitions/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Department_id,Firstname,Lastname,Othernames,Email,PhoneNumber,Status,CreatedAt,UpdatedAt")] Intern intern)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Department_id,Intern_id,AddedBy,Station,Status,Start_Date,End_Date,CreatedAt,UpdatedAt")] Requisition requisition)
         {
-            if (id != intern.Id)
+            if (id != requisition.Id)
             {
                 return NotFound();
             }
@@ -116,13 +97,12 @@ namespace Workflows.Controllers
             {
                 try
                 {
-                    intern.UpdatedAt = DateTime.Now;
-                    _context.Update(intern);
+                    _context.Update(requisition);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!InternExists(intern.Id))
+                    if (!RequisitionExists(requisition.Id))
                     {
                         return NotFound();
                     }
@@ -133,10 +113,10 @@ namespace Workflows.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(intern);
+            return View(requisition);
         }
 
-        // GET: Interns/Delete/5
+        // GET: Requisitions/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -144,34 +124,34 @@ namespace Workflows.Controllers
                 return NotFound();
             }
 
-            var intern = await _context.Intern
+            var requisition = await _context.Requisition
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (intern == null)
+            if (requisition == null)
             {
                 return NotFound();
             }
 
-            return View(intern);
+            return View(requisition);
         }
 
-        // POST: Interns/Delete/5
+        // POST: Requisitions/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var intern = await _context.Intern.FindAsync(id);
-            if (intern != null)
+            var requisition = await _context.Requisition.FindAsync(id);
+            if (requisition != null)
             {
-                _context.Intern.Remove(intern);
+                _context.Requisition.Remove(requisition);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool InternExists(int id)
+        private bool RequisitionExists(int id)
         {
-            return _context.Intern.Any(e => e.Id == id);
+            return _context.Requisition.Any(e => e.Id == id);
         }
     }
 }

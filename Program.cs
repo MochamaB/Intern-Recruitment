@@ -1,9 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Workflows.Data;
+using Workflows.Models;
 var builder = WebApplication.CreateBuilder(args);
+// Add all the DB Contexts Here. The connection strings in GetConnectionString() is in appsettings.json.
 builder.Services.AddDbContext<WorkflowsContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("WorkflowsContext") ?? throw new InvalidOperationException("Connection string 'WorkflowsContext' not found.")));
+builder.Services.AddDbContext<KtdaleaveContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("KTDALeaveContext") ?? throw new InvalidOperationException("Connection string 'KTDALeaveContext' not found.")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

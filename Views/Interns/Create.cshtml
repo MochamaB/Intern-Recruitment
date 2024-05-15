@@ -11,10 +11,12 @@
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
             <div class="form-group">
-                <label asp-for="Department_id" class="control-label"> Department</label>
-                <input asp-for="Department_id" class="form-control" />
-                <span asp-validation-for="Department_id" class="text-danger"></span>
+                <label asp-for="DepartmentCode" class="control-label"></label>
+                <select asp-for="DepartmentCode" class="form-control" asp-items="ViewBag.DepartmentItems">
+                    <option value="">-- Select Department --</option>
+                </select>
             </div>
             <div class="form-group">
                 <label asp-for="Firstname" class="control-label"></label>

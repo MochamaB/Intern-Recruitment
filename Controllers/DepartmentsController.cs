@@ -5,31 +5,26 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Workflows.Data;
 using Workflows.Models;
 
 namespace Workflows.Controllers
 {
-    public class InternsController : Controller
+    public class DepartmentsController : Controller
     {
-        private readonly WorkflowsContext _context;
-        private readonly KtdaleaveContext _ktdaleavecontext;
+        private readonly KtdaleaveContext _context;
 
-        public InternsController(WorkflowsContext context, KtdaleaveContext ktdaleavecontext)
+        public DepartmentsController(KtdaleaveContext context)
         {
             _context = context;
-            _ktdaleavecontext = ktdaleavecontext ?? throw new ArgumentNullException(nameof(ktdaleavecontext));
         }
 
-        // GET: Interns
+        // GET: Departments
         public async Task<IActionResult> Index()
         {
-            // Get the list of departments
-           
-            return View(await _context.Intern.ToListAsync());
+            return View(await _context.Departments.ToListAsync());
         }
 
-        // GET: Interns/Details/5
+        // GET: Departments/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -37,54 +32,39 @@ namespace Workflows.Controllers
                 return NotFound();
             }
 
-            var intern = await _context.Intern
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (intern == null)
+            var department = await _context.Departments
+                .FirstOrDefaultAsync(m => m.DepartmentCode == id);
+            if (department == null)
             {
                 return NotFound();
             }
 
-            return View(intern);
+            return View(department);
         }
 
-        // GET: Interns/Create
+        // GET: Departments/Create
         public IActionResult Create()
         {
-
-            using (var db = new KtdaleaveContext())
-            {
-                var departments = db.Departments.ToList();
-
-                // Create a SelectList from the departments
-                var departmentItems = new SelectList(departments, "DepartmentCode", "DepartmentName");
-
-                // Pass the SelectList to ViewBag
-                ViewBag.DepartmentItems = departmentItems;
-            }
-
-        //    ViewBag.Department_id = new SelectList(departments, "DepartmentID", "DepartmentName");
             return View();
         }
 
-        // POST: Interns/Create
+        // POST: Departments/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Department_id,Firstname,Lastname,Othernames,Email,PhoneNumber,Status,CreatedAt,UpdatedAt")] Intern intern)
+        public async Task<IActionResult> Create([Bind("DepartmentCode,DepartmentId,DepartmentName,DepartmentHd,Emailaddress,UserName,OrgCode")] Department department)
         {
             if (ModelState.IsValid)
             {
-                intern.CreatedAt = DateTime.Now;
-                intern.UpdatedAt = DateTime.Now;
-                _context.Add(intern);
+                _context.Add(department);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(intern);
+            return View(department);
         }
 
-        // GET: Interns/Edit/5
+        // GET: Departments/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -92,22 +72,22 @@ namespace Workflows.Controllers
                 return NotFound();
             }
 
-            var intern = await _context.Intern.FindAsync(id);
-            if (intern == null)
+            var department = await _context.Departments.FindAsync(id);
+            if (department == null)
             {
                 return NotFound();
             }
-            return View(intern);
+            return View(department);
         }
 
-        // POST: Interns/Edit/5
+        // POST: Departments/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Department_id,Firstname,Lastname,Othernames,Email,PhoneNumber,Status,CreatedAt,UpdatedAt")] Intern intern)
+        public async Task<IActionResult> Edit(int id, [Bind("DepartmentCode,DepartmentId,DepartmentName,DepartmentHd,Emailaddress,UserName,OrgCode")] Department department)
         {
-            if (id != intern.Id)
+            if (id != department.DepartmentCode)
             {
                 return NotFound();
             }
@@ -116,13 +96,12 @@ namespace Workflows.Controllers
             {
                 try
                 {
-                    intern.UpdatedAt = DateTime.Now;
-                    _context.Update(intern);
+                    _context.Update(department);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!InternExists(intern.Id))
+                    if (!DepartmentExists(department.DepartmentCode))
                     {
                         return NotFound();
                     }
@@ -133,10 +112,10 @@ namespace Workflows.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(intern);
+            return View(department);
         }
 
-        // GET: Interns/Delete/5
+        // GET: Departments/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -144,34 +123,34 @@ namespace Workflows.Controllers
                 return NotFound();
             }
 
-            var intern = await _context.Intern
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (intern == null)
+            var department = await _context.Departments
+                .FirstOrDefaultAsync(m => m.DepartmentCode == id);
+            if (department == null)
             {
                 return NotFound();
             }
 
-            return View(intern);
+            return View(department);
         }
 
-        // POST: Interns/Delete/5
+        // POST: Departments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var intern = await _context.Intern.FindAsync(id);
-            if (intern != null)
+            var department = await _context.Departments.FindAsync(id);
+            if (department != null)
             {
-                _context.Intern.Remove(intern);
+                _context.Departments.Remove(department);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool InternExists(int id)
+        private bool DepartmentExists(int id)
         {
-            return _context.Intern.Any(e => e.Id == id);
+            return _context.Departments.Any(e => e.DepartmentCode == id);
         }
     }
 }

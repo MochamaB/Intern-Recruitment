@@ -5,13 +5,13 @@
 <nav class="sidebar sidebar-offcanvas" >
   <ul class="nav">
         <li class="nav-item">
-            <a class="nav-link" href="/Home/@ViewContext.RouteData.Values["action"]">
+            <a class="nav-link" href="/Requisitions/">
                 <i class="mdi mdi-grid-large menu-icon"></i>
                 <span class="menu-title" style="text-transform: uppercase;">All Requisitions</span>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/Interns/@ViewContext.RouteData.Values["action"]">
+            <a class="nav-link" href="/Interns/">
                 <i class="mdi mdi-mdi mdi-mdi mdi-account-circle menu-icon"></i>
                 <span class="menu-title" style="text-transform: uppercase;">Interns</span>
             </a>
@@ -37,11 +37,23 @@
                 <span class="menu-title" style="text-transform: uppercase;">Department Reports</span>
             </a>
         </li>
-
+        <li class="nav-item nav-category">Administration</li>
         <li class="nav-item">
-            <a class="nav-link" href="">
+            <a class="nav-link" href="/Departments/">
+                <i class="menu-icon mdi mdi-account-multiple "></i>
+                <span class="menu-title" style="text-transform: uppercase;">Departments</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/Employees/">
                 <i class="menu-icon mdi mdi-account-card-details "></i>
-                <span class="menu-title" style="text-transform: uppercase;">Administration</span>
+                <span class="menu-title" style="text-transform: uppercase;">Employees</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/Roles/">
+                <i class="menu-icon mdi mdi-account-key "></i>
+                <span class="menu-title" style="text-transform: uppercase;">Roles</span>
             </a>
         </li>
 
