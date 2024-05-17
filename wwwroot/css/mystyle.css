@@ -19,7 +19,10 @@ span.input-group-text.bg-transparent.border-right-0 {
     height: 51px;
     border-right:none;
 }
-
+.auth.auth-img-bg .auth-form-transparent {
+    width: 70%;
+    margin: auto;
+}
 input.form-control.form-control-lg.border-left-0:focus {
     border:3px solid #fcb900
 }

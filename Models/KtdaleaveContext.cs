@@ -21,6 +21,8 @@ public partial class KtdaleaveContext : DbContext
 
     public virtual DbSet<Role> Roles { get; set; }
 
+    public virtual DbSet<PasswordCheckResults> PasswordCheckResults { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning    To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseSqlServer("Data Source=.;Initial Catalog=KTDALeave;Persist Security Info=True;User ID=sa;Password=P@ssw0rd;Trust Server Certificate=True");
@@ -40,6 +42,8 @@ public partial class KtdaleaveContext : DbContext
             entity.Property(e => e.EmpisCurrActive).HasDefaultValue(0);
             entity.Property(e => e.Fullname).HasComputedColumnSql("(isnull([Surname],'')+isnull([othernames],''))", false);
         });
+
+        modelBuilder.Entity<PasswordCheckResults>().HasNoKey();
 
         OnModelCreatingPartial(modelBuilder);
     }
