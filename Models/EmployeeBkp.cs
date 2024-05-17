@@ -110,6 +110,5 @@ public partial class EmployeeBkp
     [Unicode(false)]
     public string Fullname { get; set; } = null!;
 
-    ////Relationships
-    public Department DepartmentRelationship { get; set; } = null!;
+    
 }

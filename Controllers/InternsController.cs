@@ -24,9 +24,20 @@ namespace Workflows.Controllers
         // GET: Interns
         public async Task<IActionResult> Index()
         {
-            // Get the list of departments
-           
-            return View(await _context.Intern.ToListAsync());
+            // Get the list of interns from the WorkflowContext
+            var interns = await _context.Intern.ToListAsync();
+
+            // Get the list of departments from the KtdaleaveContext
+            List<Department> departments;
+            using (var ktdaContext = new KtdaleaveContext())
+            {
+                departments = await ktdaContext.Departments.ToListAsync();
+            }
+
+            // Pass both sets of data to the view
+            ViewBag.Departments = departments;
+
+            return View(interns);
         }
 
         // GET: Interns/Details/5
@@ -71,10 +82,11 @@ namespace Workflows.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Department_id,Firstname,Lastname,Othernames,Email,PhoneNumber,Status,CreatedAt,UpdatedAt")] Intern intern)
+        public async Task<IActionResult> Create([Bind("Id,DepartmentCode,Firstname,Lastname,Othernames,Email,PhoneNumber,Status,CreatedAt,UpdatedAt")] Intern intern)
         {
             if (ModelState.IsValid)
             {
+                intern.Status =   "Inactive";
                 intern.CreatedAt = DateTime.Now;
                 intern.UpdatedAt = DateTime.Now;
                 _context.Add(intern);
@@ -105,7 +117,7 @@ namespace Workflows.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Department_id,Firstname,Lastname,Othernames,Email,PhoneNumber,Status,CreatedAt,UpdatedAt")] Intern intern)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,departmentCode,Firstname,Lastname,Othernames,Email,PhoneNumber,Status,CreatedAt,UpdatedAt")] Intern intern)
         {
             if (id != intern.Id)
             {

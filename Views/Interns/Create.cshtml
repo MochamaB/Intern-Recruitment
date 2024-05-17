@@ -8,14 +8,14 @@
 
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-5">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             
             <div class="form-group">
                 <label asp-for="DepartmentCode" class="control-label"></label>
-                <select asp-for="DepartmentCode" class="form-control" asp-items="ViewBag.DepartmentItems">
-                    <option value="">-- Select Department --</option>
+                <select asp-for="DepartmentCode" class="formcontrol2" asp-items="ViewBag.DepartmentItems">
+                    <option value="">   -- Select Department --</option>
                 </select>
             </div>
             <div class="form-group">
@@ -43,24 +43,16 @@
                 <input asp-for="PhoneNumber" class="form-control" />
                 <span asp-validation-for="PhoneNumber" class="text-danger"></span>
             </div>
+           
             <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <select asp-for="Status" class="form-control">
-                    <option value="">Select a status</option>
-                    <option value="Active">Active</option>
-                    <option value="Inactive">Inactive</option>
-                    <!-- Add more options as needed -->
-                </select>
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Create" class="btn btn-primary" /> &nbsp;  &nbsp;
+                <a class="btn btn-outline-primary" asp-action="Index">Back to List</a>
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+   
 </div>
 

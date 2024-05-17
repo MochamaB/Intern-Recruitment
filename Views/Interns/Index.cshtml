@@ -51,7 +51,13 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                    @Html.DisplayFor(modelItem => item.DepartmentCode)
+                    @foreach (var department in ViewBag.Departments)
+                    {
+                        if (department.DepartmentCode == item.DepartmentCode)
+                        {
+                            @department.DepartmentName
+                        }
+                    }
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Firstname)  @Html.DisplayFor(modelItem => item.Lastname)

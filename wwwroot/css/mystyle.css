@@ -55,7 +55,7 @@ input.form-control.form-control-lg.border-left-0:focus {
         border-color: #fcb900;
     }
 .btn-outline-primary {
-    border: 1px solid #081031 !important;
+    border: 2px solid #081031 !important;
     color: #326408 !important;
 }
     .btn-outline-primary:hover {
@@ -63,6 +63,23 @@ input.form-control.form-control-lg.border-left-0:focus {
         background-color: #fcb900 !important;
         border-color: #fcb900 !important;
     }
+
+.btn-danger {
+    color: #fff;
+    background-color: red !important;
+    border-color: red;
+}
+
+.btn-danger:hover {
+    color: #fff;
+    background-color: #FF0000;
+    border-color: #ff0000;
+}
+.btn-outline-danger {
+    border: 2px solid #FF0000 !important;
+    color: #FF0000 !important;
+}
+
 .table th {
     border: none;
 }
@@ -120,6 +137,18 @@ input.form-control.form-control-sm.search-input {
         width: 700px;
         /* Set the desired width on hover */
     }
+
+.formcontrol2 {
+    padding: .4375rem .75rem;
+    border: 1px solid #dee2e6;
+    font-weight: 400;
+    font-size: 14px;
+    border-radius: 0px;
+    height: 2.8rem;
+    color: #777;
+    padding-right: 10px;
+    width: 100%;
+}
 
 /* === SIDEBAR === */
 .sidebar {

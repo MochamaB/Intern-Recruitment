@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Workflows.Data;
 using Workflows.Models;
+using Workflows.Services;
 var builder = WebApplication.CreateBuilder(args);
 // Add all the DB Contexts Here. The connection strings in GetConnectionString() is in appsettings.json.
 builder.Services.AddDbContext<WorkflowsContext>(options =>
@@ -11,6 +12,7 @@ builder.Services.AddDbContext<KtdaleaveContext>(options =>
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 
 var app = builder.Build();
 

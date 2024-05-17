@@ -1,5 +1,6 @@
 ﻿@{
     Layout = "_LoginLayout";
+    var errorMessage = ViewBag.ErrorMessage as string;
 }
 
   <div class="container-scroller">
@@ -18,8 +19,14 @@
                 <img src="~/images/Login.gif" alt="logo">
               </div>
               <h4>Intern Requisition</h4>
-              <h6 class="fw-light">Login:</h6>
-              <form class="pt-3">
+                        @if (!string.IsNullOrEmpty(errorMessage))
+                        {
+                            <div class="alert alert-danger">
+                                @errorMessage
+                            </div>
+                        }
+
+        <form class="pt-3" asp-controller="Login" asp-action="Login" method="post">
                 <div class="form-group">
                   <label for="exampleInputEmail">Payroll Number</label>
                   <div class="input-group">
@@ -28,7 +35,7 @@
                         <i class="ti-user text-primary"></i>
                       </span>
                     </div>
-                    <input type="text" class="form-control form-control-lg border-left-0" id="exampleInputEmail"
+                    <input type="text"  class="form-control form-control-lg border-left-0" name="payrollNo"
                       placeholder="Payroll Number">
                   </div>
                 </div>
@@ -40,7 +47,7 @@
                         <i class="ti-lock text-primary"></i>
                       </span>
                     </div>
-                    <input type="password" class="form-control form-control-lg border-left-0" id="exampleInputPassword"
+                     <input type="password" class="form-control form-control-lg border-left-0" name="password"
                       placeholder="Password">
                   </div>
                 </div>
@@ -54,7 +61,7 @@
                   <a href="#" class="auth-link text-black">Forgot password?</a>
                 </div>
                 <div class="my-3 d-grid gap-2">
-                                <a class="btn btn-block btn-primary btn-lg fw-medium auth-form-btn" asp-controller="Home" asp-action="Index">LOGIN</a>
+                  <button type="submit" class="btn btn-block btn-primary btn-lg fw-medium auth-form-btn">LOGIN</button>
                 </div>
                
        

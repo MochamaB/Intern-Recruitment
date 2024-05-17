@@ -8,11 +8,14 @@ namespace Workflows.Models
         public int Id { get; set; }
 
         [Column("departmentCode")]
+        [Display(Name = "Department")]
         public int DepartmentCode { get; set; }
 
         [Column("PayrollNo")]
-        public string PayrollNo { get; set; } = null!;
+        [Display(Name = "Added By")]
+        public string? PayrollNo { get; set; }
 
+        [Display(Name = "Intern")]
         public int Intern_id { get; set; }
         public string? Station {  get; set; }
 
@@ -27,14 +30,7 @@ namespace Workflows.Models
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
 
-        ////Relationships Department
-        //     [ForeignKey("Department")]
-        public Department Department { get; set; }
-
-        //
-        ////Relationships Employee
-
-
+        
         ////Relationships
         //   [ForeignKey("Intern")]
         //    [Column("Intern_id")]
