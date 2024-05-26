@@ -1,5 +1,46 @@
-﻿
+﻿@model List<Approval>
 
 
+    <form asp-controller="RequisitionWizard" asp-action="CreateRequisition">
+    <div class="row">
+        <div class="col-md-12">
+    <ul class="bullet-line-list">
+    @{
+        var counter = 1;
+    }
+         @foreach (var approvalStep in Model)
+    {
+        <li>
 
-<h2>Approval Workflow</h2>
+            <div class="d-flex justify-content-between">
+                <div>
+                    <h5 class="text-information"><b>@(counter++). Approval Step:</b> @approvalStep.ApprovalStep </h5>
+                    <hr />
+                    <p class="text-muted mb-2 fw-bold"><b>UPDATED ON:</b> @approvalStep.CreatedAt </p>
+                    <p class="text-muted"><b>APPROVAL BY:</b>
+                                    @if (ViewBag.EmployeeNames.ContainsKey(approvalStep.PayrollNo))
+                                    {
+                                        @ViewBag.EmployeeNames[approvalStep.PayrollNo]
+                                    }
+                                    else
+                                    {
+                                        @approvalStep.PayrollNo
+                                    }
+                        </p>
+                    <p class="text-muted"><b>STATUS:</b>  @approvalStep.ApprovalStatus </p>
+                </div>
+                <div class="d-flex">
+                <a asp-action="Edit" asp-route-id=""><i class="mdi mdi-lead-pencil mdi-24px text-primary"></i></a>
+                <a asp-action="Delete" asp-route-id=""> <i class="mdi mdi-delete mdi-24px text-danger"></i></a>
+                        
+                </div>
+            </div>
+        </li>
+        }
+     
+    </ul>
+    </div>
+<!-- Add the wizard buttons-->
+<partial name="_WizardBottom" />
+</div>
+</form>

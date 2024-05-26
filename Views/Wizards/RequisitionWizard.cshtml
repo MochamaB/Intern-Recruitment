@@ -26,9 +26,9 @@
                 case "Requisition":
                     <partial name="_CreateRequisitionForm" />
                     break;
-            case "Approval":
-                <partial name="_CreateApprovalForm" />
-                break;
+                case "Approvals":
+                    <partial name="_CreateApprovalForm" />
+                    break;
                 // Add other cases as needed
                 
             }
@@ -46,6 +46,7 @@
             
             // Set the active tab initially
             $("#step" + currentStep).addClass("active");
+            $("#step" + (currentStep - 1)).addClass("complete");
             $(".nextbutton").click(function () {
                
                 if (currentStep < steps.length - 1) {

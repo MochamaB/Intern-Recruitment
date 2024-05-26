@@ -258,6 +258,55 @@ input.form-control.form-control-sm.search-input {
     color: red;
 }
 
+/* === BULLET LIST === */
+.bullet-line-list {
+    position: relative;
+    list-style: none;
+    padding: 0;
+}
+
+    .bullet-line-list li {
+        position: relative;
+        padding-left: 50px;
+        /* Adjust as needed */
+        margin-bottom: 20px;
+        /* Adjust space between items */
+    }
+
+        .bullet-line-list li:before {
+            content: '';
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            left: 0;
+            top: 10px;
+            /* Adjust to align with the center of the bullet */
+            border: 4px solid #E9EDFB;
+            border-radius: 50%;
+            background: #326408;
+            z-index: 2;
+        }
+
+        .bullet-line-list li:after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            /* Width of the line */
+            height: 100%;
+            /* Make line full height */
+            left: 12px;
+            /* Adjust to align with the center of the bullet */
+            top: 35px;
+            /* Adjust to start from the bottom of the bullet */
+            background: #fcb900;
+            /* Color of the line */
+            z-index: 1;
+        }
+
+        /* Remove line from the last item */
+        .bullet-line-list li:last-child:after {
+            display: none;
+        }
 /* === FOOTER === */
 .footer {
     background: #F4F5F7;

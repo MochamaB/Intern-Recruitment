@@ -4,11 +4,11 @@ namespace Workflows.Services
 {
     public interface IApprovalService
     {
-        List<Approval> CreateApprovalSteps(Requisition requisition);
+        List<Approval> CreateApprovalSteps(Requisition requisition, string HOD, string HROfficerPayrollNO, string HOH);
     }
     public class ApprovalService : IApprovalService
     {
-        public List<Approval> CreateApprovalSteps(Requisition requisition)
+        public List<Approval> CreateApprovalSteps(Requisition requisition, string HOD, string HROfficerPayrollNO, string HOH)
         {
             var approvalSteps = new List<Approval>
         {
@@ -17,16 +17,17 @@ namespace Workflows.Services
                 Requisition_id = requisition.Id,
                 DepartmentCode = requisition.DepartmentCode,
                 ApprovalStep = "HOD Approval",
-                PayrollNo = requisition.PayrollNo,
+                PayrollNo = HOD,
                 ApprovalStatus = "Pending",
-                CreatedAt = DateTime.Now
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now
             },
             new Approval
             {
                 Requisition_id = requisition.Id,
                 DepartmentCode = requisition.DepartmentCode,
                 ApprovalStep = "HR Officer Approval",
-                PayrollNo = requisition.PayrollNo,
+                PayrollNo = HROfficerPayrollNO,
                 ApprovalStatus = "Pending",
                 CreatedAt = DateTime.Now
             },
@@ -35,7 +36,7 @@ namespace Workflows.Services
                 Requisition_id = requisition.Id,
                 DepartmentCode = requisition.DepartmentCode,
                 ApprovalStep = "HOH Approval",
-                PayrollNo = requisition.PayrollNo,
+                PayrollNo = HOH,
                 ApprovalStatus = "Pending",
                 CreatedAt = DateTime.Now
             }

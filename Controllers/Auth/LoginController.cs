@@ -43,7 +43,7 @@ namespace Workflows.Controllers.Auth
                     HttpContext.Session.SetString("EmployeeName", employee.Fullname);
                     HttpContext.Session.SetString("EmployeePayrollNo", employee.PayrollNo);
                     HttpContext.Session.SetString("EmployeeDepartment", employee.Department);
-                    HttpContext.Session.SetString("EmployeePayrollNo", employee.Role);
+                    HttpContext.Session.SetString("EmployeeRole", employee.Role);
 
 
                 }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Workflows.Data;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Workflows.Services;
+using Workflows.ViewModels;
 
 namespace Workflows.Controllers
 {
@@ -80,7 +81,7 @@ namespace Workflows.Controllers
             if (intern == null)
             {
                 // Handle the case where the intern is not in the session
-                return RedirectToAction("CreateIntern");
+                return RedirectToAction("Intern");
             }
             // Check if the request method is GET to clear validation errors on initial load
             if (HttpContext.Request.Method.Equals("GET", StringComparison.OrdinalIgnoreCase))
@@ -95,7 +96,7 @@ namespace Workflows.Controllers
 
                 // Create a SelectList from the departments
                 //  var departmentItems = new SelectList(department, "DepartmentCode", "DepartmentName");
-
+                requisition.Start_Date = DateTime.Now;
                 ViewBag.DepartmentCode = department.DepartmentCode;
                 ViewBag.DepartmentName = department.DepartmentName;
                 ViewBag.Intern_id = intern.Id;
@@ -121,14 +122,37 @@ namespace Workflows.Controllers
                 HttpContext.Session.SetObject("WizardRequisition", requisition);
 
                 ////Create Approval Steps//////
-                // Create the approval steps
-                
-                var approvalSteps = _approvalService.CreateApprovalSteps(requisition);
+                // Create the approval steps////
+                /// Get the PayrollNo for the HOD,HR Officer,HOH
+                int DepartmentCode = requisition.DepartmentCode;
+                using (var db = new KtdaleaveContext())
+                {
+                    var department = db.Departments.FirstOrDefault(d => d.DepartmentCode == DepartmentCode);
+                    string HOD;
+                    if (department.DepartmentHd != null)
+                    {
+                         HOD = department.DepartmentHd; /// HOD PAYROLL
+                    }
+                    else
+                    {
+                        HOD = employeePayrollNo;
+                    }
 
-                // Store the approval steps in the session
-                HttpContext.Session.SetObject("WizardApprovalSteps", approvalSteps);
+                    string HROfficer = "HUMAN RESOURCE ASSISTANT";
+                    var HRemployee = db.EmployeeBkps.FirstOrDefault(d => d.Designation == HROfficer && d.EmpisCurrActive == 0);
+                    var HROfficerPayrollNO = HRemployee.PayrollNo;
 
-                return RedirectToAction("Approval");
+                    string HOHOfficer = "Head of HR Operations";
+                    var HOHemployee = db.EmployeeBkps.FirstOrDefault(d => d.Designation == HOHOfficer && d.EmpisCurrActive == 0);
+                    var HOH = HOHemployee.PayrollNo; //HOH Payroll
+
+                    var approvalSteps = _approvalService.CreateApprovalSteps(requisition, HOD, HROfficerPayrollNO,HOH);
+
+                    // Store the approval steps in the session
+                    HttpContext.Session.SetObject("WizardApprovalSteps", approvalSteps);
+
+                    return RedirectToAction("Approval");
+                }
             }
             return Requisition(requisition);
         }
@@ -138,15 +162,33 @@ namespace Workflows.Controllers
             // Retrieve the approval steps from the session
             var approvalSteps = HttpContext.Session.GetObject<List<Approval>>("WizardApprovalSteps");
 
-            if (requisition == null)
+            if (requisition == null || approvalSteps == null)
             {
                 // Handle the case where the approval steps are not found in the session
-                return RedirectToAction("CreateRequisition");
+                return RedirectToAction("Requisition");
             }
 
-            ViewBag.Steps = GetSteps();
-            ViewBag.CurrentStep = "Approvals";
-            return View(RequisitionWizardViewPath, approvalSteps);
+            // Create a list to hold the view models
+            // Create a dictionary to hold the employee names
+            var employeeName = new Dictionary<string, string>();
+
+            using (var db = new KtdaleaveContext())
+                {
+                foreach (var approvalStep in approvalSteps)
+                {
+                    var employee = db.EmployeeBkps.FirstOrDefault(d => d.PayrollNo == approvalStep.PayrollNo);
+                    // Add to the dictionary
+                    if (employee != null && !employeeName.ContainsKey(approvalStep.PayrollNo))
+                    {
+                        employeeName[approvalStep.PayrollNo] = employee.Fullname;
+                    }
+                }
+                }
+                ViewBag.EmployeeNames = employeeName;
+                ViewBag.Steps = GetSteps();
+                ViewBag.CurrentStep = "Approvals";
+                return View(RequisitionWizardViewPath, approvalSteps);
+            
         }
 
         [HttpPost]
@@ -165,7 +207,7 @@ namespace Workflows.Controllers
 
             ViewBag.Steps = GetSteps();
             ViewBag.CurrentStep = "Document";
-            return View("~/Views/Wizards/RequisitionWizard.cshtml");
+            return View(RequisitionWizardViewPath);
         }
 
         [HttpPost]

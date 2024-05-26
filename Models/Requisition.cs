@@ -26,10 +26,12 @@ namespace Workflows.Models
         public string? Status {  get; set; }
 
         [Display(Name = "Start Date")]
+        [DataType(DataType.Date)]
         [Required]
         public DateTime Start_Date { get; set; }
 
         [Display(Name = "End Date")]
+        [DataType(DataType.Date)]
         [Required]
         public DateTime End_Date { get; set; }
 
