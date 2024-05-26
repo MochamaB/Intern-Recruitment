@@ -5,7 +5,9 @@
 }
 
 
-<a asp-action="Create" class="btn btn-primary text-white mb-0 me-0  float-end">Create New</a>
+<a asp-controller="RequisitionWizard" asp-action="Intern" class="btn btn-primary text-white mb-0 me-0  float-end">
+    <i class="mdi mdi-plus-circle-outline">Create New</i>
+</a>
 <div style="clear: both;"></div>
 
 <table id="table"
@@ -57,7 +59,13 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.DepartmentCode)
+                    @foreach (var department in ViewBag.Departments)
+                    {
+                        if (department.DepartmentCode == item.DepartmentCode)
+                        {
+                            @department.DepartmentName
+                        }
+                    }
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Intern_id)

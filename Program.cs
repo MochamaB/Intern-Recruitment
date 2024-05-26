@@ -3,6 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Workflows.Data;
 using Workflows.Models;
 using Workflows.Services;
+
+
 var builder = WebApplication.CreateBuilder(args);
 // Add all the DB Contexts Here. The connection strings in GetConnectionString() is in appsettings.json.
 builder.Services.AddDbContext<WorkflowsContext>(options =>
@@ -13,6 +15,16 @@ builder.Services.AddDbContext<KtdaleaveContext>(options =>
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+builder.Services.AddScoped<IApprovalService,ApprovalService>();
+
+// Add session services
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Set session timeout as needed
+    options.Cookie.HttpOnly = true; // Make the session cookie accessible only to the server
+    options.Cookie.IsEssential = true; // Make the session cookie essential
+});
 
 var app = builder.Build();
 
@@ -30,6 +42,10 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+
+// Add session middleware
+app.UseSession();
+
 
 app.MapControllerRoute(
     name: "default",

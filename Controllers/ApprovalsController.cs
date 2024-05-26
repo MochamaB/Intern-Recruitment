@@ -10,32 +10,22 @@ using Workflows.Models;
 
 namespace Workflows.Controllers
 {
-    public class RequisitionsController : Controller
+    public class ApprovalsController : Controller
     {
         private readonly WorkflowsContext _context;
 
-        public RequisitionsController(WorkflowsContext context)
+        public ApprovalsController(WorkflowsContext context)
         {
             _context = context;
         }
 
-        // GET: Requisitions
+        // GET: Approvals
         public async Task<IActionResult> Index()
         {
-            var requisitions = await _context.Requisition.ToListAsync();
-            // Get the list of departments from the KtdaleaveContext
-            List<Department> departments;
-            using (var ktdaContext = new KtdaleaveContext())
-            {
-                departments = await ktdaContext.Departments.ToListAsync();
-            }
-
-            // Pass both sets of data to the view
-            ViewBag.Departments = departments;
-            return View(requisitions);
+            return View(await _context.Approval.ToListAsync());
         }
 
-        // GET: Requisitions/Details/5
+        // GET: Approvals/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -43,55 +33,39 @@ namespace Workflows.Controllers
                 return NotFound();
             }
 
-            var requisition = await _context.Requisition
+            var approval = await _context.Approval
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (requisition == null)
+            if (approval == null)
             {
                 return NotFound();
             }
 
-            return View(requisition);
+            return View(approval);
         }
 
-        // GET: Requisitions/Create
+        // GET: Approvals/Create
         public IActionResult Create()
         {
-            using (var db = new KtdaleaveContext())
-            {
-                var departments = db.Departments.ToList();
-
-                // Create a SelectList from the departments
-                var departmentItems = new SelectList(departments, "DepartmentCode", "DepartmentName");
-
-                // Pass the SelectList to ViewBag
-                ViewBag.DepartmentItems = departmentItems;
-            }
             return View();
         }
 
-        // POST: Requisitions/Create
+        // POST: Approvals/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,DepartmentCode,Intern_id,AddedBy,Station,Status,Start_Date,End_Date,CreatedAt,UpdatedAt")] Requisition requisition)
+        public async Task<IActionResult> Create([Bind("Id,Requisition_id,DepartmentCode,ApprovalStep,PayrollNo,ApprovalStatus,ApprovalComment,CreatedAt,UpdatedAt")] Approval approval)
         {
             if (ModelState.IsValid)
             {
-                string? PayrollNo = HttpContext.Session.GetString("EmployeePayrollNo");
-                requisition.PayrollNo = PayrollNo;
-                requisition.Status = "Active";
-                requisition.CreatedAt = DateTime.Now;
-                requisition.UpdatedAt = DateTime.Now;
-                _context.Add(requisition);
+                _context.Add(approval);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-
-            return View(requisition);
+            return View(approval);
         }
 
-        // GET: Requisitions/Edit/5
+        // GET: Approvals/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -99,22 +73,22 @@ namespace Workflows.Controllers
                 return NotFound();
             }
 
-            var requisition = await _context.Requisition.FindAsync(id);
-            if (requisition == null)
+            var approval = await _context.Approval.FindAsync(id);
+            if (approval == null)
             {
                 return NotFound();
             }
-            return View(requisition);
+            return View(approval);
         }
 
-        // POST: Requisitions/Edit/5
+        // POST: Approvals/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Department_id,Intern_id,AddedBy,Station,Status,Start_Date,End_Date,CreatedAt,UpdatedAt")] Requisition requisition)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Requisition_id,DepartmentCode,ApprovalStep,PayrollNo,ApprovalStatus,ApprovalComment,CreatedAt,UpdatedAt")] Approval approval)
         {
-            if (id != requisition.Id)
+            if (id != approval.Id)
             {
                 return NotFound();
             }
@@ -123,12 +97,12 @@ namespace Workflows.Controllers
             {
                 try
                 {
-                    _context.Update(requisition);
+                    _context.Update(approval);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!RequisitionExists(requisition.Id))
+                    if (!ApprovalExists(approval.Id))
                     {
                         return NotFound();
                     }
@@ -139,10 +113,10 @@ namespace Workflows.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(requisition);
+            return View(approval);
         }
 
-        // GET: Requisitions/Delete/5
+        // GET: Approvals/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -150,34 +124,34 @@ namespace Workflows.Controllers
                 return NotFound();
             }
 
-            var requisition = await _context.Requisition
+            var approval = await _context.Approval
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (requisition == null)
+            if (approval == null)
             {
                 return NotFound();
             }
 
-            return View(requisition);
+            return View(approval);
         }
 
-        // POST: Requisitions/Delete/5
+        // POST: Approvals/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var requisition = await _context.Requisition.FindAsync(id);
-            if (requisition != null)
+            var approval = await _context.Approval.FindAsync(id);
+            if (approval != null)
             {
-                _context.Requisition.Remove(requisition);
+                _context.Approval.Remove(approval);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool RequisitionExists(int id)
+        private bool ApprovalExists(int id)
         {
-            return _context.Requisition.Any(e => e.Id == id);
+            return _context.Approval.Any(e => e.Id == id);
         }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Workflows.Data;
 
@@ -11,9 +12,11 @@ using Workflows.Data;
 namespace Workflows.Migrations
 {
     [DbContext(typeof(WorkflowsContext))]
-    partial class WorkflowsContextModelSnapshot : ModelSnapshot
+    [Migration("20240524165316_AddIdnumberIntern")]
+    partial class AddIdnumberIntern
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -84,8 +87,9 @@ namespace Workflows.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("Idnumber")
-                        .HasColumnType("bigint");
+                    b.Property<string>("Idnumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Lastname")
                         .IsRequired()

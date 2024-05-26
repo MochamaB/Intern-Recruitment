@@ -1,31 +1,31 @@
-﻿@model Workflows.Models.Requisition
-
-@{
-    ViewData["Title"] = "Create";
-}
+﻿
+@model Workflows.Models.Requisition
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 
-<h4>Requisition</h4>
-<hr />
+<form asp-controller="RequisitionWizard" asp-action="CreateRequisition">
 <div class="row">
     <div class="col-md-5">
-        <form asp-action="Create">
+       
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
             <div class="form-group">
-                <label asp-for="DepartmentCode" class="control-label"></label>
+                <label asp-for="DepartmentCode" class="control-label"></label>  <span class="requiredlabel">*</span>
                 <select asp-for="DepartmentCode" class="formcontrol2" asp-items="ViewBag.DepartmentItems">
-                    <option value="">   -- Select Department --</option>
+                    <option value="@ViewBag.DepartmentCode"> @ViewBag.DepartmentName</option>
                 </select>
                 <span asp-validation-for="DepartmentCode" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Intern_id" class="control-label"></label>
-                <input asp-for="Intern_id" class="form-control" />
+                <label asp-for="Intern_id" class="control-label"></label>  <span class="requiredlabel">*</span>
+                <select asp-for="Intern_id" class="formcontrol2">
+                    <option value="@ViewBag.Intern_id">   @ViewBag.InternFirstname @ViewBag.InternLastname</option>
+                </select>
                 <span asp-validation-for="Intern_id" class="text-danger"></span>
             </div>
-          
+
             <div class="form-group">
-                <label asp-for="Station" class="control-label"></label>
+                <label asp-for="Station" class="control-label"></label>  <span class="requiredlabel">*</span>
                 <select asp-for="Station" class="formcontrol2">
                     <option value="">-- Select Station --</option>
                     <option value="HQ">HQ</option>
@@ -34,24 +34,19 @@
                 <span asp-validation-for="Station" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Start_Date" class="control-label"></label>
+                <label asp-for="Start_Date" class="control-label"></label> <span class="requiredlabel">*</span>
                 <input asp-for="Start_Date" class="form-control" />
                 <span asp-validation-for="Start_Date" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="End_Date" class="control-label"></label>
+                <label asp-for="End_Date" class="control-label"></label> <span class="requiredlabel">*</span>
                 <input asp-for="End_Date" class="form-control" />
                 <span asp-validation-for="End_Date" class="text-danger"></span>
             </div>
-           
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+
+       
     </div>
+        <!-- Add the wizard buttons-->
+        <partial name="_WizardBottom" />
+</form>
 </div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-

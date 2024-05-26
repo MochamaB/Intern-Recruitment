@@ -9,6 +9,7 @@ namespace Workflows.Models
 
         [Column("departmentCode")]
         [Display(Name = "Department")]
+        [Required]
         public int DepartmentCode { get; set; }
 
         [Column("PayrollNo")]
@@ -16,15 +17,20 @@ namespace Workflows.Models
         public string? PayrollNo { get; set; }
 
         [Display(Name = "Intern")]
+        [Required]
         public int Intern_id { get; set; }
+
+        [Required]
         public string? Station {  get; set; }
 
         public string? Status {  get; set; }
 
         [Display(Name = "Start Date")]
+        [Required]
         public DateTime Start_Date { get; set; }
 
         [Display(Name = "End Date")]
+        [Required]
         public DateTime End_Date { get; set; }
 
         public DateTime CreatedAt { get; set; }

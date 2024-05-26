@@ -46,13 +46,15 @@ input.form-control.form-control-lg.border-left-0:focus {
     transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
+        /* === PRIMARY === */
+
 .btn-primary {
     color: #fff;
     background-color: #324721;
     border-color: #324721;
 }
 
-    .btn-primary:hover {
+    .btn-primary:hover , .btn-primary:focus{
         color: #fff;
         background-color: #fcb900;
         border-color: #fcb900;
@@ -83,6 +85,29 @@ input.form-control.form-control-lg.border-left-0:focus {
     color: #FF0000 !important;
 }
 
+.btn-hazard {
+    color: #fff;
+    background-color: #fcb900;
+    border-color: #fcb900;
+}
+
+    .btn-hazard:hover {
+        color: #fff;
+        background-color: #fefa45;
+        border-color: #fefa45;
+    }
+
+.btn-outline-hazard {
+    border: 2px solid #fcb900 !important;
+    color: #326408 !important;
+}
+
+    .btn-outline-hazard:hover {
+        color: #fff;
+        background-color: #fcb900 !important;
+        border-color: #fcb900 !important;
+    }
+
 .table th {
     border: none;
 }
@@ -98,6 +123,11 @@ input.form-control.form-control-lg.border-left-0:focus {
 .text-primary {
     --bs-text-opacity: 1;
     color: #324721 !important;
+}
+.text-danger {
+    font-weight: 700;
+    color: rgba(var(--bs-danger-rgb), var(--bs-text-opacity)) !important;
+    font-size: 0.815rem;
 }
 
 .form-control, .asColorPicker-input, .dataTables_wrapper select, .select2-container--default .select2-selection--single, .select2-container--default .select2-selection--single .select2-search__field, .typeahead, .tt-query, .tt-hint {
@@ -151,6 +181,16 @@ input.form-control.form-control-sm.search-input {
     color: #777;
     padding-right: 10px;
     width: 100%;
+}
+   .input-validation-error {
+        border-color: #dc3545;
+    }
+    .form-group label {
+    font-size: 0.912rem;
+    line-height: 1.4rem;
+    vertical-align: top;
+    margin-bottom: .5rem;
+    color:#000;
 }
 
 /* === SIDEBAR === */
@@ -210,6 +250,12 @@ input.form-control.form-control-sm.search-input {
         margin-bottom: 0;
         color: #326408;
     }
+}
+
+.requiredlabel {
+    font-size: 20px;
+    padding-left: 5px;
+    color: red;
 }
 
 /* === FOOTER === */

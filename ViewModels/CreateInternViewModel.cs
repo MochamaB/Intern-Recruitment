@@ -1,15 +1,14 @@
-﻿
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace Workflows.Models
+namespace Workflows.ViewModels
 {
-    public class Intern
+    public class CreateInternViewModel
     {
-        public int Id { get; set; }
+          public int Id { get; set; }
 
-        [Column("departmentCode")]
+      
         [Display(Name = "Department")]
         [Required]
         public int DepartmentCode { get; set; }
@@ -45,16 +44,6 @@ namespace Workflows.Models
         public string? Status { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
-     //   public SelectList? DepartmentItems { get; set; }
-
-        // Foreign key property
-        //    [ForeignKey("Department")]
-
-
-        // Navigation property for the associated Department
-        //  public Department Department { get; set; }
-
-
-
+        public SelectList DepartmentItems { get; internal set; }
     }
 }

@@ -1,0 +1,83 @@
+﻿
+@{
+    ViewData["Title"] = "Create Requisition Wizard";
+}
+
+
+<div >
+    <hr />
+    <!-- progressbar -->
+    <ul id="progressbar">
+        @foreach (var step in ViewBag.Steps)
+        {
+            <li class="@(step == ViewBag.Steps[0] ? "active" : "")" id="step@(ViewBag.Steps.IndexOf(step))">
+                <strong>@(ViewBag.Steps.IndexOf(step) + 1). Create @step</strong>
+            </li>
+        }
+    </ul>
+</div>
+<div id="stepContent">
+ @{
+        switch (ViewBag.CurrentStep)
+            {
+                case "Intern":
+                    <partial name="_CreateInternForm" />
+                    break;
+                case "Requisition":
+                    <partial name="_CreateRequisitionForm" />
+                    break;
+            case "Approval":
+                <partial name="_CreateApprovalForm" />
+                break;
+                // Add other cases as needed
+                
+            }
+        }
+  </div>
+
+
+
+@section Scripts {
+    <script>
+        $(function () {
+         
+            var steps = @Html.Raw(Json.Serialize(ViewBag.Steps));
+            var currentStep = steps.indexOf('@ViewBag.CurrentStep');
+            
+            // Set the active tab initially
+            $("#step" + currentStep).addClass("active");
+            $(".nextbutton").click(function () {
+               
+                if (currentStep < steps.length - 1) {
+                    $("#step" + currentStep).removeClass("active").addClass("complete");
+                    currentStep++;
+                    $("#step" + currentStep).addClass("active");
+                    updateNavButtons();
+                    // Load the partial view for the next step
+                    // ...
+                }
+            });
+
+            $(".wizardpreviousBtn").click(function () {
+                if (currentStep > 0) {
+                    $("#step" + currentStep).removeClass("active");
+                    currentStep--;
+                    $("#step" + currentStep).addClass("active").removeClass("complete");
+                    updateNavButtons();
+                    // Load the partial view for the previous step
+                    // ...
+                }
+            });
+
+            function updateNavButtons() {
+                if (currentStep === 0) {
+                    $(".wizardpreviousBtn").hide();
+                } else {
+                    $(".wizardpreviousBtn").show();
+                }
+            }
+
+            updateNavButtons();
+        });
+    </script>
+}

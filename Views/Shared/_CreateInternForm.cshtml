@@ -1,0 +1,55 @@
+﻿@model Workflows.Models.Intern
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+
+<form asp-controller="RequisitionWizard" asp-action="CreateIntern">
+<div class="row">
+    <div class="col-md-5">
+       
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="DepartmentCode" class="control-label"></label><span class="requiredlabel">*</span>
+                <select asp-for="DepartmentCode" class="formcontrol2" asp-items="ViewBag.DepartmentItems">
+                    <option value="">   -- Select Department --</option>
+                </select>
+                <span asp-validation-for="DepartmentCode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Idnumber" class="control-label"></label><span class="requiredlabel">*</span>
+                <input asp-for="Idnumber" class="form-control" />
+                <span asp-validation-for="Idnumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Firstname" class="control-label"></label><span class="requiredlabel">*</span>
+                <input asp-for="Firstname" class="form-control" />
+                <span asp-validation-for="Firstname" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Lastname" class="control-label"></label><span class="requiredlabel">*</span>
+                <input asp-for="Lastname" class="form-control" />
+                <span asp-validation-for="Lastname" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Othernames" class="control-label"></label>
+                <input asp-for="Othernames" class="form-control" />
+                <span asp-validation-for="Othernames" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label><span class="requiredlabel">*</span>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PhoneNumber" class="control-label"></label><span class="requiredlabel">*</span>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+          
+
+       
+    </div>
+        <!-- Add the wizard buttons-->
+        <partial name="_WizardBottom" />
+</form>
+</div>

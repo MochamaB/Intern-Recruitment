@@ -16,5 +16,6 @@ namespace Workflows.Data
 
         public DbSet<Workflows.Models.Intern> Intern { get; set; } = default!;
         public DbSet<Workflows.Models.Requisition> Requisition { get; set; } = default!;
+        public DbSet<Workflows.Models.Approval> Approval { get; set; } = default!;
     }
 }
