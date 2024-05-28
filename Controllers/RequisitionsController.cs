@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Workflows.Data;
 using Workflows.Models;
+using Workflows.Attributes;
 
 namespace Workflows.Controllers
 {
+    [CustomAuthorize] /// Used to ensure authenticated users view this class/pages
     public class RequisitionsController : Controller
     {
         private readonly WorkflowsContext _context;

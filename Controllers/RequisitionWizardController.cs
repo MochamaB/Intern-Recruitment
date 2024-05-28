@@ -194,19 +194,17 @@ namespace Workflows.Controllers
         [HttpPost]
         public IActionResult CreateApproval(Approval approval)
         {
-            if (ModelState.IsValid)
-            {
+            
               //  HttpContext.Session.Set("Approval", approval);
-                return RedirectToAction("Documents");
-            }
-            return View(approval);
+                return RedirectToAction("Document");
+            
         }
 
         public IActionResult Document()
         {
 
             ViewBag.Steps = GetSteps();
-            ViewBag.CurrentStep = "Document";
+            ViewBag.CurrentStep = "Documents";
             return View(RequisitionWizardViewPath);
         }
 
