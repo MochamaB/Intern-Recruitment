@@ -32,6 +32,9 @@
                 case "Documents":
                     <partial name="_CreateDocumentForm" />
                     break;
+                case "Summary":
+                    <partial name="_CreateSummaryForm" />
+                    break;
                 // Add other cases as needed
                 
             }
@@ -49,7 +52,10 @@
             
             // Set the active tab initially
             $("#step" + currentStep).addClass("active");
-            $("#step" + (currentStep - 1)).addClass("complete");
+            // Add 'complete' class to all previous steps
+            for (var i = 0; i < currentStep; i++) {
+                $("#step" + i).addClass("complete");
+            }
             $(".nextbutton").click(function () {
                
                 if (currentStep < steps.length - 1) {

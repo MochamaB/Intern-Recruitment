@@ -1,0 +1,35 @@
+﻿@model Workflows.ViewModels.SummaryViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+
+
+<h2>Summary</h2>
+
+<h3>Intern Details</h3>
+<p><strong>First Name:</strong> @Model.Intern.Firstname</p>
+<p><strong>Last Name:</strong> @Model.Intern.Lastname</p>
+<p><strong>Email:</strong> @Model.Intern.Email</p>
+
+<h3>Requisition Details</h3>
+<p><strong>Department:</strong> @Model.Requisition.DepartmentCode</p>
+<p><strong>Start Date:</strong> @Model.Requisition.Start_Date.ToShortDateString()</p>
+<p><strong>End Date:</strong> @Model.Requisition.End_Date.ToShortDateString()</p>
+
+<h3>Approval Steps</h3>
+@foreach (var approval in Model.ApprovalSteps)
+{
+    <p><strong>Step:</strong> @approval.ApprovalStep - <strong>Status:</strong> @approval.ApprovalStatus</p>
+}
+
+<h3>Documents</h3>
+@foreach (var document in Model.DocumentList)
+{
+    <p><strong>Document Type:</strong> @document.DocumentType - <strong>File Name:</strong> @document.FileName</p>
+}
+
+<form asp-controller="RequisitionWizard" asp-action="CompleteWizard" method="post">
+    <!-- Add the wizard buttons-->
+    <partial name="_WizardBottom" />
+</form>
+
+

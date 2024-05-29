@@ -18,23 +18,23 @@
     #progressbar li {
         list-style-type: none;
         font-size: 17px;
-        width: 25%;
+        width: 20%;
         float: left;
         position: relative;
         border-bottom: 5px solid #fcb900;
-        padding: 10px 10px;
+        padding: 10px 10px 30px 10px;
     }
 
     #progressbar li.active {
         color: #326408;
         border-bottom: 5px solid #326408;
-        padding: 10px 10px;
+       
         text-align: center;
     }
         #progressbar li.complete {
             color: #326408;
             border-bottom: 5px solid #326408;
-            padding: 10px 10px;
+           
             text-align: center;
         }
 

@@ -257,6 +257,11 @@ input.form-control.form-control-sm.search-input {
     padding-left: 5px;
     color: red;
 }
+/* === LAYOUT === */
+.contentwrapper {
+    border: 1px solid #dee2e6;
+    padding: 30px;
+}
 
 /* === BULLET LIST === */
 .bullet-line-list {

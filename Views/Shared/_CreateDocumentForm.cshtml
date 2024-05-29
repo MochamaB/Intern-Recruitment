@@ -1,12 +1,30 @@
-﻿
-@*
-    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model Workflows.Models.Document
 
-<div class="row">
-    <div class="col-md-5">
-        <h5 class="text-information"><b>. Approval Step:</b> @approvalStep.ApprovalStep </h5>
-        <hr />
 
-     </div>
-</div>
+<form asp-controller="RequisitionWizard" asp-action="CreateDocument" enctype="multipart/form-data" method="post">
+    <div class="row">
+        <div class="col-md-6">
+
+            @{
+                var counter = 1;
+                var DocumentTypes = ViewBag.DocumentTypes as List<Workflows.Models.DocumentType>;
+            }
+            @foreach (var docType in DocumentTypes)
+            {
+
+                <h5 class="text-information"><b> @(counter++).  @docType.DocumentName Document:</b>.</h5>
+                <hr />
+
+
+                <div class="form-group">
+                    <label asp-for="File" class="control-label"></label><span class="requiredlabel">*</span>
+                    <input type="file" name="files" class="form-control" />
+                    <span asp-validation-for="File" class="text-danger"></span>
+                </div>
+            }
+
+        </div>
+        <!-- Add the wizard buttons-->
+        <partial name="_WizardBottom" />
+    </div>
+</form>

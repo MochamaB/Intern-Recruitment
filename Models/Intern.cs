@@ -17,7 +17,7 @@ namespace Workflows.Models
 
         [Display(Name = "ID Number")]
         [Required]
-        public long Idnumber { get; set; }
+        public long Idnumber { get; set; } = 29000000;
 
         [Display(Name = "First Name")]
         [DataType(DataType.Text)]  // used to display the value as text

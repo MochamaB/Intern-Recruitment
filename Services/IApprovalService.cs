@@ -28,7 +28,7 @@ namespace Workflows.Services
                 DepartmentCode = requisition.DepartmentCode,
                 ApprovalStep = "HR Officer Approval",
                 PayrollNo = HROfficerPayrollNO,
-                ApprovalStatus = "Pending",
+                ApprovalStatus = "Not Started",
                 CreatedAt = DateTime.Now
             },
             new Approval
@@ -37,7 +37,7 @@ namespace Workflows.Services
                 DepartmentCode = requisition.DepartmentCode,
                 ApprovalStep = "HOH Approval",
                 PayrollNo = HOH,
-                ApprovalStatus = "Pending",
+                ApprovalStatus = "Not Started",
                 CreatedAt = DateTime.Now
             }
         };
