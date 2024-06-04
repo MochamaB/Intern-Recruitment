@@ -13,5 +13,8 @@ namespace Workflows.Models
 
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
+
+        // Navigation property
+        public ICollection<Document> Document { get; set; }
     }
 }

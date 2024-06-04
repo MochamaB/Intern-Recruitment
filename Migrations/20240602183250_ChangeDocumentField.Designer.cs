@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Workflows.Data;
 
@@ -11,9 +12,11 @@ using Workflows.Data;
 namespace Workflows.Migrations
 {
     [DbContext(typeof(WorkflowsContext))]
-    partial class WorkflowsContextModelSnapshot : ModelSnapshot
+    [Migration("20240602183250_ChangeDocumentField")]
+    partial class ChangeDocumentField
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

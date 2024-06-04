@@ -1,6 +1,7 @@
 ﻿
 @{
     ViewData["Title"] = "Create Requisition Wizard";
+    var currentStep = ViewBag.CurrentStep as string;
 }
 
 
@@ -49,6 +50,8 @@
          
             var steps = @Html.Raw(Json.Serialize(ViewBag.Steps));
             var currentStep = steps.indexOf('@ViewBag.CurrentStep');
+
+           
             
             // Set the active tab initially
             $("#step" + currentStep).addClass("active");
@@ -64,7 +67,7 @@
                     $("#step" + currentStep).addClass("active");
                     updateNavButtons();
                     // Load the partial view for the next step
-                    // ...
+                   // alert(steps[currentStep]);
                 }
             });
 
@@ -75,7 +78,8 @@
                     $("#step" + currentStep).addClass("active").removeClass("complete");
                     updateNavButtons();
                     // Load the partial view for the previous step
-                    // ...
+                    // Redirect to the previous step
+                    window.location.href = '/RequisitionWizard/' + steps[currentStep];
                 }
             });
 
@@ -85,6 +89,10 @@
                 } else {
                     $(".wizardpreviousBtn").show();
                 }
+
+                if (currentStep === steps.length - 1) {
+                    $(".nextbutton").html('<i class="mdi mdi-arrow-right-bold-circle mdi-24"> Complete Requisition </i>');
+                } 
             }
 
             updateNavButtons();

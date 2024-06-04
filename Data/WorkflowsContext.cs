@@ -19,5 +19,13 @@ namespace Workflows.Data
         public DbSet<Workflows.Models.Approval> Approval { get; set; } = default!;
         public DbSet<Workflows.Models.DocumentType> DocumentType { get; set; } = default!;
         public DbSet<Workflows.Models.Document> Document { get; set; } = default!;
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Document>()
+                .HasOne(d => d.DocumentType)
+                .WithMany(dt => dt.Document)
+                .HasForeignKey(d => d.DocumentTypeId);
+        }
     }
 }

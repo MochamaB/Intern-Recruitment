@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Workflows.Extensions;
 using Workflows.Models;
 using Workflows.Services;
 
@@ -40,6 +41,8 @@ namespace Workflows.Controllers.Auth
                 if (employee != null)
                 {
                     // Store employee information in session
+                    // Store the whole employee object in session
+                    HttpContext.Session.SetObject("Employee", employee);
                     HttpContext.Session.SetString("EmployeeName", employee.Fullname);
                     HttpContext.Session.SetString("EmployeePayrollNo", employee.PayrollNo);
                     HttpContext.Session.SetString("EmployeeDepartment", employee.Department);

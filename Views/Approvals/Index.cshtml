@@ -4,19 +4,41 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+
+<a asp-action="Create" class="btn btn-primary text-white mb-0 me-0  float-end">
+    <div style="display: flex; align-items: center;">
+        <i class="mdi mdi-plus-circle-outline" style="margin-right: 5px;"></i>
+        <span>  Create New</span>
+    </div>
+</a>
+<div style="clear: both;"></div>
+
+<table id="table"
+       data-toggle="table"
+       data-icon-size="sm"
+       data-buttons-class="primary"
+       data-toolbar-align="right"
+       data-buttons-align="left"
+       data-search-align="left"
+       data-sort-order="asc"
+       data-search="true"
+       data-mobile-responsive="true"
+       data-sticky-header="true"
+       data-pagination="true"
+       data-page-list="[100, 200, 250, 500, ALL]"
+       data-page-size="100"
+       data-show-footer="false"
+       data-side-pagination="client"
+       data-show-export="true"
+       class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Requisition_id)
+                @Html.DisplayNameFor(model => model.DepartmentCode)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.DepartmentCode)
+               Intern
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.ApprovalStep)
@@ -30,9 +52,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.ApprovalComment)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedAt)
-            </th>
+   
             <th>
                 @Html.DisplayNameFor(model => model.UpdatedAt)
             </th>
@@ -40,38 +60,98 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Requisition_id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DepartmentCode)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ApprovalStep)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PayrollNo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ApprovalStatus)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ApprovalComment)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UpdatedAt)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var grouping in Model.GroupBy(a => a.Requisition_id))
+        {
+            int rowSpan = grouping.Count();
+            var firstItem = grouping.First();
+            int stepCounter = 1; // Initialize the counter for approval steps
+            var lastRowStyle = "border-bottom:2px solid grey";  // Style to apply to the last row of each group
+
+            <tr >
+                <td rowspan="@rowSpan" style="border-right:2px solid #dee2e6">
+                    @foreach (var department in ViewBag.Departments)
+                    {
+                        if (department.DepartmentCode == firstItem.DepartmentCode)
+                        {
+                            @department.DepartmentName
+                        }
+                    }
+                </td>
+                <td rowspan="@rowSpan" style="border-right:2px solid #dee2e6">
+                    @(ViewBag.InternNames.ContainsKey(firstItem.Requisition_id) ? ViewBag.InternNames[firstItem.Requisition_id] : "InternUser")
+                </td>
+                <td>
+                    @stepCounter.  @Html.DisplayFor(modelItem => firstItem.ApprovalStep)
+                </td>
+                <td>
+                    @(ViewBag.EmployeeNames.ContainsKey(firstItem.PayrollNo) ? ViewBag.EmployeeNames[firstItem.PayrollNo] : "DeptUserMissing")
+                  
+                </td>
+                <td>
+                    <span class="badge @(
+                        firstItem.ApprovalStatus switch
+                        {
+                            "Pending" => "badge-warning",
+                            "Not Started" => "badge-information",
+                            "Approved" => "badge-active",
+                            "Rejected" => "badge-danger",
+                            _ => "badge-secondary"
+                        })">
+                        @Html.DisplayFor(modelItem => firstItem.ApprovalStatus)
+                    </span>
+                  
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => firstItem.ApprovalComment)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => firstItem.UpdatedAt)
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@firstItem.Id"><i class="mdi mdi-eye mdi-24px text-warning"></i></a>
+                    <a asp-action="Edit" asp-route-id="@firstItem.Id"><i class="mdi mdi-lead-pencil mdi-24px text-primary"></i></a>
+                    <a asp-action="Delete" asp-route-id="@firstItem.Id"><i class="mdi mdi-delete mdi-24px text-danger"></i></a>
+                </td>
+            </tr>
+
+            @foreach (var item in grouping.Skip(1))
+            {
+                stepCounter++; // Increment the counter for each subsequent item
+                <tr style="@(item == grouping.Last() ? lastRowStyle : "")">
+                    <td>
+                        @stepCounter.  @Html.DisplayFor(modelItem => item.ApprovalStep)
+                    </td>
+                    <td>
+                        @(ViewBag.EmployeeNames.ContainsKey(item.PayrollNo) ? ViewBag.EmployeeNames[item.PayrollNo] : "DeptUserMissing")
+                       
+                    </td>
+                    <td>
+                        <span class="badge @(
+                        item.ApprovalStatus switch
+                        {
+                            "Pending" => "badge-warning",
+                            "Not Started" => "badge-information",
+                            "Approved" => "badge-active",
+                            "Rejected" => "badge-danger",
+                            _ => "badge-secondary"
+                        })">
+                            @Html.DisplayFor(modelItem => item.ApprovalStatus)
+                        </span>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ApprovalComment)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UpdatedAt)
+                    </td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.Id"><i class="mdi mdi-eye mdi-24px text-warning"></i></a>
+                        <a asp-action="Edit" asp-route-id="@item.Id"><i class="mdi mdi-lead-pencil mdi-24px text-primary"></i></a>
+                        <a asp-action="Delete" asp-route-id="@item.Id"><i class="mdi mdi-delete mdi-24px text-danger"></i></a>
+                    </td>
+                </tr>
+            }
+        }
     </tbody>
+
 </table>

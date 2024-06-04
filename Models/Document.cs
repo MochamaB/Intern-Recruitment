@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Workflows.Attributes;
 
 namespace Workflows.Models
 {
@@ -14,7 +15,7 @@ namespace Workflows.Models
         [Display(Name = "Intern")]
         public int Intern_id {  get; set; }
 
-        public int DocumentType { get; set; }
+        public int DocumentTypeId { get; set; }
 
         [Display(Name = "File Name")]
         public string FileName { get; set; }
@@ -27,7 +28,11 @@ namespace Workflows.Models
 
         [Display(Name = "Upload File")]
         [Required(ErrorMessage = "Please upload a file.")]
+        [ValidFile(ErrorMessage = "Please select a valid file.")]
         [NotMapped]
         public IFormFile File { get; set; }
+
+        // Navigation property
+        public DocumentType DocumentType { get; set; }
     }
 }

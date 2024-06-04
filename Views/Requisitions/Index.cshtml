@@ -6,7 +6,10 @@
 
 
 <a asp-controller="RequisitionWizard" asp-action="Intern" class="btn btn-primary text-white mb-0 me-0  float-end">
-    <i class="mdi mdi-plus-circle-outline">Create New</i>
+    <div style="display: flex; align-items: center;">
+        <i class="mdi mdi-plus-circle-outline" style="margin-right: 5px;"></i>
+        <span>  Add Requisition</span>
+    </div>
 </a>
 <div style="clear: both;"></div>
 
@@ -40,17 +43,17 @@
             <th>
                 @Html.DisplayNameFor(model => model.PayrollNo)
             </th>
-            <th>
+            <th >
                 @Html.DisplayNameFor(model => model.Station)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Start_Date)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.End_Date)
+            </th>
+            <th data-sortable="true">
+                @Html.DisplayNameFor(model => model.Status)
             </th>
             <th></th>
         </tr>
@@ -68,22 +71,25 @@
                     }
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Intern_id)
+                    @(ViewBag.InternNames.ContainsKey(item.Intern_id) ? ViewBag.InternNames[item.Intern_id] : "InternUser")
             </td>
             <td>
-                    @Html.DisplayFor(modelItem => item.PayrollNo)
+                    @(ViewBag.EmployeeNames.ContainsKey(item.PayrollNo) ? ViewBag.EmployeeNames[item.PayrollNo] : "DeptUser")
+
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Station)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Start_Date)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.End_Date)
+            </td>
+            <td>
+                <span class="badge @(item.Status == "Active" ? "badge-active" : "badge-danger")">
+                    @Html.DisplayFor(modelItem => item.Status)
+                </span>
             </td>
                 <td>
                     <a asp-action="Details" asp-route-id="@item.Id"><i class="mdi mdi-eye mdi-24px text-warning"></i></a>

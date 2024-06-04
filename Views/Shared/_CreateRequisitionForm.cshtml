@@ -5,20 +5,20 @@
 
 <form asp-controller="RequisitionWizard" asp-action="CreateRequisition">
 <div class="row">
-    <div class="col-md-5">
-       
+    <div class="col-md-6">
+            <h4><b> <i class="mdi mdi-plus-circle mdi-24" style=""></i>  Add New Requisition</b></h4><hr />
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <div class="form-group">
                 <label asp-for="DepartmentCode" class="control-label"></label>  <span class="requiredlabel">*</span>
-                <select asp-for="DepartmentCode" class="formcontrol2" asp-items="ViewBag.DepartmentItems">
+                <select asp-for="DepartmentCode" class="formcontrol2" asp-items="ViewBag.DepartmentItems" readonly>
                     <option value="@ViewBag.DepartmentCode"> @ViewBag.DepartmentName</option>
                 </select>
                 <span asp-validation-for="DepartmentCode" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Intern_id" class="control-label"></label>  <span class="requiredlabel">*</span>
-                <select asp-for="Intern_id" class="formcontrol2">
+                <select asp-for="Intern_id" class="formcontrol2" readonly>
                     <option value="@ViewBag.Intern_id">   @ViewBag.InternFirstname @ViewBag.InternLastname</option>
                 </select>
                 <span asp-validation-for="Intern_id" class="text-danger"></span>

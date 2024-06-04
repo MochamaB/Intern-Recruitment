@@ -26,13 +26,32 @@ namespace Workflows.Controllers
         {
             var requisitions = await _context.Requisition.ToListAsync();
             // Get the list of departments from the KtdaleaveContext
+            var employeeName = new Dictionary<string, string>();
+            var internName = new Dictionary<int, string>();
             List<Department> departments;
             using (var ktdaContext = new KtdaleaveContext())
             {
                 departments = await ktdaContext.Departments.ToListAsync();
+                foreach (var requisition in requisitions)
+                {
+                    var employee = ktdaContext.EmployeeBkps.FirstOrDefault(d => d.PayrollNo == requisition.PayrollNo);
+                    var intern = _context.Intern.FirstOrDefault(d =>d.Id == requisition.Intern_id);
+                    // Add to the dictionary
+                    if (employee != null && !employeeName.ContainsKey(requisition.PayrollNo))
+                    {
+                        employeeName[requisition.PayrollNo] = employee.Fullname;
+                    }
+                    // Add to the intern dictionary
+                    if (intern != null && !internName.ContainsKey(requisition.Intern_id))
+                    {
+                        internName[requisition.Intern_id] = intern.Firstname + " " + intern.Lastname;
+                    }
+                }
             }
 
             // Pass both sets of data to the view
+            ViewBag.EmployeeNames = employeeName;
+            ViewBag.InternNames = internName;
             ViewBag.Departments = departments;
             return View(requisitions);
         }

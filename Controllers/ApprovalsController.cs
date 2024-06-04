@@ -5,11 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Workflows.Attributes;
 using Workflows.Data;
 using Workflows.Models;
 
 namespace Workflows.Controllers
 {
+    [CustomAuthorize] /// Used to ensure authenticated users view this class/pages
     public class ApprovalsController : Controller
     {
         private readonly WorkflowsContext _context;
@@ -22,7 +24,40 @@ namespace Workflows.Controllers
         // GET: Approvals
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Approval.ToListAsync());
+            var approvals = await _context.Approval.ToListAsync();
+            // Group the approvals by Requisition_id
+            var groupedApprovals = approvals.GroupBy(a => a.Requisition_id);
+            // Get the list of departments from the KtdaleaveContext
+            List<Department> departments;
+            var employeeName = new Dictionary<string, string>();
+            var internName = new Dictionary<int, string>();
+            using (var ktdaContext = new KtdaleaveContext())
+            {
+                departments = await ktdaContext.Departments.ToListAsync();
+               
+                foreach (var approvalStep in approvals)
+                {
+                    var employee = ktdaContext.EmployeeBkps.FirstOrDefault(d => d.PayrollNo == approvalStep.PayrollNo);
+                    var requisition = _context.Requisition.FirstOrDefault(d => d.Id == approvalStep.Requisition_id);
+                    var intern = _context.Intern.FirstOrDefault(d => d.Id == requisition.Intern_id);
+                    if (employee !=null && !employeeName.ContainsKey(employee.PayrollNo))
+                    {
+                        employeeName[employee.PayrollNo] = employee.Fullname;
+                    }
+                    // Add to the intern dictionary
+                    if (intern != null && !internName.ContainsKey(requisition.Id))
+                    {
+                        internName[requisition.Id] = intern.Firstname + " " + intern.Lastname;
+                    }
+                }
+
+            }
+
+            // Pass both sets of data to the view
+            ViewBag.EmployeeNames = employeeName;
+            ViewBag.InternNames = internName;
+            ViewBag.Departments = departments;
+            return View(approvals);
         }
 
         // GET: Approvals/Details/5

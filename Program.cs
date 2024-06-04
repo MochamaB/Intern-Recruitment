@@ -26,6 +26,7 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true; // Make the session cookie accessible only to the server
     options.Cookie.IsEssential = true; // Make the session cookie essential
 });
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 

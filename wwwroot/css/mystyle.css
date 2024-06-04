@@ -193,6 +193,16 @@ input.form-control.form-control-sm.search-input {
     color:#000;
 }
 
+select[readonly] {
+    color: #808080;
+    background-color: #ffffff;
+    appearance: none;
+    -webkit-appearance: none;
+    border: none;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
 /* === SIDEBAR === */
 .sidebar {
     min-height: calc(100vh - 97px);
@@ -262,6 +272,11 @@ input.form-control.form-control-sm.search-input {
     border: 1px solid #dee2e6;
     padding: 30px;
 }
+.alert-success {
+    color: #0a5324;
+    background-color: #7ee581;
+    border-color: #326408;
+}
 
 /* === BULLET LIST === */
 .bullet-line-list {
@@ -312,6 +327,75 @@ input.form-control.form-control-sm.search-input {
         .bullet-line-list li:last-child:after {
             display: none;
         }
+
+
+
+/*--------------- badges */
+.badge {
+    display: inline-block;
+    border-radius: 20px;
+    font-size: 12.5px;
+    line-height: 19px;
+    padding: 0 10px 0;
+    font-weight: 900;
+    text-transform: uppercase;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+}
+
+    .badge:hover {
+        transform: scale(1.2);
+        /* Increase the size by 10% on hover */
+    }
+
+a .badge:hover {
+    transform: scale(1.2);
+}
+
+.badge-active {
+    color: #038d21 !important;
+    border: 1px solid #038d21 !important;
+    background-color: #c0e4c3;
+}
+
+.badge-error {
+    color: #c50000c4 !important;
+    background-color: #f9e2df;
+    border: 2px solid #c50000c4 !important;
+}
+
+.badge-warning {
+    color: #ffaf00 !important;
+    background-color: #f7f5e0;
+    border: 2px solid #fdac25 !important;
+}
+
+.badge-danger {
+    color: #f83d3dc4 !important;
+    background-color: #f9e2df;
+    border: 2px solid #f83d3dc4 !important;
+}
+
+.badge-information {
+    color: #3302a5c4 !important;
+    background-color: #dae3fa;
+    border: 2px solid #3302a5c4 !important;
+}
+
+.badge-dark {
+    color: #1E283D !important;
+    background-color: #dae3fa;
+    border: 2px solid #1E283D !important;
+}
+
+.badge-light {
+    color: #6a008a !important;
+    background-color: #edd5f5;
+    border: 2px solid #6a008a !important;
+    margin-top: 5px;
+}
+
 /* === FOOTER === */
 .footer {
     background: #F4F5F7;

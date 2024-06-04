@@ -1,0 +1,96 @@
+  @foreach($transactions as $key => $item)
+                    <tr style="height:35px;">
+                         <td class="text-center">{{$key +1}}</td>
+                         <td class="text-center">{{\Carbon\Carbon::parse($item->created_at)->format('d M Y')}}</td>
+                         <td class="text-center" style="text-transform: capitalize;">{{$item->charge_name}}</td>
+
+                         @if($item->transactionable_type ==='App\Models\Invoice')
+                         @php
+                         $balance += $item->amount;
+                         $totalInvoices += $item->amount;
+                         @endphp
+                         <td class="text-center">{{ $sitesettings->site_currency }}.{{ $item->amount}}</td>
+                         <td class="text-center"> - </td>
+                         @elseif($item->transactionable_type ==='App\Models\Payment')
+                         @php
+                         $balance -= $item->amount;
+                         $totalPayments += $item->amount;
+                         @endphp
+                         <td class="text-center"> - </td>
+                         <td class="text-center">{{ $sitesettings->site_currency }}.{{ $item->amount}}</td>
+                         @endif
+                         <td class="text-center">{{ $sitesettings->site_currency }}. {{ $balance }}</td>
+                    </tr>
+                    @endforeach
+					
+					
+					
+					           </tr>
+                    @php
+                    $balance = $openingBalance;
+                    $totalInvoices = 0;
+                    $totalPayments = 0;
+                    @endphp
+                    @foreach($pastinvoices as $key => $item)
+                    <tr style="height:35px;">
+                         <td class="text-center">{{$key +1}}</td>
+                         <td class="text-center">{{\Carbon\Carbon::parse($item->created_at)->format('d M Y')}}</td>
+                         <td class="text-center" style="text-transform: capitalize;">
+                              @foreach($item->transactions as $transaction)
+                                   {{$transaction->charge_name}} Charge - {{ $sitesettings->site_currency }}. {{$transaction->amount}}
+                                        </br></br>
+                                        @php
+                                             $groupedTransactions = $item->transactions->groupBy('unitcharge_id');
+                                             $sums = $groupedTransactions->map(function ($transactions) {
+                                             return $transactions->sum('amount');
+                                             });
+                                             $firstTransaction = $item->transactions->first();
+                                             $firstUnitCharge = $firstTransaction->unitcharge_id;
+                                             $firstTransactionType = $firstTransaction->transactionable_type;
+                                             $totalsums =$sums[$firstUnitCharge];
+                                        @endphp
+
+                              @endforeach
+                         </td>
+                         @if($firstTransactionType ==='App\Models\Invoice')
+                              @php
+                              $balance += $totalsums;
+                              $totalInvoices += $totalsums;
+                              @endphp
+                              <td class="text-center">{{ $sitesettings->site_currency }}.{{ $totalsums}}</td>
+                              <td class="text-center"> - </td>
+                         @elseif($firstTransactionType ==='App\Models\Payment')
+                              @php
+                              $balance -= $totalsums;
+                              $totalPayments += $totalsums;
+                              @endphp
+                              <td class="text-center"> - </td>
+                              <td class="text-center">{{ $sitesettings->site_currency }}.{{ $totalsums}}</td>
+                         @endif
+                         <td class="text-center">{{ $sitesettings->site_currency }}. {{ $balance }}</td>
+                    </tr>
+                    @endforeach
+               </tbody>
+               <tfooter>
+                    <tr style="height:35px;">
+                         <td class="text-center"> </td>
+                         <td class="text-center"> - </td>
+                         <td class="text-center"> <b>TOTALS</b></td>
+                         <td class="text-center"><b>{{ $sitesettings->site_currency }}. {{ $totalInvoices }}</b></td>
+                         <td class="text-center"><b>{{ $sitesettings->site_currency }}. {{ $totalPayments }}</b></td>
+                         <td class="text-center"><b>{{ $sitesettings->site_currency }}. {{ $balance }}</b></td>
+
+                    </tr>
+               </tfooter>
+          </table>
+		  
+		   $pastinvoices = Invoice::where('created_at', '>=', $sixMonths)
+            ->where('unit_id', $invoice->unit_id);
+        
+        if ($unitchargeId) {
+            $pastinvoices = $pastinvoices->whereHas('invoiceItems', function ($query) use ($unitchargeId) {
+                $query->where('unitcharge_id', $unitchargeId);
+            });
+        }
+        
+        $pastinvoices = $pastinvoices->get();

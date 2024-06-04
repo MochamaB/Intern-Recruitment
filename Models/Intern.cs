@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Workflows.Attributes;
 
 namespace Workflows.Models
 {
@@ -17,7 +18,8 @@ namespace Workflows.Models
 
         [Display(Name = "ID Number")]
         [Required]
-        public long Idnumber { get; set; } = 29000000;
+        [UniqueIdNumber]
+        public long? Idnumber { get; set; } 
 
         [Display(Name = "First Name")]
         [DataType(DataType.Text)]  // used to display the value as text
@@ -35,26 +37,19 @@ namespace Workflows.Models
         [DataType(DataType.EmailAddress)]
         [Required]
         [EmailAddress]
+        [UniqueEmail]
         public string? Email { get; set; }
 
         [Display(Name = "Phone Number")]
         [DataType(DataType.PhoneNumber)]
         [Phone]
         [Required]
+        [UniquePhonenumber]
         public string? PhoneNumber { get; set;}
         public string? Status { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
-     //   public SelectList? DepartmentItems { get; set; }
-
-        // Foreign key property
-        //    [ForeignKey("Department")]
-
-
-        // Navigation property for the associated Department
-        //  public Department Department { get; set; }
-
-
+    
 
     }
 }

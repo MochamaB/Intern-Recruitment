@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Workflows.Attributes;
 
 namespace Workflows.Models
 {
@@ -33,18 +34,13 @@ namespace Workflows.Models
         [Display(Name = "End Date")]
         [DataType(DataType.Date)]
         [Required]
+        [DateGreaterThan("Start_Date")]
         public DateTime End_Date { get; set; }
 
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
 
-        
-        ////Relationships
-        //   [ForeignKey("Intern")]
-        //    [Column("Intern_id")]
-        //    [Display(Name = "Intern")]
-
-        //     public Intern Intern { get; set; }
+      
 
     }
 }
