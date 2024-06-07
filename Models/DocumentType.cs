@@ -15,6 +15,6 @@ namespace Workflows.Models
         public DateTime? UpdatedAt { get; set; }
 
         // Navigation property
-        public ICollection<Document> Document { get; set; }
+       
     }
 }

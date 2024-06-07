@@ -5,7 +5,7 @@
 }
 
 
-<div >
+<div>
     <hr />
     <!-- progressbar -->
     <ul id="progressbar">
@@ -60,6 +60,12 @@
                 $("#step" + i).addClass("complete");
             }
             $(".nextbutton").click(function () {
+                     // Perform form validation if on the "Documents" step
+                    if (steps[currentStep] === "Documents") {
+                        if (!validateFiles()) {
+                            return false; // Prevent moving to the next step if validation fails
+                        }
+                    }
                
                 if (currentStep < steps.length - 1) {
                     $("#step" + currentStep).removeClass("active").addClass("complete");
@@ -92,10 +98,14 @@
 
                 if (currentStep === steps.length - 1) {
                     $(".nextbutton").html('<i class="mdi mdi-arrow-right-bold-circle mdi-24"> Complete Requisition </i>');
-                } 
+                    } else {
+                        $(".nextbutton").html('Next Step');
+                    }
             }
 
             updateNavButtons();
+
         });
+
     </script>
 }

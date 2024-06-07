@@ -11,8 +11,7 @@
 #progressbar {
     margin-bottom: 30px;
     overflow: hidden;
-    color: #fcb900;
-   
+    color: #95989b;
 }
 
     #progressbar li {
@@ -21,15 +20,14 @@
         width: 20%;
         float: left;
         position: relative;
-        border-bottom: 5px solid #fcb900;
+        border-bottom: 5px solid #95989b;
         padding: 10px 10px 30px 10px;
     }
 
         #progressbar li.active {
-            color: #ff0000;
-            border-bottom: 5px solid #ff0000;
+            color: #fcb900;
+            border-bottom: 5px solid #fcb900;
             text-align: center;
-
         }
         #progressbar li.complete {
             color: #326408;

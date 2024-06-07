@@ -21,6 +21,7 @@ namespace Workflows.Models
         public string? PayrollNo { get; set; } = null!;
 
         [Display(Name = "Status")]
+        [Required]
         public string? ApprovalStatus { get; set; }
 
         [Display(Name = "Comment")]

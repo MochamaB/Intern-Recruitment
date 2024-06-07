@@ -5,10 +5,7 @@ namespace Workflows.ViewModels
 {
     public class DocumentViewModel
     {
-       
-        [Display(Name = "File Name")]
-        [Required]
-        public string FileName { get; set; }
-        public List<DocumentType> DocumentTypes { get; set; } = new List<DocumentType>();
+        public Document Document { get; set; }
+        public DocumentType DocumentType { get; set; }
     }
 }

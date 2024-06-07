@@ -7,8 +7,6 @@ namespace Workflows.Models
     public class Document
     {
         public int Id { get; set; }
-
-   
        
         public int Requisition_id { get; set; }
 

@@ -31,7 +31,7 @@
        data-show-footer="false"
        data-side-pagination="client"
        data-show-export="true"
-       class="table">
+       class="table table-bordered">
     <thead>
         <tr>
             <th>
@@ -65,7 +65,7 @@
             int rowSpan = grouping.Count();
             var firstItem = grouping.First();
             int stepCounter = 1; // Initialize the counter for approval steps
-            var lastRowStyle = "border-bottom:2px solid grey";  // Style to apply to the last row of each group
+            var lastRowStyle = "border-bottom:3px solid #dee2e6";  // Style to apply to the last row of each group
 
             <tr >
                 <td rowspan="@rowSpan" style="border-right:2px solid #dee2e6">
@@ -88,7 +88,7 @@
                   
                 </td>
                 <td>
-                    <span class="badge @(
+                    <span style="margin-right:8px" class="badge @(
                         firstItem.ApprovalStatus switch
                         {
                             "Pending" => "badge-warning",
@@ -99,6 +99,14 @@
                         })">
                         @Html.DisplayFor(modelItem => firstItem.ApprovalStatus)
                     </span>
+                        <!-- SHOW THE APPROVAL OPTION IF STATUS IS PENDING-->
+                        @if (firstItem.ApprovalStatus == "Pending")
+                        {
+                            <a class="text-primary" asp-action="MakeApproval" asp-route-id="@firstItem.Id" data-bs-toggle="tooltip" data-placement="top" data-bs-original-title="Make Approval">
+                            <i class="mdi mdi-check-circle mdi-24px text-primary" style="vertical-align: middle;"></i> APPROVE
+                            </a>
+                        }
+                    
                   
                 </td>
                 <td>
@@ -108,6 +116,7 @@
                     @Html.DisplayFor(modelItem => firstItem.UpdatedAt)
                 </td>
                 <td>
+                   
                     <a asp-action="Details" asp-route-id="@firstItem.Id"><i class="mdi mdi-eye mdi-24px text-warning"></i></a>
                     <a asp-action="Edit" asp-route-id="@firstItem.Id"><i class="mdi mdi-lead-pencil mdi-24px text-primary"></i></a>
                     <a asp-action="Delete" asp-route-id="@firstItem.Id"><i class="mdi mdi-delete mdi-24px text-danger"></i></a>
@@ -126,7 +135,7 @@
                        
                     </td>
                     <td>
-                        <span class="badge @(
+                        <span style="margin-right:8px" class="badge @(
                         item.ApprovalStatus switch
                         {
                             "Pending" => "badge-warning",
@@ -137,6 +146,13 @@
                         })">
                             @Html.DisplayFor(modelItem => item.ApprovalStatus)
                         </span>
+                        <!-- SHOW THE APPROVAL OPTION IF STATUS IS PENDING-->
+                        @if (item.ApprovalStatus == "Pending")
+                        {
+                            <a class="text-primary" asp-action="MakeApproval" asp-route-id="@item.Id" data-bs-toggle="tooltip" data-placement="top" data-bs-original-title="Make Approval">
+                                <i class="mdi mdi-check-circle mdi-24px text-primary" style="vertical-align: middle;"> </i> APPROVE
+                            </a>
+                        }
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.ApprovalComment)
@@ -155,3 +171,9 @@
     </tbody>
 
 </table>
+<script>
+    $(document).ready(function(){
+        $('[data-bs-toggle="tooltip"]').tooltip();
+    });
+</script>
+

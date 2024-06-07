@@ -52,7 +52,7 @@ public partial class EmployeeBkp
 
     [StringLength(20)]
     [Unicode(false)]
-    public string Role { get; set; } = null!;
+    public string? Role { get; set; }
 
     [StringLength(100)]
     [Unicode(false)]

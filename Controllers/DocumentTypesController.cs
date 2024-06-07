@@ -5,11 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Workflows.Attributes;
 using Workflows.Data;
 using Workflows.Models;
 
 namespace Workflows.Controllers
 {
+    [CustomAuthorize]
     public class DocumentTypesController : Controller
     {
         private readonly WorkflowsContext _context;

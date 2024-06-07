@@ -108,27 +108,35 @@ input.form-control.form-control-lg.border-left-0:focus {
         border-color: #fcb900 !important;
     }
 
-.table th {
-    border: none;
-}
+.table th,
 .table td {
-    border: none;
+    border: none !important;
 }
+/* Add borders only to .table.table-bordered */
 .table.table-bordered {
     border-top: 1px solid #dee2e6;
+    border: 1px solid #dee2e6;
 }
+
+    .table.table-bordered th,
+    .table.table-bordered td {
+        border-top: 1px solid #dee2e6;
+        border: 1px solid #dee2e6;
+    }
 
 /* === INPUTS AND TEXT === */
 
 .text-primary {
-    --bs-text-opacity: 1;
+    font-weight: 700;
     color: #324721 !important;
+    font-size: 0.815rem;
 }
 .text-danger {
     font-weight: 700;
     color: rgba(var(--bs-danger-rgb), var(--bs-text-opacity)) !important;
     font-size: 0.815rem;
 }
+
 
 .form-control, .asColorPicker-input, .dataTables_wrapper select, .select2-container--default .select2-selection--single, .select2-container--default .select2-selection--single .select2-search__field, .typeahead, .tt-query, .tt-hint {
     border: 1px solid #dee2e6;

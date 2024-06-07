@@ -1,26 +1,25 @@
 ﻿@model Workflows.Models.Document
 
+@{
+    var counter = 1;
+    var DocumentTypes = ViewBag.DocumentTypes as List<Workflows.Models.DocumentType>;
+    var documentTypesJson = System.Text.Json.JsonSerializer.Serialize(DocumentTypes);
+}
 
-<form asp-controller="RequisitionWizard" asp-action="CreateDocument" enctype="multipart/form-data" method="post">
+<form id="documentForm" asp-controller="RequisitionWizard" asp-action="CreateDocument" enctype="multipart/form-data" method="post" onsubmit="return validateFiles();">
     <div class="row">
         <div class="col-md-6">
 
-            @{
-                var counter = 1;
-                var DocumentTypes = ViewBag.DocumentTypes as List<Workflows.Models.DocumentType>;
-            }
             @foreach (var docType in DocumentTypes)
             {
+                    <h5 class="text-information"><b> @(counter++).  @docType.DocumentName Document:</b>.</h5>
+                    <hr />
 
-                <h5 class="text-information"><b> @(counter++).  @docType.DocumentName Document:</b>.</h5>
-                <hr />
-
-
-                <div class="form-group">
-                    <label asp-for="File" class="control-label"></label><span class="requiredlabel">*</span>
-                    <input type="file" name="files" class="form-control" />
-                    <span asp-validation-for="File" class="text-danger"></span>
-                </div>
+                    <div class="form-group">
+                        <label asp-for="File" class="control-label"></label><span class="requiredlabel">*</span>
+                        <input type="file" id="file_@(docType.Id)" name="files" class="form-control" />
+                        <span id="error_file_@(docType.Id)" class="text-danger"></span>
+                    </div>
             }
 
         </div>
@@ -28,3 +27,24 @@
         <partial name="_WizardBottom" />
     </div>
 </form>
+
+<script>
+    function validateFiles() {
+        var isValid = true;
+        var documentTypes = @Html.Raw(documentTypesJson);
+
+        documentTypes.forEach(function(docType) {
+            var fileInput = document.getElementById('file_' + docType.Id);
+            var errorSpan = document.getElementById('error_file_' + docType.Id);
+
+            if (fileInput && fileInput.files.length === 0) {
+                isValid = false;
+                errorSpan.textContent = 'Please upload the ' + docType.DocumentName + ' document.';
+            } else {
+                errorSpan.textContent = '';
+            }
+        });
+
+        return isValid;
+    }
+</script>

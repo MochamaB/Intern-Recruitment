@@ -75,7 +75,7 @@ namespace Workflows.Controllers
                 intern.UpdatedAt = DateTime.Now;
 
                 HttpContext.Session.SetObject("WizardIntern", intern); // Save to session
-                TempData["SuccessMessage"] = "New Intern created successfully!";
+                TempData["SuccessMessage"] = "New Intern Added successfully!";
                 return RedirectToAction("Requisition");
             }
             ViewBag.ErrorMessage = "Please check the page for validation errors.";
@@ -116,7 +116,6 @@ namespace Workflows.Controllers
                 ViewBag.InternLastname = intern.Lastname;
                 ViewBag.Steps = GetSteps();
                 ViewBag.CurrentStep = "Requisition";
-                ViewBag.SuccessMessage = TempData["SuccessMessage"] as string;
                 return View(RequisitionWizardViewPath, requisition);
             }
         }
@@ -167,7 +166,7 @@ namespace Workflows.Controllers
 
                     // Store the approval steps in the session
                     HttpContext.Session.SetObject("WizardApprovalSteps", approvalSteps);
-                    TempData["SuccessMessage"] = "New Requisition created successfully!";
+                    TempData["SuccessMessage"] = "New Requisition and Approvals added successfully!";
                     return RedirectToAction("Approvals");
                 }
             }
@@ -207,7 +206,6 @@ namespace Workflows.Controllers
                 ViewBag.EmployeeNames = employeeName;
                 ViewBag.Steps = GetSteps();
                 ViewBag.CurrentStep = "Approvals";
-                ViewBag.SuccessMessage = TempData["SuccessMessage"] as string;
             return View(RequisitionWizardViewPath, approvalSteps);
             
         }
@@ -244,7 +242,6 @@ namespace Workflows.Controllers
             ViewBag.DocumentTypes = documentTypes;
             ViewBag.Steps = GetSteps();
             ViewBag.CurrentStep = "Documents";
-            ViewBag.SuccessMessage = TempData["SuccessMessage"] as string;
             return View(RequisitionWizardViewPath, document);
         }
 
@@ -254,8 +251,9 @@ namespace Workflows.Controllers
             // Retrieve the requisition object from the session
             var requisition = HttpContext.Session.GetObject<Requisition>("WizardRequisition");
            
-                var documentTypes = _context.DocumentType.ToList();
-                var documentList = new List<Document>();
+            var documentTypes = _context.DocumentType.ToList();
+            var documentList = new List<Document>();
+
 
             if (files.Count != documentTypes.Count)
             {
@@ -326,18 +324,41 @@ namespace Workflows.Controllers
                 // Handle missing session data
                 return RedirectToAction("Requisition"); // or another appropriate action
             }
-            var viewModel = new SummaryViewModel
+            using (var db = new KtdaleaveContext())
             {
-                Intern = intern,
-                Requisition = requisition,
-                ApprovalSteps = approvalSteps,
-                DocumentList = documentList
-            };
+                var department = db.Departments.FirstOrDefault(d => d.DepartmentCode == requisition.DepartmentCode);
+                var documentViewModels = documentList.Select(document =>
+                {
+                    var documentType = _context.DocumentType.FirstOrDefault(dt => dt.Id == document.DocumentTypeId);
+                    return new DocumentViewModel
+                    {
+                        Document = document,
+                        DocumentType = documentType
+                    };
+                }).ToList();
 
-            ViewBag.Steps = GetSteps();
-            ViewBag.CurrentStep = "Summary";
-            ViewBag.SuccessMessage = TempData["SuccessMessage"] as string;
-            return View(RequisitionWizardViewPath, viewModel);
+                var viewModel = new SummaryViewModel
+                {
+                    Intern = intern,
+                    Requisition = requisition,
+                    ApprovalSteps = approvalSteps.Select(approval =>
+                    {
+                        var employee = db.EmployeeBkps.FirstOrDefault(e => e.PayrollNo == approval.PayrollNo);
+                        return new ApprovalViewModel
+                        {
+                            Approval = approval,
+                            EmployeeName = employee != null ? employee.Fullname : string.Empty
+                        };
+                    }).ToList(),
+                    DocumentList = documentViewModels,
+                    DepartmentName = department != null ? department.DepartmentName : string.Empty,
+                   
+                };
+
+                ViewBag.Steps = GetSteps();
+                ViewBag.CurrentStep = "Summary";
+                return View(RequisitionWizardViewPath, viewModel);
+            }
         }
 
 
@@ -417,7 +438,7 @@ namespace Workflows.Controllers
                 HttpContext.Session.Remove("WizardDocumentList");
 
                 // Redirect to the Requisition Index action
-                ViewBag.SuccessMessage = "Intern Requisition has been created successfully.";
+                TempData["SuccessMessage"] = "Intern Requisition has been created successfully.Go to approvals to track progress";
                 return RedirectToAction("Index", "Requisitions");
             }
 

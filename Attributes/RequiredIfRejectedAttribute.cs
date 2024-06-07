@@ -10,7 +10,7 @@ namespace Workflows.Attributes
             var approval = (Approval)validationContext.ObjectInstance;
             if (approval.ApprovalStatus != null && approval.ApprovalStatus == "Rejected" && string.IsNullOrWhiteSpace((string)value))
             {
-                return new ValidationResult("Approval comment is required when status is Rejected.");
+                return new ValidationResult("Comment is required when approval is Rejected.");
             }
             return ValidationResult.Success;
         }

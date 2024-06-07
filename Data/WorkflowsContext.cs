@@ -22,10 +22,7 @@ namespace Workflows.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Document>()
-                .HasOne(d => d.DocumentType)
-                .WithMany(dt => dt.Document)
-                .HasForeignKey(d => d.DocumentTypeId);
+            
         }
     }
 }

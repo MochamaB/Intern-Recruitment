@@ -1,15 +1,14 @@
 ﻿@model Workflows.Models.Approval
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "MakeApproval";
 }
 
-
-<h4>Edit Approval</h4>
+<h4>Make Approval</h4>
 <hr />
 <div class="row">
     <div class="col-md-6">
-        <form asp-action="Edit">
+        <form asp-action="MakeApproval">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
@@ -24,7 +23,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="ApprovalStep" class="control-label"></label>
-                <input asp-for="ApprovalStep" class="form-control" readonly/>
+                <input asp-for="ApprovalStep" class="form-control" readonly />
                 <span asp-validation-for="ApprovalStep" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -34,15 +33,19 @@
             </div>
             <div class="form-group">
                 <label asp-for="ApprovalStatus" class="control-label"></label>
-                <input asp-for="ApprovalStatus" class="form-control" readonly />
+                <select asp-for="ApprovalStatus" class="formcontrol2">
+                    <option value=""> - Select a status - </option>
+                    <option value="Approved">Approved</option>
+                    <option value="Rejected">Rejected</option>
+                </select>
                 <span asp-validation-for="ApprovalStatus" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="ApprovalComment" class="control-label"></label>
-                <input asp-for="ApprovalComment" class="form-control" readonly />
+                <input asp-for="ApprovalComment" class="form-control" />
                 <span asp-validation-for="ApprovalComment" class="text-danger"></span>
             </div>
-          
+
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>

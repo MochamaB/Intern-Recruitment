@@ -113,7 +113,39 @@ namespace Workflows.Controllers
             {
                 return NotFound();
             }
-            return View(approval);
+
+
+            Console.WriteLine($"Department Code: {approval.DepartmentCode}");
+            // Get the list of departments from the KtdaleaveContext
+            List<EmployeeBkp> employees = new List<EmployeeBkp>(); // Initialize employees to an empty list
+                                                                   // HR Department Code. To be changed later to get it through name and not hardcoded.
+            int HRDepartmentCode = 104;
+            string HRdepartmentCodeString = HRDepartmentCode.ToString();
+
+            int approvalDepartmentCode = approval.DepartmentCode;
+            string approvalDepartmentCodeString = approvalDepartmentCode.ToString();
+
+            using (var db = new KtdaleaveContext())
+            {
+
+                if (approval.ApprovalStep == "HOD Approval")
+                {
+                    var department = await db.Departments.FirstOrDefaultAsync(d => d.DepartmentCode == approval.DepartmentCode);
+                    // Fetch employees in the same department as the approval
+                    employees = await db.EmployeeBkps.Where(e => e.Department == department.DepartmentId &&
+                    e.EmpisCurrActive == 0).ToListAsync();
+                }
+                else if (approval.ApprovalStep == "HR Officer Approval" || approval.ApprovalStep == "HOH Approval")
+                {
+                    // Fetch employees in the HUMAN RESOURCE department
+                    employees = await db.EmployeeBkps.Where(e => e.Department == HRdepartmentCodeString &&
+                    e.EmpisCurrActive == 0).ToListAsync();
+                }
+
+
+                ViewBag.Employees = employees;
+                return View(approval);
+            }
         }
 
         // POST: Approvals/Edit/5
@@ -150,6 +182,54 @@ namespace Workflows.Controllers
             }
             return View(approval);
         }
+
+        public async Task<IActionResult> MakeApproval(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var approval = await _context.Approval.FindAsync(id);
+            if (approval == null)
+            {
+                return NotFound();
+            }
+            return View(approval);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> MakeApproval(int id, [Bind("Id,Requisition_id,DepartmentCode,ApprovalStep,PayrollNo,ApprovalStatus,ApprovalComment,CreatedAt,UpdatedAt")] Approval approval)
+        {
+            if (id != approval.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(approval);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!ApprovalExists(approval.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(approval);
+        }
+
 
         // GET: Approvals/Delete/5
         public async Task<IActionResult> Delete(int? id)
