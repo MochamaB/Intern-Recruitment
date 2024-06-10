@@ -12,7 +12,7 @@
     </div>
 </a>
 <div style="clear: both;"></div>
-
+<div class=" table-responsive" id="dataTable">
 <table id="table"
        data-toggle="table"
        data-icon-size="sm"
@@ -35,6 +35,9 @@
     <thead>
         <tr>
             <th>
+                ID
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.DepartmentCode)
             </th>
             <th>
@@ -47,20 +50,21 @@
                 @Html.DisplayNameFor(model => model.Station)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Start_Date)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.End_Date)
+               Start - End Date
             </th>
             <th data-sortable="true">
                 @Html.DisplayNameFor(model => model.Status)
             </th>
+            <th data-sortable="true">Approvals</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
             <td>
                     @foreach (var department in ViewBag.Departments)
                     {
@@ -81,15 +85,20 @@
                 @Html.DisplayFor(modelItem => item.Station)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Start_Date)
+                    @Html.DisplayFor(modelItem => item.Start_Date) -   @Html.DisplayFor(modelItem => item.End_Date)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.End_Date)
-            </td>
+           
             <td>
                 <span class="badge @(item.Status == "Active" ? "badge-active" : "badge-danger")">
                     @Html.DisplayFor(modelItem => item.Status)
                 </span>
+            </td>
+            <td>
+                    <span style="font-size:15px" class="@(ViewBag.ApprovalStatuses.ContainsKey(item.Id) ? (ViewBag.ApprovalStatuses[item.Id] == "Pending Approval" ? "text-error" : "text-success") : "N/A")">
+                        @(ViewBag.ApprovalStatuses.ContainsKey(item.Id) ? ViewBag.ApprovalStatuses[item.Id] : "N/A")
+                    </span>
+                    <br><br />
+                    @(ViewBag.ApprovalEmployeeNames.ContainsKey(item.Id) ? ViewBag.ApprovalEmployeeNames[item.Id] : "")
             </td>
                 <td>
                     <a asp-action="Details" asp-route-id="@item.Id"><i class="mdi mdi-eye mdi-24px text-warning"></i></a>
@@ -100,3 +109,4 @@
 }
     </tbody>
 </table>
+</div>

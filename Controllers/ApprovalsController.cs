@@ -89,7 +89,7 @@ namespace Workflows.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Requisition_id,DepartmentCode,ApprovalStep,PayrollNo,ApprovalStatus,ApprovalComment,CreatedAt,UpdatedAt")] Approval approval)
+        public async Task<IActionResult> Create([Bind("Id,Requisition_id,DepartmentCode,StepNumber,ApprovalStep,PayrollNo,ApprovalStatus,ApprovalComment,CreatedAt,UpdatedAt")] Approval approval)
         {
             if (ModelState.IsValid)
             {
@@ -133,17 +133,17 @@ namespace Workflows.Controllers
                     var department = await db.Departments.FirstOrDefaultAsync(d => d.DepartmentCode == approval.DepartmentCode);
                     // Fetch employees in the same department as the approval
                     employees = await db.EmployeeBkps.Where(e => e.Department == department.DepartmentId &&
-                    e.EmpisCurrActive == 0).ToListAsync();
+                    e.EmpisCurrActive == 0).OrderBy(e => e.Fullname).ToListAsync();
                 }
                 else if (approval.ApprovalStep == "HR Officer Approval" || approval.ApprovalStep == "HOH Approval")
                 {
                     // Fetch employees in the HUMAN RESOURCE department
                     employees = await db.EmployeeBkps.Where(e => e.Department == HRdepartmentCodeString &&
-                    e.EmpisCurrActive == 0).ToListAsync();
+                    e.EmpisCurrActive == 0).OrderBy(e => e.Fullname).ToListAsync();
                 }
 
 
-                ViewBag.Employees = employees;
+                ViewBag.Employees = new SelectList(employees, "PayrollNo", "Fullname", approval.PayrollNo);
                 return View(approval);
             }
         }
@@ -153,7 +153,7 @@ namespace Workflows.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Requisition_id,DepartmentCode,ApprovalStep,PayrollNo,ApprovalStatus,ApprovalComment,CreatedAt,UpdatedAt")] Approval approval)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Requisition_id,DepartmentCode,StepNumber,ApprovalStep,PayrollNo,ApprovalStatus,ApprovalComment,CreatedAt,UpdatedAt")] Approval approval)
         {
             if (id != approval.Id)
             {
@@ -164,6 +164,7 @@ namespace Workflows.Controllers
             {
                 try
                 {
+                    approval.UpdatedAt = DateTime.Now;
                     _context.Update(approval);
                     await _context.SaveChangesAsync();
                 }
@@ -178,8 +179,10 @@ namespace Workflows.Controllers
                         throw;
                     }
                 }
+                TempData["SuccessMessage"] = "Approval Edited successfully!";
                 return RedirectToAction(nameof(Index));
             }
+           
             return View(approval);
         }
 
@@ -200,7 +203,7 @@ namespace Workflows.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> MakeApproval(int id, [Bind("Id,Requisition_id,DepartmentCode,ApprovalStep,PayrollNo,ApprovalStatus,ApprovalComment,CreatedAt,UpdatedAt")] Approval approval)
+        public async Task<IActionResult> MakeApproval(int id, [Bind("Id,Requisition_id,DepartmentCode,StepNumber,ApprovalStep,PayrollNo,ApprovalStatus,ApprovalComment,CreatedAt,UpdatedAt")] Approval approval)
         {
             if (id != approval.Id)
             {
@@ -211,8 +214,12 @@ namespace Workflows.Controllers
             {
                 try
                 {
+                    approval.UpdatedAt = DateTime.Now;
                     _context.Update(approval);
                     await _context.SaveChangesAsync();
+
+                    // Call the method or service to handle the approval flow
+                    await HandleApprovalFlow(approval);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -225,9 +232,52 @@ namespace Workflows.Controllers
                         throw;
                     }
                 }
+                ViewBag.SuccessMessage = "Approval Made Successfully.";
                 return RedirectToAction(nameof(Index));
             }
             return View(approval);
+        }
+
+
+        private async Task HandleApprovalFlow(Approval currentApproval)
+        {
+            if (currentApproval.ApprovalStatus == "Approved")
+            {
+                // Get the next approval in the flow
+                var nextApproval = await _context.Approval
+                    .Where(a => a.Requisition_id == currentApproval.Requisition_id && a.StepNumber == currentApproval.StepNumber + 1)
+                    .FirstOrDefaultAsync();
+
+                if (nextApproval != null)
+                {
+                    // Update the next approval status to "Pending"
+                    nextApproval.ApprovalStatus = "Pending";
+                    nextApproval.UpdatedAt = DateTime.Now;
+                    _context.Update(nextApproval);
+                    await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    // This is the last approval, update the requisition status to "Active"
+                    var requisition = await _context.Requisition.FindAsync(currentApproval.Requisition_id);
+                    if (requisition != null)
+                    {
+                        requisition.Status = "Active";
+                        requisition.UpdatedAt = DateTime.Now;
+                        _context.Update(requisition);
+                        // Update the intern status to "Active"
+                        var intern = await _context.Intern.FindAsync(requisition.Intern_id);
+                        if (intern != null)
+                        {
+                            intern.Status = "Active";
+                            intern.UpdatedAt = DateTime.Now;  // Assuming Intern has an UpdatedAt field
+                            _context.Update(intern);
+                        }
+                    }
+                    
+                }
+                await _context.SaveChangesAsync();
+            }
         }
 
 

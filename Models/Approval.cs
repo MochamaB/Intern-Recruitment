@@ -14,6 +14,8 @@ namespace Workflows.Models
         [Display(Name = "Department")]
         public int DepartmentCode { get; set; }
 
+        public int StepNumber { get; set; }
+
         [Display(Name = "Approval Step")]
         public string ApprovalStep { get; set; } = null!;
 
@@ -31,7 +33,7 @@ namespace Workflows.Models
         public DateTime CreatedAt { get; set; }
 
 
-        [Display(Name = "Approval Date")]
+        [Display(Name = "Updated On")]
         [DataType(DataType.Date)]
         public DateTime? UpdatedAt { get; set; }
     }

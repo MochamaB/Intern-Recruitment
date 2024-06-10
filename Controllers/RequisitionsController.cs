@@ -24,11 +24,14 @@ namespace Workflows.Controllers
         // GET: Requisitions
         public async Task<IActionResult> Index()
         {
-            var requisitions = await _context.Requisition.ToListAsync();
+            var requisitions = await _context.Requisition.OrderBy(e => e.Id).ToListAsync();
             // Get the list of departments from the KtdaleaveContext
             var employeeName = new Dictionary<string, string>();
             var internName = new Dictionary<int, string>();
             List<Department> departments;
+            var approvalStatuses = new Dictionary<int, string>(); // RequisitionId to ApprovalStatus with pending
+            var approvalEmployeeNames = new Dictionary<int, string>(); // RequisitionId to Approval EmployeeName
+
             using (var ktdaContext = new KtdaleaveContext())
             {
                 departments = await ktdaContext.Departments.ToListAsync();
@@ -46,6 +49,24 @@ namespace Workflows.Controllers
                     {
                         internName[requisition.Intern_id] = intern.Firstname + " " + intern.Lastname;
                     }
+
+                    // Retrieve the pending approval for the requisition
+                    var pendingApproval = await _context.Approval
+                        .Where(a => a.Requisition_id == requisition.Id && a.ApprovalStatus == "Pending")
+                        .FirstOrDefaultAsync();
+                    if (pendingApproval != null)
+                    {
+                        approvalStatuses[requisition.Id] = "Pending Approval";
+                        var approvalEmployee = await ktdaContext.EmployeeBkps.FirstOrDefaultAsync(e => e.PayrollNo == pendingApproval.PayrollNo);
+                        if (approvalEmployee != null)
+                        {
+                            approvalEmployeeNames[requisition.Id] = approvalEmployee.Fullname;
+                        }
+                    }
+                    else
+                    {
+                        approvalStatuses[requisition.Id] = "Fully Approved";
+                    }
                 }
             }
 
@@ -53,6 +74,8 @@ namespace Workflows.Controllers
             ViewBag.EmployeeNames = employeeName;
             ViewBag.InternNames = internName;
             ViewBag.Departments = departments;
+            ViewBag.ApprovalStatuses = approvalStatuses;
+            ViewBag.ApprovalEmployeeNames = approvalEmployeeNames;
             return View(requisitions);
         }
 

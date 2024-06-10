@@ -16,6 +16,7 @@ namespace Workflows.Services
             {
                 Requisition_id = requisition.Id,
                 DepartmentCode = requisition.DepartmentCode,
+                StepNumber = 1,
                 ApprovalStep = "HOD Approval",
                 PayrollNo = HOD,
                 ApprovalStatus = "Pending",
@@ -26,6 +27,7 @@ namespace Workflows.Services
             {
                 Requisition_id = requisition.Id,
                 DepartmentCode = requisition.DepartmentCode,
+                StepNumber = 2,
                 ApprovalStep = "HR Officer Approval",
                 PayrollNo = HROfficerPayrollNO,
                 ApprovalStatus = "Not Started",
@@ -35,6 +37,7 @@ namespace Workflows.Services
             {
                 Requisition_id = requisition.Id,
                 DepartmentCode = requisition.DepartmentCode,
+                StepNumber = 3,
                 ApprovalStep = "HOH Approval",
                 PayrollNo = HOH,
                 ApprovalStatus = "Not Started",

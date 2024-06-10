@@ -13,13 +13,18 @@
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
                 <label asp-for="Requisition_id" class="control-label"></label>
-                <input asp-for="Requisition_id" class="form-control" readonly />
+                <input type="hidden" asp-for="Requisition_id" class="form-control" readonly />
                 <span asp-validation-for="Requisition_id" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="DepartmentCode" class="control-label"></label>
                 <input asp-for="DepartmentCode" class="form-control" readonly />
                 <span asp-validation-for="DepartmentCode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StepNumber" class="control-label"></label>
+                <input asp-for="StepNumber" class="form-control" readonly />
+                <span asp-validation-for="StepNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="ApprovalStep" class="control-label"></label>
@@ -47,7 +52,7 @@
             </div>
 
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Approve" class="btn btn-primary" />
             </div>
         </form>
     </div>

@@ -136,6 +136,16 @@ input.form-control.form-control-lg.border-left-0:focus {
     color: rgba(var(--bs-danger-rgb), var(--bs-text-opacity)) !important;
     font-size: 0.815rem;
 }
+.text-error {
+    font-weight: 700;
+    color: red !important;
+    font-size: 0.815rem;
+}
+.text-success {
+    font-weight: 700;
+    color: #469904;
+    font-size: 0.815rem;
+}
 
 
 .form-control, .asColorPicker-input, .dataTables_wrapper select, .select2-container--default .select2-selection--single, .select2-container--default .select2-selection--single .select2-search__field, .typeahead, .tt-query, .tt-hint {
@@ -226,6 +236,21 @@ select[readonly] {
     -moz-transition: width 0.25s ease, background 0.25s ease;
     -ms-transition: width 0.25s ease, background 0.25s ease;
 }
+    /* Adjust sidebar width when collapsed */
+    .sidebar.sidebar-icon-only {
+        width: 70px; /* Adjust as needed */
+    }
+
+/* Adjust padding for main content */
+.main-panel {
+    padding-right: 20px; /* Initial padding */
+}
+
+    /* Adjust padding for main content when sidebar is collapsed */
+    .main-panel.sidebar-icon-only {
+        padding-left: 70px; /* Adjust as needed */
+    }
+
 
     .sidebar .nav .nav-item.active {
         border-radius: 0px 0px 0px 0px;

@@ -23,13 +23,20 @@
                 <span asp-validation-for="DepartmentCode" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="StepNumber" class="control-label"></label>
+                <input asp-for="StepNumber" class="form-control" readonly />
+                <span asp-validation-for="StepNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="ApprovalStep" class="control-label"></label>
                 <input asp-for="ApprovalStep" class="form-control" readonly/>
                 <span asp-validation-for="ApprovalStep" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="PayrollNo" class="control-label"></label>
-                <input asp-for="PayrollNo" class="form-control" readonly />
+                <select asp-for="PayrollNo" class="formcontrol2" asp-items="ViewBag.Employees">
+                    <option value="">   -- Select Employee --</option>
+                </select>
                 <span asp-validation-for="PayrollNo" class="text-danger"></span>
             </div>
             <div class="form-group">

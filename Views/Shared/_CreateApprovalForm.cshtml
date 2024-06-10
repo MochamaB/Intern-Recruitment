@@ -13,8 +13,8 @@
         <li>
 
             <div class="d-flex justify-content-between">
-                <div>
-                    <h5 class="text-information"><b>@(counter++). Approval Step:</b> @approvalStep.ApprovalStep </h5>
+                <div class="col-md-6">
+                    <h5 class="text-information"><b>@approvalStep.StepNumber. Approval Step:</b> @approvalStep.ApprovalStep </h5>
                     <hr />
                     <p class="text-muted mb-2 fw-bold"><b>UPDATED ON:</b> @approvalStep.CreatedAt </p>
                     <p class="text-muted"><b>APPROVAL BY:</b>
@@ -30,8 +30,7 @@
                     <p class="text-muted"><b>STATUS:</b>  @approvalStep.ApprovalStatus </p>
                 </div>
                 <div class="d-flex">
-                <a asp-action="Edit" asp-route-id=""><i class="mdi mdi-lead-pencil mdi-24px text-primary"></i></a>
-                <a asp-action="Delete" asp-route-id=""> <i class="mdi mdi-delete mdi-24px text-danger"></i></a>
+               
                         
                 </div>
             </div>
