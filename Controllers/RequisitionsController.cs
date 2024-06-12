@@ -24,14 +24,17 @@ namespace Workflows.Controllers
         // GET: Requisitions
         public async Task<IActionResult> Index()
         {
-            var requisitions = await _context.Requisition.OrderBy(e => e.Id).ToListAsync();
+            var requisitions = await _context.Requisition.OrderByDescending(e => e.Id).ToListAsync();
             // Get the list of departments from the KtdaleaveContext
             var employeeName = new Dictionary<string, string>();
             var internName = new Dictionary<int, string>();
             List<Department> departments;
             var approvalStatuses = new Dictionary<int, string>(); // RequisitionId to ApprovalStatus with pending
             var approvalEmployeeNames = new Dictionary<int, string>(); // RequisitionId to Approval EmployeeName
-
+            var StepNumber = new Dictionary<int, int>();
+            var approvalStep = new Dictionary<int, string>();
+            var approvalComment = new Dictionary<int, string>();
+            var daysLeftDictionary = new Dictionary<int, int>();
             using (var ktdaContext = new KtdaleaveContext())
             {
                 departments = await ktdaContext.Departments.ToListAsync();
@@ -39,7 +42,7 @@ namespace Workflows.Controllers
                 {
                     var employee = ktdaContext.EmployeeBkps.FirstOrDefault(d => d.PayrollNo == requisition.PayrollNo);
                     var intern = _context.Intern.FirstOrDefault(d =>d.Id == requisition.Intern_id);
-                    // Add to the dictionary
+                    // Add to the department dictionary
                     if (employee != null && !employeeName.ContainsKey(requisition.PayrollNo))
                     {
                         employeeName[requisition.PayrollNo] = employee.Fullname;
@@ -49,6 +52,9 @@ namespace Workflows.Controllers
                     {
                         internName[requisition.Intern_id] = intern.Firstname + " " + intern.Lastname;
                     }
+                    // Get the remaining Days
+                    TimeSpan difference = requisition.End_Date - requisition.Start_Date;
+                    daysLeftDictionary[requisition.Id] = (int)difference.TotalDays;
 
                     // Retrieve the pending approval for the requisition
                     var pendingApproval = await _context.Approval
@@ -62,10 +68,38 @@ namespace Workflows.Controllers
                         {
                             approvalEmployeeNames[requisition.Id] = approvalEmployee.Fullname;
                         }
+                        // Include the ApprovalComment and step
+                        StepNumber[requisition.Id] = pendingApproval.StepNumber;
+                        approvalStep[requisition.Id] = pendingApproval.ApprovalStep;
+                        approvalComment[requisition.Id] = pendingApproval.ApprovalComment;
                     }
                     else
                     {
-                        approvalStatuses[requisition.Id] = "Fully Approved";
+                        // Check for rejected approval
+                        var rejectedApproval = await _context.Approval
+                            .Where(a => a.Requisition_id == requisition.Id && a.ApprovalStatus == "Rejected")
+                            .FirstOrDefaultAsync();
+
+                        if (rejectedApproval != null)
+                        {
+                            approvalStatuses[requisition.Id] = "Approval Rejected";
+                            var rejectionEmployee = await ktdaContext.EmployeeBkps.FirstOrDefaultAsync(e => e.PayrollNo == rejectedApproval.PayrollNo);
+                            if (rejectionEmployee != null)
+                            {
+                                approvalEmployeeNames[requisition.Id] = rejectionEmployee.Fullname;
+                            }
+                            // Include the ApprovalComment
+                            StepNumber[requisition.Id] = rejectedApproval.StepNumber;
+                            approvalStep[requisition.Id] = rejectedApproval.ApprovalStep;
+                            approvalComment[requisition.Id] = rejectedApproval.ApprovalComment;
+                        }
+                        else
+                        {
+                            // If no pending or rejected approval, it means the approval process is fully approved
+                            approvalStatuses[requisition.Id] = "Fully Approved";
+                            // No comment for fully approved requisitions
+                            approvalComment[requisition.Id] = string.Empty;
+                        }
                     }
                 }
             }
@@ -76,6 +110,10 @@ namespace Workflows.Controllers
             ViewBag.Departments = departments;
             ViewBag.ApprovalStatuses = approvalStatuses;
             ViewBag.ApprovalEmployeeNames = approvalEmployeeNames;
+            ViewBag.StepNumber = StepNumber;
+            ViewBag.ApprovalStep = approvalStep;
+            ViewBag.ApprovalComment = approvalComment;
+            ViewBag.DaysLeftDictionary = daysLeftDictionary;
             return View(requisitions);
         }
 

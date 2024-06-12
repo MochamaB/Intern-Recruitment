@@ -5,11 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Workflows.Attributes;
 using Workflows.Data;
 using Workflows.Models;
 
 namespace Workflows.Controllers
 {
+    [CustomAuthorize] /// Used to ensure authenticated users view this class/pages
     public class InternsController : Controller
     {
         private readonly WorkflowsContext _context;

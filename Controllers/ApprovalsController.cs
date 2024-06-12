@@ -24,9 +24,10 @@ namespace Workflows.Controllers
         // GET: Approvals
         public async Task<IActionResult> Index()
         {
-            var approvals = await _context.Approval.ToListAsync();
-            // Group the approvals by Requisition_id
-            var groupedApprovals = approvals.GroupBy(a => a.Requisition_id);
+            var approvals = await _context.Approval
+                .OrderByDescending(a => a.Requisition_id)
+                .ToListAsync();
+
             // Get the list of departments from the KtdaleaveContext
             List<Department> departments;
             var employeeName = new Dictionary<string, string>();
@@ -113,7 +114,12 @@ namespace Workflows.Controllers
             {
                 return NotFound();
             }
-
+            if (approval.ApprovalStatus == "Cancelled")
+            {
+                // Return an error message to the view
+                TempData["ErrorMessage"] = "This approval has been cancelled and cannot be changed.";
+                return RedirectToAction(nameof(Index));
+            }
 
             Console.WriteLine($"Department Code: {approval.DepartmentCode}");
             // Get the list of departments from the KtdaleaveContext
@@ -232,7 +238,7 @@ namespace Workflows.Controllers
                         throw;
                     }
                 }
-                ViewBag.SuccessMessage = "Approval Made Successfully.";
+                TempData["SuccessMessage"] = "Approval Made successfully!";
                 return RedirectToAction(nameof(Index));
             }
             return View(approval);
@@ -276,6 +282,22 @@ namespace Workflows.Controllers
                     }
                     
                 }
+                await _context.SaveChangesAsync();
+            }
+            else if (currentApproval.ApprovalStatus == "Rejected")
+            {
+                // Cancel all subsequent approvals
+                var subsequentApprovals = await _context.Approval
+                    .Where(a => a.Requisition_id == currentApproval.Requisition_id && a.StepNumber > currentApproval.StepNumber)
+                    .ToListAsync();
+
+                foreach (var approval in subsequentApprovals)
+                {
+                    approval.ApprovalStatus = "Cancelled";
+                    approval.UpdatedAt = DateTime.Now;
+                    _context.Update(approval);
+                }
+
                 await _context.SaveChangesAsync();
             }
         }

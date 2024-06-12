@@ -4,12 +4,33 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+<a asp-action="Create" class="btn btn-primary text-white mb-0 me-0  float-end">
+    <div style="display: flex; align-items: center;">
+        <i class="mdi mdi-plus-circle-outline" style="margin-right: 5px;"></i>
+        <span>  Create New</span>
+    </div>
+</a>
+<div style="clear: both;"></div>
+
+<table id="table"
+       data-toggle="table"
+       data-icon-size="sm"
+       data-buttons-class="primary"
+       data-toolbar-align="right"
+       data-buttons-align="left"
+       data-search-align="left"
+       data-sort-order="asc"
+       data-search="true"
+       data-mobile-responsive="true"
+       data-sticky-header="true"
+       data-pagination="true"
+       data-page-list="[100, 200, 250, 500, ALL]"
+       data-page-size="100"
+       data-show-footer="false"
+       data-side-pagination="client"
+       data-show-export="true"
+       class="table">
     <thead>
         <tr>
             <th>
@@ -66,11 +87,11 @@
             <td>
                 @Html.DisplayFor(modelItem => item.UpdatedAt)
             </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id"><i class="mdi mdi-eye mdi-24px text-warning"></i></a>
+                    <a asp-action="Edit" asp-route-id="@item.Id"><i class="mdi mdi-lead-pencil mdi-24px text-primary"></i></a>
+                    <a asp-action="Delete" asp-route-id="@item.Id"><i class="mdi mdi-delete mdi-24px text-danger"></i></a>
+                </td>
         </tr>
 }
     </tbody>

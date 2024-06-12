@@ -35,11 +35,12 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.DepartmentCode)
+                Req ID
             </th>
             <th>
-               Intern
+               Department - Intern
             </th>
+
             <th>
                 @Html.DisplayNameFor(model => model.ApprovalStep)
             </th>
@@ -49,10 +50,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.ApprovalStatus)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ApprovalComment)
-            </th>
-   
+            
             <th>
                 @Html.DisplayNameFor(model => model.UpdatedAt)
             </th>
@@ -65,9 +63,12 @@
             int rowSpan = grouping.Count();
             var firstItem = grouping.First();
             int stepCounter = 1; // Initialize the counter for approval steps
-            var lastRowStyle = "border-bottom:3px solid #dee2e6";  // Style to apply to the last row of each group
+            var lastRowStyle = "border-bottom:3px solid #b0b7bd";  // Style to apply to the last row of each group
 
             <tr >
+                <td rowspan="@rowSpan" style="border-right:2px solid #dee2e6">
+                    @firstItem.Requisition_id
+                </td>
                 <td rowspan="@rowSpan" style="border-right:2px solid #dee2e6">
                     @foreach (var department in ViewBag.Departments)
                     {
@@ -76,10 +77,11 @@
                             @department.DepartmentName
                         }
                     }
-                </td>
-                <td rowspan="@rowSpan" style="border-right:2px solid #dee2e6">
+                    <br/><br/>
+                    <!-- INTERN DATA-->
                     @(ViewBag.InternNames.ContainsKey(firstItem.Requisition_id) ? ViewBag.InternNames[firstItem.Requisition_id] : "InternUser")
                 </td>
+           
                 <td>
                     @stepCounter.  @Html.DisplayFor(modelItem => firstItem.ApprovalStep)
                 </td>
@@ -88,6 +90,7 @@
                   
                 </td>
                 <td>
+         
                     <span style="margin-right:8px" class="badge @(
                         firstItem.ApprovalStatus switch
                         {
@@ -95,6 +98,7 @@
                             "Not Started" => "badge-information",
                             "Approved" => "badge-active",
                             "Rejected" => "badge-danger",
+                            "Cancelled" => "badge-light",
                             _ => "badge-secondary"
                         })">
                         @Html.DisplayFor(modelItem => firstItem.ApprovalStatus)
@@ -106,12 +110,18 @@
                             <i class="mdi mdi-check-circle mdi-24px text-primary" style="vertical-align: middle;"></i> APPROVE
                             </a>
                         }
-                    
+                    @if (firstItem.ApprovalStatus == "Rejected")
+                    {
+                    <br />
+                    <p class="text-wrap pt-1"
+                       style="width:250px;">
+                            <b>Comment:</b>
+                        @Html.DisplayFor(modelItem => firstItem.ApprovalComment)
+                    </p>
+                    }
                   
                 </td>
-                <td>
-                    @Html.DisplayFor(modelItem => firstItem.ApprovalComment)
-                </td>
+                
                 <td>
                     @Html.DisplayFor(modelItem => firstItem.UpdatedAt)
                 </td>
@@ -142,6 +152,7 @@
                             "Not Started" => "badge-information",
                             "Approved" => "badge-active",
                             "Rejected" => "badge-danger",
+                            "Cancelled" => "badge-light",
                             _ => "badge-secondary"
                         })">
                             @Html.DisplayFor(modelItem => item.ApprovalStatus)
@@ -153,9 +164,14 @@
                                 <i class="mdi mdi-check-circle mdi-24px text-primary" style="vertical-align: middle;"> </i> APPROVE
                             </a>
                         }
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ApprovalComment)
+                        @if (firstItem.ApprovalStatus == "Rejected")
+                        {
+                        <br />
+                        <p class="text-wrap pt-1"
+                           style="width:200px;" >
+                            @Html.DisplayFor(modelItem => item.ApprovalComment)
+                        </p>
+                        }
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.UpdatedAt)

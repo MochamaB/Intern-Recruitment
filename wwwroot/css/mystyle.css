@@ -19,6 +19,10 @@ span.input-group-text.bg-transparent.border-right-0 {
     height: 51px;
     border-right:none;
 }
+span.input-group-text.bg-transparent.border-left-0 {
+    height: 50px;
+    border-left: none;
+}
 .auth.auth-img-bg .auth-form-transparent {
     width: 70%;
     margin: auto;
@@ -124,6 +128,13 @@ input.form-control.form-control-lg.border-left-0:focus {
         border: 1px solid #dee2e6;
     }
 
+.table > thead {
+    vertical-align: bottom;
+    background-color: #F4F5F7;
+    text-align:center;
+
+}
+
 /* === INPUTS AND TEXT === */
 
 .text-primary {
@@ -223,6 +234,8 @@ select[readonly] {
 
 /* === SIDEBAR === */
 .sidebar {
+    position: fixed;
+    overflow-y: auto;
     min-height: calc(100vh - 97px);
     background: #fff;
     font-family: "Manrope", sans-serif;
@@ -241,9 +254,15 @@ select[readonly] {
         width: 70px; /* Adjust as needed */
     }
 
+
 /* Adjust padding for main content */
 .main-panel {
+    margin-left: 255px;
     padding-right: 20px; /* Initial padding */
+}
+.sidebar-icon-only .main-panel {
+    width: calc(100% - 70px);
+    margin-left: 70px;
 }
 
     /* Adjust padding for main content when sidebar is collapsed */
@@ -301,10 +320,7 @@ select[readonly] {
     color: red;
 }
 /* === LAYOUT === */
-.contentwrapper {
-    border: 1px solid #dee2e6;
-    padding: 30px;
-}
+
 .alert-success {
     color: #0a5324;
     background-color: #7ee581;

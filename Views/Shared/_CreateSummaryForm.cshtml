@@ -46,27 +46,61 @@
 
     <h4 style="color:#326408;font-weight:700;">3. Approval Steps</h4>
     <hr />
-    @foreach (var approvalViewModel in Model.ApprovalSteps)
-    {
-        <h6> 
-             <strong>Step @(counter++).:</strong> @approvalViewModel.Approval.ApprovalStep -&nbsp; 
-            <strong>Status:</strong> @approvalViewModel.Approval.ApprovalStatus - 
-            <strong>Employee:</strong> @approvalViewModel.EmployeeName
-        </h6>
-    }
+    <div class="col-md-7">
+    <table class="table" >
+        <thead style="border-bottom:1px solid #dee2e6;">
+            <tr>
+                <th style="font-size: 1rem; font-weight: bold; margin: 0;">Step</th>
+                    <th style="font-size: 1rem; font-weight: bold; margin: 0;">Approval Step</th>
+                    <th style="font-size: 1rem; font-weight: bold; margin: 0;">Status</th>
+                    <th style="font-size: 1rem; font-weight: bold; margin: 0;">Employee</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var approvalViewModel in Model.ApprovalSteps)
+            {
+                <tr>
+                    <td>@approvalViewModel.Approval.StepNumber</td>
+                    <td>@approvalViewModel.Approval.ApprovalStep</td>
+                    <td> @approvalViewModel.Approval.ApprovalStatus</td>
+                    <td>@approvalViewModel.EmployeeName</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    </div>
+    
     <hr style="visibility:hidden;" />
 
     <h4 style="color:#326408;font-weight:700;"> 4. Documents</h4>
     <hr />
-    @foreach (var doc in Model.DocumentList)
-    {
-         <h6> 
-                <strong>Document Name:</strong> @doc.DocumentType?.DocumentName -&nbsp; 
-                <strong>Status:</strong> @doc.Document.FileName - 
-                <strong>File Type:</strong> @doc.Document.FileType
-        </h6>
-
-    }
+    <div class="col-md-8">
+    <table class="table">
+        <thead style="border-bottom:1px solid #dee2e6;">
+            <tr>
+                <th style="font-size: 1rem; font-weight: bold; margin: 0;">No.</th>
+                <th style="font-size: 1rem; font-weight: bold; margin: 0;">Document Name</th>
+                <th style="font-size: 1rem; font-weight: bold; margin: 0;">Status</th>
+                <th style="font-size: 1rem; font-weight: bold; margin: 0;">File Type</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int docCount = 1;
+            }
+            @foreach (var doc in Model.DocumentList)
+            {
+                <tr>
+                    <td>@(docCount++)</td>
+                    <td>@doc.DocumentType?.DocumentName</td>
+                    <td>@doc.Document.FileName</td>
+                    <td>@doc.Document.FileType</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    </div>
+   
 
     <form asp-controller="RequisitionWizard" asp-action="CompleteWizard" method="post">
         <!-- Add the wizard buttons-->
