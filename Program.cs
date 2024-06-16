@@ -16,6 +16,7 @@ builder.Services.AddDbContext<KtdaleaveContext>(options =>
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IApprovalService,ApprovalService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 
 // Add session services

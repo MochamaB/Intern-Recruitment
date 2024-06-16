@@ -28,22 +28,22 @@
        class="table">
     <thead>
         <tr>
-            <th>
+            <th data-sortable="true">
                DEPARTMENT
-            </th>
+            </th  data-sortable="true">
             <th>
                NAME
             </th>
             <th>
                EMAIL
             </th>
-            <th>
+            <th data-sortable="true">
                 ID NUMBER
             </th>
             <th>
                 PHONE NUMBER
             </th>
-            <th>
+            <th  data-sortable="true">
                 STATUS
             </th>
             <th></th>
@@ -74,7 +74,9 @@
                 @Html.DisplayFor(modelItem => item.PhoneNumber)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Status)
+                    <span class="badge @(item.Status == "Active" ? "badge-active" : "badge-danger")">
+                        @Html.DisplayFor(modelItem => item.Status)
+                    </span>
             </td>
             <td>
                     <a asp-action="Details" asp-route-id="@item.Id"><i class="mdi mdi-eye mdi-24px text-warning"></i></a>

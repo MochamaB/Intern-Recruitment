@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Workflows.Attributes;
 using Workflows.Data;
 using Workflows.Models;
+using Workflows.Services;
 
 namespace Workflows.Controllers
 {
@@ -15,10 +16,12 @@ namespace Workflows.Controllers
     public class ApprovalsController : Controller
     {
         private readonly WorkflowsContext _context;
+        private readonly IEmailService _emailService;
 
-        public ApprovalsController(WorkflowsContext context)
+        public ApprovalsController(WorkflowsContext context, IEmailService emailService)
         {
             _context = context;
+            _emailService = emailService;
         }
 
         // GET: Approvals
@@ -226,6 +229,20 @@ namespace Workflows.Controllers
 
                     // Call the method or service to handle the approval flow
                     await HandleApprovalFlow(approval);
+
+                    // Send email notification to employee that made the requisition
+                    var requisition = await _context.Requisition.FindAsync(approval.Requisition_id);
+                    if (requisition != null)
+                    {
+
+                        using (var db = new KtdaleaveContext())
+                        {
+                            var employee = await db.EmployeeBkps.FindAsync(requisition.PayrollNo);
+
+                            var requesterEmail = employee.EmailAddress;
+                            await _emailService.SendApprovalMadeNotificationAsync(requesterEmail, requisition.Id);
+                        }
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -261,6 +278,16 @@ namespace Workflows.Controllers
                     nextApproval.UpdatedAt = DateTime.Now;
                     _context.Update(nextApproval);
                     await _context.SaveChangesAsync();
+
+                    // Send email notification for approval pending
+                    using (var db = new KtdaleaveContext())
+                    {
+                        var approver = await db.EmployeeBkps.FindAsync(nextApproval.PayrollNo);
+                        if (approver != null)
+                        {
+                            await _emailService.SendApprovalPendingNotificationAsync(approver.EmailAddress, nextApproval.Requisition_id);
+                        }
+                    }
                 }
                 else
                 {
