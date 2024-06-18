@@ -15,7 +15,9 @@
             <!-- partial -->
             <div class="main-panel">
                 <div class="content-wrapper" >
-                   
+                    <div id="progress-container">
+                        <div id="progress-bar"></div>
+                    </div>
                         <div class="col-12">
                             <partial name="_Breadcrumb" />
                             <partial name="_Messages" />
@@ -41,12 +43,14 @@
     </div>
     <!-- container-scroller -->
     <!-- plugins:js -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script>
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl)
         })
     </script>
+
     <script src="~/vendors/js/vendor.bundle.base.js"></script>
     <script src="~/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
     <!-- endinject -->
@@ -60,6 +64,7 @@
     <script src="~/js/settings.js"></script>
     <script src="~/js/todolist.js"></script>
     <script src="~/js/Customwizard.js"></script>
+    <script src="~/js/Progress.js"></script>
     <!-- endinject -->
     <!-- Custom js for this page-->
     <script src="~/js/profile-demo.js"></script>

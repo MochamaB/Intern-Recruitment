@@ -17,15 +17,17 @@ namespace Workflows.Controllers
         private readonly WorkflowsContext _context;
         private const string RequisitionWizardViewPath = "~/Views/Wizards/RequisitionWizard.cshtml";
         private readonly IApprovalService _approvalService;
-     //   private readonly IDocumentService _documentService;
+        //   private readonly IDocumentService _documentService;
+        private readonly IEmailService _emailService;
 
-        public RequisitionWizardController(WorkflowsContext context, IApprovalService approvalService 
-         //   IDocumentService documentService
+        public RequisitionWizardController(WorkflowsContext context, IApprovalService approvalService,
+          IEmailService emailService //   IDocumentService documentService
             )
         {
             _context = context;
             _approvalService = approvalService;
-         //   _documentService = documentService;
+            //   _documentService = documentService;
+            _emailService = emailService;
         }
 
         private List<string> GetSteps()
@@ -428,6 +430,21 @@ namespace Workflows.Controllers
                 // Save the documents
                 _context.Document.AddRange(documentList);
                 await _context.SaveChangesAsync();
+
+                // Send Email to the person who raised requisition and the first approver
+                using (var db = new KtdaleaveContext())
+                {
+                    // Get Employee who raised requisition.
+                    var requester = db.EmployeeBkps.FirstOrDefault(d => d.PayrollNo == requisition.PayrollNo);
+                    var requesterEmail = requester.EmailAddress;
+                    await _emailService.SendRequistionCreatedNotificationAsync(requesterEmail, requisition.Id);
+
+                    // Get the first approval's payroll number
+                    var firstApprovalPayrollNo = approvalSteps[0].PayrollNo;
+                    var FirstApprover = db.EmployeeBkps.FirstOrDefault(d => d.PayrollNo == firstApprovalPayrollNo);
+                    await _emailService.SendApprovalPendingNotificationAsync(FirstApprover.EmailAddress, requisition.Id);
+
+                }
 
 
 

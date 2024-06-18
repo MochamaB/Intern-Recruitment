@@ -230,19 +230,6 @@ namespace Workflows.Controllers
                     // Call the method or service to handle the approval flow
                     await HandleApprovalFlow(approval);
 
-                    // Send email notification to employee that made the requisition
-                    var requisition = await _context.Requisition.FindAsync(approval.Requisition_id);
-                    if (requisition != null)
-                    {
-
-                        using (var db = new KtdaleaveContext())
-                        {
-                            var employee = await db.EmployeeBkps.FindAsync(requisition.PayrollNo);
-
-                            var requesterEmail = employee.EmailAddress;
-                            await _emailService.SendApprovalMadeNotificationAsync(requesterEmail, requisition.Id);
-                        }
-                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -264,25 +251,54 @@ namespace Workflows.Controllers
 
         private async Task HandleApprovalFlow(Approval currentApproval)
         {
+            //1. Send Email to the employee that made the requisition
+            //2. Get the next approval in the sequence
+            //3. Update the next approval status to "Pending"
+            //4. Send email notification for approval pending to the next approver
+            //5. if it is the last approval, update the requisition status to "Active"
+            //6. If it is the last approval. Update the intern status to "Active"
+            //7. If the approval is rejected. send email to the employee who requested rejecting the requisition
+            var currentRequisition = await _context.Requisition.FindAsync(currentApproval.Requisition_id);
             if (currentApproval.ApprovalStatus == "Approved")
             {
-                // Get the next approval in the flow
+                // 1.Send email notification to employee that made the requisition
+                     //   var currentRequisition = await _context.Requisition.FindAsync(currentApproval.Requisition_id);
+                if (currentRequisition != null)
+                {
+                    using (var db = new KtdaleaveContext())
+                    {
+                        //   var employee = await db.EmployeeBkps.FindAsync(requisition.PayrollNo);
+                        var employee =  db.EmployeeBkps.FirstOrDefault(d => d.PayrollNo == currentRequisition.PayrollNo);
+                        var currentApprover = db.EmployeeBkps.FirstOrDefault(d => d.PayrollNo == currentApproval.PayrollNo);
+
+                        var requesterEmail = employee.EmailAddress;
+                        var currentApproverName = currentApprover.Fullname;
+                        int stepNumber = currentApproval.StepNumber; // Assuming this is an integer
+                        string approvalStep = currentApproval.ApprovalStep; // Assuming this is a string
+                        // Concatenate step number and approval step
+                        string currentStep = stepNumber + ". " + approvalStep;
+                        await _emailService.SendApprovalMadeNotificationAsync(requesterEmail, currentApproverName, currentStep, currentRequisition.Id);
+                    }
+                }
+
+                // 2. Get the next approval in the flow
                 var nextApproval = await _context.Approval
                     .Where(a => a.Requisition_id == currentApproval.Requisition_id && a.StepNumber == currentApproval.StepNumber + 1)
                     .FirstOrDefaultAsync();
 
                 if (nextApproval != null)
                 {
-                    // Update the next approval status to "Pending"
+                // 3.Update the next approval status to "Pending"
                     nextApproval.ApprovalStatus = "Pending";
                     nextApproval.UpdatedAt = DateTime.Now;
                     _context.Update(nextApproval);
                     await _context.SaveChangesAsync();
 
-                    // Send email notification for approval pending
+                // 4.Send email notification for approval pending
                     using (var db = new KtdaleaveContext())
                     {
-                        var approver = await db.EmployeeBkps.FindAsync(nextApproval.PayrollNo);
+                     //   var approver = await db.EmployeeBkps.FindAsync(nextApproval.PayrollNo);
+                        var approver = db.EmployeeBkps.FirstOrDefault(d => d.PayrollNo == nextApproval.PayrollNo);
                         if (approver != null)
                         {
                             await _emailService.SendApprovalPendingNotificationAsync(approver.EmailAddress, nextApproval.Requisition_id);
@@ -291,19 +307,19 @@ namespace Workflows.Controllers
                 }
                 else
                 {
-                    // This is the last approval, update the requisition status to "Active"
+                // 5.This is the last approval, update the requisition status to "Active"
                     var requisition = await _context.Requisition.FindAsync(currentApproval.Requisition_id);
                     if (requisition != null)
                     {
                         requisition.Status = "Active";
                         requisition.UpdatedAt = DateTime.Now;
                         _context.Update(requisition);
-                        // Update the intern status to "Active"
+                 // 6.Update the intern status to "Active"
                         var intern = await _context.Intern.FindAsync(requisition.Intern_id);
                         if (intern != null)
                         {
                             intern.Status = "Active";
-                            intern.UpdatedAt = DateTime.Now;  // Assuming Intern has an UpdatedAt field
+                            intern.UpdatedAt = DateTime.Now;  
                             _context.Update(intern);
                         }
                     }
@@ -313,7 +329,21 @@ namespace Workflows.Controllers
             }
             else if (currentApproval.ApprovalStatus == "Rejected")
             {
-                // Cancel all subsequent approvals
+                // 7. send email to the employee who requested rejecting the requisition
+                if (currentRequisition != null)
+                {
+
+                    using (var db = new KtdaleaveContext())
+                    {
+                        //   var employee = await db.EmployeeBkps.FindAsync(requisition.PayrollNo);
+                        var employee = db.EmployeeBkps.FirstOrDefault(d => d.PayrollNo == currentRequisition.PayrollNo);
+
+                        var requesterEmail = employee.EmailAddress;
+                        await _emailService.SendApprovalRejectedNotificationAsync(requesterEmail, currentRequisition.Id);
+                    }
+                }
+
+                // 8. Cancel all subsequent approvals
                 var subsequentApprovals = await _context.Approval
                     .Where(a => a.Requisition_id == currentApproval.Requisition_id && a.StepNumber > currentApproval.StepNumber)
                     .ToListAsync();
