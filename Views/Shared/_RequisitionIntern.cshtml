@@ -1,0 +1,68 @@
+﻿@model Workflows.ViewModels.RequisitionDetailsViewModel
+
+<table id="table"
+       data-toggle="table"
+       data-icon-size="sm"
+       data-buttons-class="primary"
+       data-toolbar-align="right"
+       data-buttons-align="left"
+       data-search-align="left"
+       data-sort-order="asc"
+       data-search="true"
+       data-mobile-responsive="true"
+       data-sticky-header="true"
+       data-pagination="true"
+       data-page-list="[100, 200, 250, 500, ALL]"
+       data-page-size="100"
+       data-show-footer="false"
+       data-side-pagination="client"
+       data-show-export="true"
+       class="table">
+    <thead>
+        <tr>
+            <th>
+               NAME
+            </th>
+            <th>
+               EMAIL
+            </th>
+            <th data-sortable="true">
+                ID NUMBER
+            </th>
+            <th>
+                PHONE NUMBER
+            </th>
+            <th  data-sortable="true">
+                STATUS
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                @Html.DisplayFor(model => model.Intern.Firstname)   @Html.DisplayFor(model => model.Intern.Lastname)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.Intern.Email)
+            </td>
+                <td>
+                @Html.DisplayFor(model => model.Intern.Idnumber)
+                </td>
+            <td>
+                @Html.DisplayFor(model => model.Intern.PhoneNumber)
+            </td>
+            <td>
+                    <span class="badge @(Model.Intern.Status == "Active" ? "badge-active" : "badge-danger")">
+                        @Html.DisplayFor(model => model.Intern.Status)
+                    </span>
+            </td>
+            <td>
+                <a asp-action="Details" asp-route-id="@Model.Intern.Id"><i class="mdi mdi-eye mdi-24px text-warning"></i></a>
+                <a asp-action="Edit" asp-route-id="@Model.Intern.Id"><i class="mdi mdi-lead-pencil mdi-24px text-primary"></i></a>
+                <a asp-action="Delete" asp-route-id="@Model.Intern.Id"><i class="mdi mdi-delete mdi-24px text-danger"></i></a>
+            </td>
+        </tr>
+
+    </tbody>
+</table>

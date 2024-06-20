@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Workflows.Data;
 using Workflows.Models;
 using Workflows.Attributes;
+using Workflows.ViewModels;
+using Microsoft.AspNetCore.Html;
 
 namespace Workflows.Controllers
 {
@@ -125,14 +127,97 @@ namespace Workflows.Controllers
                 return NotFound();
             }
 
-            var requisition = await _context.Requisition
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var requisition = await _context.Requisition.FirstOrDefaultAsync(m => m.Id == id);
             if (requisition == null)
             {
                 return NotFound();
             }
+            var intern = _context.Intern.FirstOrDefault(d => d.Id == requisition.Intern_id);
+            var approvals = await _context.Approval.Where(a => a.Requisition_id == id).ToListAsync();
+            var documents = await _context.Document.Where(d => d.Requisition_id == id).ToListAsync();
+            Department department;
+            EmployeeBkp addedBy;
+            EmployeeBkp employee;
+            using (var db = new KtdaleaveContext())
+            {
+                department = db.Departments.FirstOrDefault(d => d.DepartmentCode == requisition.DepartmentCode);
+                addedBy = db.EmployeeBkps.FirstOrDefault(d => d.PayrollNo == requisition.PayrollNo);
 
-            return View(requisition);
+
+                var requisitionDetails = new RequisitionDetailsViewModel
+                {
+                    Requisition = requisition,
+                    Intern = intern,
+                    Approvals = approvals.Select(approval =>
+                    {
+                        var employee = db.EmployeeBkps.FirstOrDefault(e => e.PayrollNo == approval.PayrollNo);
+                        return new ApprovalViewModel
+                        {
+                            Approval = approval,
+                            EmployeeName = employee != null ? employee.Fullname : string.Empty
+                        };
+                    }).ToList(),
+                    Documents = documents.Select(document =>
+                    {
+                        var documentType = _context.DocumentType.FirstOrDefault(dt => dt.Id == document.DocumentTypeId);
+                        return new DocumentViewModel
+                        {
+                            Document = document,
+                            DocumentType = documentType
+                        };
+                    }).ToList(),
+                    DepartmentName = department != null ? department.DepartmentName : string.Empty,
+                    AddedBy = addedBy != null ? addedBy.Fullname : string.Empty,
+                };
+
+
+                //// VIEW MODEL FOR THE DYNAMIC TABS
+                var tabViewModel = new TabViewModel
+                {
+                    Tabs = new List<TabViewModel.TabItem>
+        {
+            new TabViewModel.TabItem
+            {
+                Id = "tab-1",
+                Title = "Summary",
+                PartialViewName = "_RequisitionSummary",
+                Model = requisitionDetails,
+                IsActive = true
+            },
+            new TabViewModel.TabItem
+            {
+                Id = "tab-2",
+                Title = "Intern",
+                PartialViewName = "_RequisitionIntern",
+                Model = requisitionDetails,
+                IsActive = false
+            },
+            new TabViewModel.TabItem
+            {
+                Id = "tab-3",
+                Title = "Documents",
+                PartialViewName = "_RequisitionDocument",
+                Model = requisitionDetails,
+                IsActive = false
+            },
+            new TabViewModel.TabItem
+            {
+                Id = "tab-4",
+                Title = "Approvals",
+                PartialViewName = "_RequisitionApproval",
+                Model = requisitionDetails,
+                IsActive = false
+            }
+        }
+                };
+                var viewModel = new DetailsViewModel
+                {
+                    RequisitionDetails = requisitionDetails,
+                    TabViewModel = tabViewModel
+                };
+
+                return View(viewModel);
+            }
         }
 
         // GET: Requisitions/Create

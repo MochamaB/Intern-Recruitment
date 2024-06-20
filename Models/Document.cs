@@ -7,7 +7,8 @@ namespace Workflows.Models
     public class Document
     {
         public int Id { get; set; }
-       
+
+        [Display(Name = "ReqId")]
         public int Requisition_id { get; set; }
 
         [Display(Name = "Intern")]
@@ -18,8 +19,13 @@ namespace Workflows.Models
         [Display(Name = "File Name")]
         public string FileName { get; set; }
 
+        [Display(Name = "File Type")]
         public string? FileType { get; set; }
+
+        [Display(Name = "Size")]
         public long FileSize { get; set; } = 0;
+
+        [Display(Name = "File Path")]
         public string? FilePath { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }

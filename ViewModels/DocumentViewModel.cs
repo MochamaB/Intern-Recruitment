@@ -7,5 +7,6 @@ namespace Workflows.ViewModels
     {
         public Document Document { get; set; }
         public DocumentType DocumentType { get; set; }
+
     }
 }

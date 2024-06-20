@@ -1,0 +1,114 @@
+﻿@model Workflows.ViewModels.RequisitionDetailsViewModel
+
+<div class="row">
+
+    <div class="col-md-7">
+        <div class=" contwrapper">
+            <h6>
+                <b>Requisition Details</b>
+            </h6>
+            <hr>
+            <dl class="row">
+                <dt class="col-sm-6">Req ID</dt>
+                <dd class="col-sm-6"> @Html.DisplayFor(model => model.Requisition.Id)</dd>
+
+                <dt class="col-sm-6">@Html.DisplayNameFor(model => model.Requisition.DepartmentCode)</dt>
+                <dd class="col-sm-6"> @Html.DisplayFor(model => model.DepartmentName)</dd>
+
+                <dt class="col-sm-6">Added By</dt>
+                <dd class="col-sm-6"> @Html.DisplayFor(model => model.AddedBy)</dd>
+
+                <dt class="col-sm-6">@Html.DisplayNameFor(model => model.Requisition.Station)</dt>
+                <dd class="col-sm-6"> @Html.DisplayFor(model => model.Requisition.Station)</dd>
+
+                <dt class="col-sm-6">@Html.DisplayNameFor(model => model.Requisition.Start_Date)</dt>
+                <dd class="col-sm-6"> @Html.DisplayFor(model => model.Requisition.Start_Date)</dd>
+
+                <dt class="col-sm-6">@Html.DisplayNameFor(model => model.Requisition.End_Date)</dt>
+                <dd class="col-sm-6"> @Html.DisplayFor(model => model.Requisition.End_Date)</dd>
+
+                <dt class="col-sm-6">@Html.DisplayNameFor(model => model.Requisition.Status)</dt>
+                <dd class="col-sm-6"> @Html.DisplayFor(model => model.Requisition.Status)</dd>
+            </dl>
+
+            <h6 class="pt-2">
+                <b>Intern Details</b>
+            </h6>
+            <hr>
+            <dl class="row">
+                <dt class="col-sm-6"> @Html.DisplayNameFor(model => model.Intern.Firstname)</dt>
+                <dd class="col-sm-6"> @Html.DisplayFor(model => model.Intern.Firstname)</dd>
+
+                <dt class="col-sm-6">@Html.DisplayNameFor(model => model.Intern.Lastname)</dt>
+                <dd class="col-sm-6"> @Html.DisplayFor(model => model.Intern.Lastname)</dd>
+
+                <dt class="col-sm-6">@Html.DisplayNameFor(model => model.Intern.Othernames)</dt>
+                <dd class="col-sm-6"> @Html.DisplayFor(model => model.Intern.Othernames)</dd>
+
+                <dt class="col-sm-6">@Html.DisplayNameFor(model => model.Intern.Email)</dt>
+                <dd class="col-sm-6 text-muted"> @Html.DisplayFor(model => model.Intern.Email)</dd>
+
+                <dt class="col-sm-6">@Html.DisplayNameFor(model => model.Intern.PhoneNumber)</dt>
+                <dd class="col-sm-6"> @Html.DisplayFor(model => model.Intern.PhoneNumber)</dd>
+
+                <dt class="col-sm-6">@Html.DisplayNameFor(model => model.Intern.Status)</dt>
+                <dd class="col-sm-6"> @Html.DisplayFor(model => model.Intern.Status)</dd>
+            </dl>
+
+            <h6 class="pt-2">
+                <b>Document Details</b>
+            </h6>
+            <hr>
+            <dl class="row">
+                @{
+                    var count = 1;
+                }
+                @foreach (var document in Model.Documents)
+            {
+                    <dt class="col-sm-4">@count. @document.DocumentType.DocumentName</dt>
+                    <dd class="col-sm-8"> @document.Document.FileName</dd>
+                    count++;
+            }
+            </dl>
+
+
+
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class=" contwrapper" style="background-color: #ffffa8;border: 1px solid #fcb900 ;">
+
+            <h6>
+                <b>Approvals</b>
+            </h6>
+            <hr>
+            <ul class="bullet-line-list">
+                @{
+                    var counter = 1;
+                }
+                @foreach (var approval in Model.Approvals)
+                {
+                    <li>
+                        <div class="d-flex justify-content-between">
+                            <div class="col-md-12">
+                                <h5 class="text-information"><b>@counter. Approval Step:</b> @approval.Approval.ApprovalStep </h5>
+                                <hr />
+                                <p class=" mb-2 fw-bold"><b>UPDATED ON:</b> @approval.Approval.CreatedAt </p>
+                                <p class=""><b>APPROVAL BY:</b> @approval.EmployeeName </p>
+                                <p class=""><b>STATUS:</b> @approval.Approval.ApprovalStatus </p>
+                            </div>
+                            <div class="d-flex">
+                            </div>
+                        </div>
+                    </li>
+                    counter++;
+                }
+            </ul>
+            
+
+
+        </div>
+
+    </div>
+</div>
+

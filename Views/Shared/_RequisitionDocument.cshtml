@@ -1,0 +1,52 @@
+﻿@model Workflows.ViewModels.RequisitionDetailsViewModel
+
+
+    @{
+        var count = 1;
+    }
+    
+<table id="table"
+       data-toggle="table"
+       data-icon-size="sm"
+       data-buttons-class="primary"
+       data-toolbar-align="right"
+       data-buttons-align="left"
+       data-search-align="left"
+       data-sort-order="asc"
+       data-search="true"
+       data-mobile-responsive="true"
+       data-sticky-header="true"
+       data-pagination="true"
+       data-page-list="[100, 200, 250, 500, ALL]"
+       data-page-size="100"
+       data-show-footer="false"
+       data-side-pagination="client"
+       data-show-export="true"
+       class="table">
+    <thead>
+        <tr>
+            <th></th>
+            <th> Document Type</th>
+            <th>File Name</th>
+            <th>File Path</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+          @foreach (var document in Model.Documents)
+            {
+            <tr>
+                <td> @(count++)</td>
+                <td> @document.DocumentType.DocumentName </td>
+                <td> @document.Document.FileName </td>
+                <td>  @document.Document.FilePath </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@document.Document.Id"><i class="mdi mdi-eye mdi-24px text-warning"></i></a>
+                    <a asp-action="Edit" asp-route-id="@document.Document.Id"><i class="mdi mdi-lead-pencil mdi-24px text-primary"></i></a>
+                    <a asp-action="Delete" asp-route-id="@document.Document.Id"><i class="mdi mdi-delete mdi-24px text-danger"></i></a>
+                </td>
+            </tr>
+            }
+
+    </tbody>
+</table>

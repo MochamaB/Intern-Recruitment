@@ -320,6 +320,39 @@ select[readonly] {
     }
 }
 
+/* === TABS === */
+.nav-tabs {
+    font-family: "Manrope", sans-serif;
+    border-bottom: 2px solid #dee2e6;
+}
+
+    .nav-tabs .nav-item .nav-link {
+        font-style: normal;
+        font-weight: 500;
+        font-size: 18px;
+        line-height: 18px;
+        color: #212121;
+        padding: 22px 14px 14px 20px;
+        border: none;
+        font-family: "Manrope", sans-serif;
+        background: transparent;
+    }
+
+        .nav-tabs .nav-item .nav-link.active {
+            background: transparent;
+            color: #326408;
+            border-bottom: 7px solid #326408;
+        }
+
+.tab-content {
+    border: none;
+}
+
+.contwrapper {
+    border: 1px solid #dee2e6;
+    padding: 30px;
+}
+
 .requiredlabel {
     font-size: 20px;
     padding-left: 5px;
