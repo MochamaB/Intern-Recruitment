@@ -32,7 +32,7 @@ namespace Workflows.Controllers
 
         private List<string> GetSteps()
         {
-            return new List<string> { "Intern", "Requisition", "Approvals", "Documents", "Summary" };
+            return new List<string> { "Intern", "Requisition", "Documents", "Approvals", "Summary" };
         }
         //////////////////////////////////////////////// Step 1: Create Intern ///////////////////////////////////
         [HttpGet]
@@ -68,7 +68,7 @@ namespace Workflows.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateIntern([Bind("Id,DepartmentCode,Idnumber,Firstname,Lastname,Othernames,Email,PhoneNumber,Status,CreatedAt,UpdatedAt")] Intern intern)
+        public async Task<IActionResult> CreateIntern([Bind("Id,DepartmentCode,Idnumber,Firstname,Lastname,Othernames,Email,PhoneNumber,Status,Certification,Course,School,CreatedAt,UpdatedAt")] Intern intern)
         {
             if (ModelState.IsValid)
             {
@@ -168,60 +168,15 @@ namespace Workflows.Controllers
 
                     // Store the approval steps in the session
                     HttpContext.Session.SetObject("WizardApprovalSteps", approvalSteps);
-                    TempData["SuccessMessage"] = "New Requisition and Approvals added successfully!";
-                    return RedirectToAction("Approvals");
+                    TempData["SuccessMessage"] = "New Requisition added successfully!";
+                    return RedirectToAction("Documents");
                 }
             }
           //  ViewBag.ErrorMessage = "Please check the page for validation errors.";
             return Requisition(requisition);
         }
 
-        ////////////////////////////////////// Step 3: Get Approvals //////////////////////////////////////
-        [HttpGet]
-        public IActionResult Approvals(Requisition? requisition = null)
-        {
-            // Retrieve the approval steps from the session
-            var approvalSteps = HttpContext.Session.GetObject<List<Approval>>("WizardApprovalSteps");
-
-            if (requisition == null || approvalSteps == null)
-            {
-                // Handle the case where the approval steps are not found in the session
-                return RedirectToAction("Requisition");
-            }
-
-            // Create a list to hold the view models
-            // Create a dictionary to hold the employee names
-            var employeeName = new Dictionary<string, string>();
-
-            using (var db = new KtdaleaveContext())
-                {
-                    foreach (var approvalStep in approvalSteps)
-                    {
-                        var employee = db.EmployeeBkps.FirstOrDefault(d => d.PayrollNo == approvalStep.PayrollNo);
-                        // Add to the dictionary
-                        if (employee != null && !employeeName.ContainsKey(approvalStep.PayrollNo))
-                        {
-                            employeeName[approvalStep.PayrollNo] = employee.Fullname;
-                        }
-                    }
-                }
-                ViewBag.EmployeeNames = employeeName;
-                ViewBag.Steps = GetSteps();
-                ViewBag.CurrentStep = "Approvals";
-            return View(RequisitionWizardViewPath, approvalSteps);
-            
-        }
-
-        [HttpPost]
-        public IActionResult CreateApproval(Approval approval)
-        {
-
-            //  HttpContext.Session.Set("Approval", approval);
-            TempData["SuccessMessage"] = "All approval levels created successfully!";
-            return RedirectToAction("Documents");
-            
-        }
-        ////////////////////////////////////// Step 4: Create Documents //////////////////////////////////////
+        ////////////////////////////////////// Step 3: Create Documents //////////////////////////////////////
         [HttpGet]
         public IActionResult Documents(Document? document = null)
         {
@@ -308,9 +263,55 @@ namespace Workflows.Controllers
             
                 HttpContext.Session.SetObject("WizardDocumentList", documentList);
                 TempData["SuccessMessage"] = "All files uploaded successfully!";
-            return RedirectToAction("Summary");
+            return RedirectToAction("Approvals");
                 
                
+        }
+
+        ////////////////////////////////////// Step 4: Get Approvals //////////////////////////////////////
+        [HttpGet]
+        public IActionResult Approvals(Requisition? requisition = null)
+        {
+            // Retrieve the approval steps from the session
+            var approvalSteps = HttpContext.Session.GetObject<List<Approval>>("WizardApprovalSteps");
+
+            if (requisition == null || approvalSteps == null)
+            {
+                // Handle the case where the approval steps are not found in the session
+                return RedirectToAction("Requisition");
+            }
+
+            // Create a list to hold the view models
+            // Create a dictionary to hold the employee names
+            var employeeName = new Dictionary<string, string>();
+
+            using (var db = new KtdaleaveContext())
+            {
+                foreach (var approvalStep in approvalSteps)
+                {
+                    var employee = db.EmployeeBkps.FirstOrDefault(d => d.PayrollNo == approvalStep.PayrollNo);
+                    // Add to the dictionary
+                    if (employee != null && !employeeName.ContainsKey(approvalStep.PayrollNo))
+                    {
+                        employeeName[approvalStep.PayrollNo] = employee.Fullname;
+                    }
+                }
+            }
+            ViewBag.EmployeeNames = employeeName;
+            ViewBag.Steps = GetSteps();
+            ViewBag.CurrentStep = "Approvals";
+            return View(RequisitionWizardViewPath, approvalSteps);
+
+        }
+
+        [HttpPost]
+        public IActionResult CreateApproval(Approval approval)
+        {
+
+            //  HttpContext.Session.Set("Approval", approval);
+            TempData["SuccessMessage"] = "All approval levels created successfully!";
+            return RedirectToAction("Summary");
+
         }
         ////////////////////////////////////// Step 5: Finish the wizard //////////////////////////////////////
         [HttpGet]

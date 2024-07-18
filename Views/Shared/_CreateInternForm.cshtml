@@ -5,7 +5,7 @@
 <form asp-controller="RequisitionWizard" asp-action="CreateIntern">
 <div class="row">
     <div class="col-md-6">
-            <h4><b> <i class="mdi mdi-plus-circle mdi-24" style=""></i>  Add New Intern</b></h4><hr />
+            <h4><b>   Personal Details</b></h4><hr />
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <div class="form-group">
@@ -44,6 +44,28 @@
                 <label asp-for="PhoneNumber" class="control-label"></label><span class="requiredlabel">*</span>
                 <input asp-for="PhoneNumber" class="form-control" />
                 <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+
+            <h4><b>   Proffesional Details</b></h4><hr />
+            <div class="form-group">
+                <label asp-for="Certification" class="control-label"></label><span class="requiredlabel">*</span>
+                <select asp-for="Certification" class="formcontrol2">
+                    <option value="">   -- Select Certification level --</option>
+                    <option value="degree"> (B) Bachelors Degree</option>
+                    <option value="diploma"> (Dip) Diploma </option>
+                    <option value="certification"> (Cert) Certification </option>
+                </select>
+                <span asp-validation-for="DepartmentCode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Course" class="control-label"></label>
+                <input asp-for="Course" class="form-control" />
+                <span asp-validation-for="Course" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="School" class="control-label"></label>
+                <input asp-for="School" class="form-control" />
+                <span asp-validation-for="School" class="text-danger"></span>
             </div>
           
 

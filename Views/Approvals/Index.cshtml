@@ -106,7 +106,7 @@
                         <!-- SHOW THE APPROVAL OPTION IF STATUS IS PENDING-->
                         @if (firstItem.ApprovalStatus == "Pending")
                         {
-                            <a class="text-primary" asp-action="MakeApproval" asp-route-id="@firstItem.Id" data-bs-toggle="tooltip" data-placement="top" data-bs-original-title="Make Approval">
+                        <a class="text-primary" asp-controller="Requisitions" asp-action="Details" asp-route-id="@firstItem.Requisition_id" data-bs-toggle="tooltip" data-placement="top" data-bs-original-title="Make Approval">
                             <i class="mdi mdi-check-circle mdi-24px text-primary" style="vertical-align: middle;"></i> APPROVE
                             </a>
                         }
@@ -160,7 +160,7 @@
                         <!-- SHOW THE APPROVAL OPTION IF STATUS IS PENDING-->
                         @if (item.ApprovalStatus == "Pending")
                         {
-                            <a class="text-primary" asp-action="MakeApproval" asp-route-id="@item.Id" data-bs-toggle="tooltip" data-placement="top" data-bs-original-title="Make Approval">
+                            <a class="text-primary" asp-controller="Requisitions" asp-action="Details" asp-route-id="@item.Requisition_id" data-bs-toggle="tooltip" data-placement="top" data-bs-original-title="Make Approval">
                                 <i class="mdi mdi-check-circle mdi-24px text-primary" style="vertical-align: middle;"> </i> APPROVE
                             </a>
                         }

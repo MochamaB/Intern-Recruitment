@@ -54,6 +54,7 @@
                     <th style="font-size: 1rem; font-weight: bold; margin: 0;">Approval Step</th>
                     <th style="font-size: 1rem; font-weight: bold; margin: 0;">Status</th>
                     <th style="font-size: 1rem; font-weight: bold; margin: 0;">Employee</th>
+                    <th style="font-size: 1rem; font-weight: bold; margin: 0;">Action</th>
             </tr>
         </thead>
         <tbody>
@@ -64,6 +65,7 @@
                     <td>@approvalViewModel.Approval.ApprovalStep</td>
                     <td> @approvalViewModel.Approval.ApprovalStatus</td>
                     <td>@approvalViewModel.EmployeeName</td>
+                    <td></td>
                 </tr>
             }
         </tbody>
@@ -79,9 +81,9 @@
         <thead style="border-bottom:1px solid #dee2e6;">
             <tr>
                 <th style="font-size: 1rem; font-weight: bold; margin: 0;">No.</th>
+                <th style="font-size: 1rem; font-weight: bold; margin: 0;">Document Type</th>
                 <th style="font-size: 1rem; font-weight: bold; margin: 0;">Document Name</th>
-                <th style="font-size: 1rem; font-weight: bold; margin: 0;">Status</th>
-                <th style="font-size: 1rem; font-weight: bold; margin: 0;">File Type</th>
+                <th style="font-size: 1rem; font-weight: bold; margin: 0;">Action</th>
             </tr>
         </thead>
         <tbody>
@@ -94,7 +96,7 @@
                     <td>@(docCount++)</td>
                     <td>@doc.DocumentType?.DocumentName</td>
                     <td>@doc.Document.FileName</td>
-                    <td>@doc.Document.FileType</td>
+                    <td> </td>
                 </tr>
             }
         </tbody>

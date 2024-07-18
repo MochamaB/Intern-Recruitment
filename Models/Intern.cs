@@ -47,6 +47,19 @@ namespace Workflows.Models
         [UniquePhonenumber]
         public string? PhoneNumber { get; set;}
         public string? Status { get; set; }
+
+
+        [Display(Name = "Certification")]
+        [Required]
+        public string? Certification { get; set; }
+
+        [Display(Name = "Course")]
+        [Required]
+        public string? Course { get; set; }
+
+        [Display(Name = "School")]
+        [Required]
+        public string? School { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
     

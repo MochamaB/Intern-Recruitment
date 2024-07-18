@@ -41,9 +41,9 @@
                 <td> @document.Document.FileName </td>
                 <td>  @document.Document.FilePath </td>
                 <td>
-                    <a asp-action="Details" asp-route-id="@document.Document.Id"><i class="mdi mdi-eye mdi-24px text-warning"></i></a>
-                    <a asp-action="Edit" asp-route-id="@document.Document.Id"><i class="mdi mdi-lead-pencil mdi-24px text-primary"></i></a>
-                    <a asp-action="Delete" asp-route-id="@document.Document.Id"><i class="mdi mdi-delete mdi-24px text-danger"></i></a>
+                    <a asp-controller="Documents" asp-action="Details" asp-route-id="@document.Document.Id"><i class="mdi mdi-eye mdi-24px text-warning"></i></a>
+                    <a asp-controller="Documents" asp-action="Edit" asp-route-id="@document.Document.Id"><i class="mdi mdi-lead-pencil mdi-24px text-primary"></i></a>
+                    <a asp-controller="Documents" asp-action="Delete" asp-route-id="@document.Document.Id"><i class="mdi mdi-delete mdi-24px text-danger"></i></a>
                 </td>
             </tr>
             }

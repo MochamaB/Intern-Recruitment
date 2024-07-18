@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Create Requisition Wizard";
     var currentStep = ViewBag.CurrentStep as string;
 }
@@ -18,41 +17,41 @@
     </ul>
 </div>
 <div id="stepContent">
- @{
+    @{
         switch (ViewBag.CurrentStep)
-            {
-                case "Intern":
-                    <partial name="_CreateInternForm" />
-                    break;
-                case "Requisition":
-                    <partial name="_CreateRequisitionForm" />
-                    break;
-                case "Approvals":
-                    <partial name="_CreateApprovalForm" />
-                    break;
-                case "Documents":
-                    <partial name="_CreateDocumentForm" />
-                    break;
-                case "Summary":
-                    <partial name="_CreateSummaryForm" />
-                    break;
+        {
+            case "Intern":
+                <partial name="_CreateInternForm" />
+                break;
+            case "Requisition":
+                <partial name="_CreateRequisitionForm" />
+                break;
+            case "Documents":
+                <partial name="_CreateDocumentForm" />
+                break;
+            case "Approvals":
+                <partial name="_CreateApprovalForm" />
+                break;
+            case "Summary":
+                <partial name="_CreateSummaryForm" />
+                break;
                 // Add other cases as needed
-                
-            }
+
         }
-  </div>
+    }
+</div>
 
 
 
 @section Scripts {
     <script>
         $(function () {
-         
+
             var steps = @Html.Raw(Json.Serialize(ViewBag.Steps));
             var currentStep = steps.indexOf('@ViewBag.CurrentStep');
 
-           
-            
+
+
             // Set the active tab initially
             $("#step" + currentStep).addClass("active");
             // Add 'complete' class to all previous steps
@@ -60,20 +59,20 @@
                 $("#step" + i).addClass("complete");
             }
             $(".nextbutton").click(function () {
-                     // Perform form validation if on the "Documents" step
-                    if (steps[currentStep] === "Documents") {
-                        if (!validateFiles()) {
-                            return false; // Prevent moving to the next step if validation fails
-                        }
+                // Perform form validation if on the "Documents" step
+                if (steps[currentStep] === "Documents") {
+                    if (!validateFiles()) {
+                        return false; // Prevent moving to the next step if validation fails
                     }
-               
+                }
+
                 if (currentStep < steps.length - 1) {
                     $("#step" + currentStep).removeClass("active").addClass("complete");
                     currentStep++;
                     $("#step" + currentStep).addClass("active");
                     updateNavButtons();
                     // Load the partial view for the next step
-                   // alert(steps[currentStep]);
+                    // alert(steps[currentStep]);
                 }
             });
 
@@ -98,9 +97,9 @@
 
                 if (currentStep === steps.length - 1) {
                     $(".nextbutton").html('<i class="mdi mdi-arrow-right-bold-circle mdi-24"> Complete Requisition </i>');
-                    } else {
+                } else {
                     $(".nextbutton").html('<i class="mdi mdi-arrow-right-bold-circle mdi-24">Next Step </i>');
-                    }
+                }
             }
 
             updateNavButtons();

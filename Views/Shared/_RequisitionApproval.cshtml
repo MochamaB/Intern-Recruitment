@@ -1,4 +1,96 @@
-﻿
-@*
-    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model Workflows.ViewModels.RequisitionDetailsViewModel
+
+
+<table id="table"
+       data-toggle="table"
+       data-icon-size="sm"
+       data-buttons-class="primary"
+       data-toolbar-align="right"
+       data-buttons-align="left"
+       data-search-align="left"
+       data-sort-order="asc"
+       data-search="true"
+       data-mobile-responsive="true"
+       data-sticky-header="true"
+       data-pagination="true"
+       data-page-list="[100, 200, 250, 500, ALL]"
+       data-page-size="100"
+       data-show-footer="false"
+       data-side-pagination="client"
+       data-show-export="true"
+       class="table table-bordered">
+    <thead>
+        <tr>
+           <th></th>
+            <th>
+               Approvals Step
+            </th>
+            <th>
+               Approver
+            </th>
+            <th>
+              Status
+            </th>
+
+            <th>Action</th>
+            <th>Updated On</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var approval in Model.Approvals)
+        {
+          
+            <tr>
+                <td>@approval.Approval.StepNumber</td>
+                <td>
+                   @approval.Approval.ApprovalStep
+                </td>
+                <td>
+                    @approval.EmployeeName
+
+                </td>
+                <td>
+
+                    <span style="margin-right:8px" class="badge @(approval.Approval.ApprovalStatus switch
+                        {
+                            "Pending" => "badge-warning",
+                            "Not Started" => "badge-information",
+                            "Approved" => "badge-active",
+                            "Rejected" => "badge-danger",
+                            "Cancelled" => "badge-light",
+                            _ => "badge-secondary"
+                        })">
+                        @approval.Approval.ApprovalStatus
+                    </span>
+                   
+                </td>
+                <td>
+                    <!-- SHOW THE APPROVAL OPTION IF STATUS IS PENDING-->
+                    @if (@approval.Approval.ApprovalStatus == "Pending")
+                    {
+                        <a class="text-primary" asp-controller="Approvals" asp-action="MakeApproval" asp-route-id="@approval.Approval.Id" data-bs-toggle="tooltip" data-placement="top" data-bs-original-title="Make Approval">
+                            <i class="mdi mdi-check-circle mdi-24px text-primary" style="vertical-align: middle;"></i> APPROVE
+                        </a>
+                    }
+                    @if (@approval.Approval.ApprovalStatus == "Rejected")
+                    {
+                        <br />
+                        <p class="text-wrap pt-1"
+                           style="width:250px;">
+                            <b>Comment:</b>
+                            @approval.Approval.ApprovalComment
+                        </p>
+                    }
+                </td>
+                <td>@approval.Approval.UpdatedAt?.ToString("dd/MM/yyyy")</td>
+                <td>
+                    <a asp-controller="Approvals" asp-action="Details" asp-route-id="@approval.Approval.Id"><i class="mdi mdi-eye mdi-24px text-warning"></i></a>
+                    <a asp-controller="Approvals" asp-action="Edit" asp-route-id="@approval.Approval.Id"><i class="mdi mdi-lead-pencil mdi-24px text-primary"></i></a>
+                    <a asp-controller="Approvals" asp-action="Delete" asp-route-id="@approval.Approval.Id"><i class="mdi mdi-delete mdi-24px text-danger"></i></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+
+</table>

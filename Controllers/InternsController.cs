@@ -84,7 +84,7 @@ namespace Workflows.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,DepartmentCode,Firstname,Lastname,Othernames,Email,PhoneNumber,Status,CreatedAt,UpdatedAt")] Intern intern)
+        public async Task<IActionResult> Create([Bind("Id,DepartmentCode,Firstname,Lastname,Othernames,Email,PhoneNumber,Status,Certification,Course,School,CreatedAt,UpdatedAt")] Intern intern)
         {
             if (ModelState.IsValid)
             {
@@ -119,7 +119,7 @@ namespace Workflows.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,departmentCode,Firstname,Lastname,Othernames,Email,PhoneNumber,Status,CreatedAt,UpdatedAt")] Intern intern)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,departmentCode,Firstname,Lastname,Othernames,Email,PhoneNumber,Status,Certification,Course,School,CreatedAt,UpdatedAt")] Intern intern)
         {
             if (id != intern.Id)
             {
