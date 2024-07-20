@@ -86,7 +86,7 @@
                 <td>@approval.Approval.UpdatedAt?.ToString("dd/MM/yyyy")</td>
                 <td>
                     <a asp-controller="Approvals" asp-action="Details" asp-route-id="@approval.Approval.Id"><i class="mdi mdi-eye mdi-24px text-warning"></i></a>
-                    <a asp-controller="Approvals" asp-action="Edit" asp-route-id="@approval.Approval.Id"><i class="mdi mdi-lead-pencil mdi-24px text-primary"></i></a>
+                    <a asp-controller="Approvals" asp-action="Edit" asp-route-id="@approval.Approval.Id" asp-route-returnUrl="@Url.Action("Details", "Requisitions", new { id = Model.Requisition.Id }, Context.Request.Scheme)"><i class="mdi mdi-lead-pencil mdi-24px text-primary"></i></a>
                     <a asp-controller="Approvals" asp-action="Delete" asp-route-id="@approval.Approval.Id"><i class="mdi mdi-delete mdi-24px text-danger"></i></a>
                 </td>
             </tr>

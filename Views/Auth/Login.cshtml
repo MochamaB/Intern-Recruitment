@@ -26,7 +26,7 @@
                             </div>
                         }
 
-        <form class="pt-3" asp-controller="Login" asp-action="Login" method="post">
+                        <form class="pt-3" asp-controller="Login" asp-action="Login" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
                 <div class="form-group">
                   <label for="exampleInputEmail">Payroll Number</label>
                   <div class="input-group">

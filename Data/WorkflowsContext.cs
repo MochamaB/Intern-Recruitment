@@ -24,5 +24,6 @@ namespace Workflows.Data
         {
             
         }
+        public DbSet<Workflows.Models.Setting> Setting { get; set; } = default!;
     }
 }

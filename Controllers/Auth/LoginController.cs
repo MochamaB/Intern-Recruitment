@@ -17,13 +17,15 @@ namespace Workflows.Controllers.Auth
             _context = context;
         }
         // GET: LoginController
-        public ActionResult Index()
+        [HttpGet]
+        public ActionResult Index(string returnUrl = null)
         {
+            ViewData["ReturnUrl"] = returnUrl;
             return View("~/Views/Auth/Login.cshtml");
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(string payrollNo, string password)
+        public async Task<IActionResult> Login(string payrollNo, string password, string returnUrl = null)
         {
             // Check if payrollNo or password is null or empty
               if (string.IsNullOrEmpty(payrollNo) || string.IsNullOrEmpty(password))
@@ -50,9 +52,23 @@ namespace Workflows.Controllers.Auth
 
 
                 }
-                    // Authentication successful
-                    // Redirect to authenticated page
+                Console.WriteLine($"ReturnUrl: {returnUrl}"); // Log the returnUrl
+                Console.WriteLine($"Is Local URL: {Url.IsLocalUrl(returnUrl)}");
+                // Authentication successful
+                // Redirect to authenticated page
+                if (!string.IsNullOrEmpty(returnUrl) 
+                 //   && Url.IsLocalUrl(returnUrl)
+                    )
+                {
+                    // Decode the URL before redirecting
+                    returnUrl = Uri.UnescapeDataString(returnUrl);
+                    return Redirect(returnUrl);
+                }
+                else
+                {
+                    Console.WriteLine("Redirecting to Requisitions Index");
                     return RedirectToAction("Index", "Requisitions");
+                }
             }
             else
             {

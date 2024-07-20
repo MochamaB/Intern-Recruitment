@@ -105,7 +105,7 @@ namespace Workflows.Controllers
         }
 
         // GET: Approvals/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int? id, string returnUrl)
         {
             if (id == null)
             {
@@ -151,6 +151,11 @@ namespace Workflows.Controllers
                     e.EmpisCurrActive == 0).OrderBy(e => e.Fullname).ToListAsync();
                 }
 
+                if (!string.IsNullOrEmpty(returnUrl))
+                {
+                    TempData["ReturnUrl"] = returnUrl;
+                }
+
 
                 ViewBag.Employees = new SelectList(employees, "PayrollNo", "Fullname", approval.PayrollNo);
                 return View(approval);
@@ -189,6 +194,12 @@ namespace Workflows.Controllers
                     }
                 }
                 TempData["SuccessMessage"] = "Approval Edited successfully!";
+                // Returns to the where the edit function was called
+                if (TempData.TryGetValue("ReturnUrl", out object returnUrl))
+                {
+                    return Redirect(returnUrl.ToString());
+                }
+
                 return RedirectToAction(nameof(Index));
             }
            

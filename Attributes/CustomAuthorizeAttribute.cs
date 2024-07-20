@@ -11,8 +11,14 @@ namespace Workflows.Attributes
 
             if (!isAuthenticated)
             {
+                // Get the current request path and query string
+                var returnUrl = context.HttpContext.Request.Path + context.HttpContext.Request.QueryString;
+
+                // Encode the returnUrl to ensure it's properly formatted in the URL
+                var encodedReturnUrl = Uri.EscapeDataString(returnUrl);
+
                 // Redirect to Login if not authenticated
-                context.Result = new RedirectToActionResult("Index", "Login", null);
+                context.Result = new RedirectToActionResult("Index", "Login", new { returnUrl = encodedReturnUrl });
             }
         }
     }

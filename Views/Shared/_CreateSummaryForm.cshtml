@@ -44,37 +44,11 @@
      </div>
     <hr style="visibility:hidden;" />
 
-    <h4 style="color:#326408;font-weight:700;">3. Approval Steps</h4>
-    <hr />
-    <div class="col-md-7">
-    <table class="table" >
-        <thead style="border-bottom:1px solid #dee2e6;">
-            <tr>
-                <th style="font-size: 1rem; font-weight: bold; margin: 0;">Step</th>
-                    <th style="font-size: 1rem; font-weight: bold; margin: 0;">Approval Step</th>
-                    <th style="font-size: 1rem; font-weight: bold; margin: 0;">Status</th>
-                    <th style="font-size: 1rem; font-weight: bold; margin: 0;">Employee</th>
-                    <th style="font-size: 1rem; font-weight: bold; margin: 0;">Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var approvalViewModel in Model.ApprovalSteps)
-            {
-                <tr>
-                    <td>@approvalViewModel.Approval.StepNumber</td>
-                    <td>@approvalViewModel.Approval.ApprovalStep</td>
-                    <td> @approvalViewModel.Approval.ApprovalStatus</td>
-                    <td>@approvalViewModel.EmployeeName</td>
-                    <td></td>
-                </tr>
-            }
-        </tbody>
-    </table>
-    </div>
+
     
     <hr style="visibility:hidden;" />
 
-    <h4 style="color:#326408;font-weight:700;"> 4. Documents</h4>
+    <h4 style="color:#326408;font-weight:700;"> 3. Documents</h4>
     <hr />
     <div class="col-md-8">
     <table class="table">
@@ -101,6 +75,34 @@
             }
         </tbody>
     </table>
+    </div>
+
+    <h4 style="color:#326408;font-weight:700;">4. Approval Steps</h4>
+    <hr />
+    <div class="col-md-7">
+        <table class="table">
+            <thead style="border-bottom:1px solid #dee2e6;">
+                <tr>
+                    <th style="font-size: 1rem; font-weight: bold; margin: 0;">Step</th>
+                    <th style="font-size: 1rem; font-weight: bold; margin: 0;">Approval Step</th>
+                    <th style="font-size: 1rem; font-weight: bold; margin: 0;">Status</th>
+                    <th style="font-size: 1rem; font-weight: bold; margin: 0;">Employee</th>
+                    <th style="font-size: 1rem; font-weight: bold; margin: 0;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var approvalViewModel in Model.ApprovalSteps)
+                {
+                    <tr>
+                        <td>@approvalViewModel.Approval.StepNumber</td>
+                        <td>@approvalViewModel.Approval.ApprovalStep</td>
+                        <td> @approvalViewModel.Approval.ApprovalStatus</td>
+                        <td>@approvalViewModel.EmployeeName</td>
+                        <td></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
    
 

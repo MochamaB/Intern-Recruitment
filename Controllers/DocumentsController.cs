@@ -66,7 +66,7 @@ namespace Workflows.Controllers
         }
 
         // GET: Documents/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int? id, string returnUrl)
         {
             if (id == null)
             {
@@ -78,6 +78,12 @@ namespace Workflows.Controllers
             {
                 return NotFound();
             }
+
+            if (!string.IsNullOrEmpty(returnUrl))
+            {
+                TempData["ReturnUrl"] = returnUrl;
+            }
+
             return View(document);
         }
 
@@ -110,6 +116,11 @@ namespace Workflows.Controllers
                     {
                         throw;
                     }
+                }
+                // Returns to the where the edit function was called
+                if (TempData.TryGetValue("ReturnUrl", out object returnUrl))
+                {
+                    return Redirect(returnUrl.ToString());
                 }
                 return RedirectToAction(nameof(Index));
             }

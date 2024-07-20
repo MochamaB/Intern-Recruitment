@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Workflows.Data;
+using Workflows.Models;
 
 namespace Workflows.Attributes
 {
@@ -9,12 +10,19 @@ namespace Workflows.Attributes
         {
             if (value == null)
             {
-                // You can return ValidationResult.Success if you want to consider null as a valid value,
-                // or return new ValidationResult(GetErrorMessage()) if you want to consider null as an invalid value.
                 return ValidationResult.Success;
             }
+
             var _context = (WorkflowsContext)validationContext.GetService(typeof(WorkflowsContext));
-            var entity = _context.Intern.SingleOrDefault(e => e.Email == value.ToString());
+            var intern = validationContext.ObjectInstance as Intern;
+
+            if (intern == null)
+            {
+                throw new ArgumentException("This attribute can only be used on Intern objects");
+            }
+
+            // Check if any other intern (excluding the current one) has this email
+            var entity = _context.Intern.FirstOrDefault(e => e.Email == value.ToString() && e.Id != intern.Id);
 
             if (entity != null)
             {

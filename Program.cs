@@ -30,6 +30,18 @@ builder.Services.AddSession(options =>
 builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
+// Apply migrations and seed data
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var ktdaContext = services.GetRequiredService<KtdaleaveContext>();
+    var workflowsContext = services.GetRequiredService<WorkflowsContext>();
+
+    ktdaContext.Database.Migrate();
+    workflowsContext.Database.Migrate();
+
+    SettingsSeeder.SeedSettings(ktdaContext, workflowsContext);
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

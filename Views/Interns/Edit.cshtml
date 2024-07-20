@@ -4,19 +4,23 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
 
 <h4>Intern</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
-                <label asp-for="DepartmentCode" class="control-label"></label>
-                <input asp-for="DepartmentCode" class="form-control" />
+              
+                <input type="hidden" asp-for="DepartmentCode" class="form-control" />
                 <span asp-validation-for="DepartmentCode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Idnumber" class="control-label"></label>
+                <input asp-for="Idnumber" class="form-control" />
+                <span asp-validation-for="Idnumber" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Firstname" class="control-label"></label>
@@ -44,22 +48,37 @@
                 <span asp-validation-for="PhoneNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <input asp-for="Status" class="form-control" />
+       
+                <input type="hidden" asp-for="Status" class="form-control" />
                 <span asp-validation-for="Status" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="CreatedAt" class="control-label"></label>
-                <input asp-for="CreatedAt" class="form-control" />
+                <label asp-for="Certification" class="control-label"></label>
+                <input asp-for="Certification" class="form-control" />
+                <span asp-validation-for="Certification" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Course" class="control-label"></label>
+                <input asp-for="Course" class="form-control" />
+                <span asp-validation-for="Course" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="School" class="control-label"></label>
+                <input asp-for="School" class="form-control" />
+                <span asp-validation-for="School" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+              
+                <input type="hidden" asp-for="CreatedAt" class="form-control" />
                 <span asp-validation-for="CreatedAt" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="UpdatedAt" class="control-label"></label>
-                <input asp-for="UpdatedAt" class="form-control" />
+               
+                <input type="hidden" asp-for="UpdatedAt" class="form-control" />
                 <span asp-validation-for="UpdatedAt" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Edit Intern" class="btn btn-primary" />
             </div>
         </form>
     </div>
