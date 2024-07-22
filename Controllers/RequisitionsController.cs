@@ -36,6 +36,7 @@ namespace Workflows.Controllers
             var StepNumber = new Dictionary<int, int>();
             var approvalStep = new Dictionary<int, string>();
             var approvalComment = new Dictionary<int, string>();
+            var today = DateTime.Today;
             var daysLeftDictionary = new Dictionary<int, int>();
             using (var ktdaContext = new KtdaleaveContext())
             {
@@ -54,9 +55,9 @@ namespace Workflows.Controllers
                     {
                         internName[requisition.Intern_id] = intern.Firstname + " " + intern.Lastname;
                     }
-                    // Get the remaining Days
-                    TimeSpan difference = requisition.End_Date - requisition.Start_Date;
-                    daysLeftDictionary[requisition.Id] = (int)difference.TotalDays;
+                    // Get the remaining Days requisition has to end
+                    int daysLeft = (requisition.End_Date - DateTime.Now).Days;
+                    daysLeftDictionary[requisition.Id] = daysLeft > 0 ? daysLeft : 0;
 
                     // Retrieve the pending approval for the requisition
                     var pendingApproval = await _context.Approval

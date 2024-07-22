@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Workflows.Authorization;
 using Workflows.Data;
 using Workflows.Models;
 using Workflows.Services;
@@ -17,6 +19,15 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IApprovalService,ApprovalService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IAuthorizationHandler, ApprovalViewHandler>();
+builder.Services.AddScoped<IAuthorizationService, CustomAuthorizationService>();
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("CanViewApproval", policy =>
+        policy.Requirements.Add(new ApprovalViewRequirement()));
+});
 
 
 // Add session services

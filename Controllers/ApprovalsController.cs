@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -17,17 +18,28 @@ namespace Workflows.Controllers
     {
         private readonly WorkflowsContext _context;
         private readonly IEmailService _emailService;
+        private readonly IAuthorizationService _authorizationService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ApprovalsController(WorkflowsContext context, IEmailService emailService)
+        public ApprovalsController(WorkflowsContext context, IEmailService emailService,
+            IAuthorizationService authorizationService, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _emailService = emailService;
+            _authorizationService = authorizationService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         // GET: Approvals
         public async Task<IActionResult> Index()
         {
+            var httpContext = _httpContextAccessor.HttpContext;
+            var userRole = httpContext.Session.GetString("EmployeeRole");
+            var userPayroll = httpContext.Session.GetString("EmployeePayrollNo");
+
+            //// FILTER: Loggedin User can only see approvals assigned to them unless HR or Admin Roles
             var approvals = await _context.Approval
+                 .Where(a => userRole == "Admin" || userRole == "HR" || a.PayrollNo == userPayroll)
                 .OrderByDescending(a => a.Requisition_id)
                 .ToListAsync();
 
@@ -38,13 +50,13 @@ namespace Workflows.Controllers
             using (var ktdaContext = new KtdaleaveContext())
             {
                 departments = await ktdaContext.Departments.ToListAsync();
-               
+
                 foreach (var approvalStep in approvals)
                 {
                     var employee = ktdaContext.EmployeeBkps.FirstOrDefault(d => d.PayrollNo == approvalStep.PayrollNo);
                     var requisition = _context.Requisition.FirstOrDefault(d => d.Id == approvalStep.Requisition_id);
                     var intern = _context.Intern.FirstOrDefault(d => d.Id == requisition.Intern_id);
-                    if (employee !=null && !employeeName.ContainsKey(employee.PayrollNo))
+                    if (employee != null && !employeeName.ContainsKey(employee.PayrollNo))
                     {
                         employeeName[employee.PayrollNo] = employee.Fullname;
                     }
@@ -202,7 +214,7 @@ namespace Workflows.Controllers
 
                 return RedirectToAction(nameof(Index));
             }
-           
+
             return View(approval);
         }
 
@@ -269,27 +281,30 @@ namespace Workflows.Controllers
             //5. if it is the last approval, update the requisition status to "Active"
             //6. If it is the last approval. Update the intern status to "Active"
             //7. If the approval is rejected. send email to the employee who requested rejecting the requisition
+            using var db = new KtdaleaveContext();
             var currentRequisition = await _context.Requisition.FindAsync(currentApproval.Requisition_id);
             if (currentApproval.ApprovalStatus == "Approved")
             {
                 // 1.Send email notification to employee that made the requisition
-                     //   var currentRequisition = await _context.Requisition.FindAsync(currentApproval.Requisition_id);
+                //   var currentRequisition = await _context.Requisition.FindAsync(currentApproval.Requisition_id);
                 if (currentRequisition != null)
                 {
-                    using (var db = new KtdaleaveContext())
-                    {
-                        //   var employee = await db.EmployeeBkps.FindAsync(requisition.PayrollNo);
-                        var employee =  db.EmployeeBkps.FirstOrDefault(d => d.PayrollNo == currentRequisition.PayrollNo);
-                        var currentApprover = db.EmployeeBkps.FirstOrDefault(d => d.PayrollNo == currentApproval.PayrollNo);
 
-                        var requesterEmail = employee.EmailAddress;
-                        var currentApproverName = currentApprover.Fullname;
-                        int stepNumber = currentApproval.StepNumber; // Assuming this is an integer
-                        string approvalStep = currentApproval.ApprovalStep; // Assuming this is a string
-                        // Concatenate step number and approval step
-                        string currentStep = stepNumber + ". " + approvalStep;
-                        await _emailService.SendApprovalMadeNotificationAsync(requesterEmail, currentApproverName, currentStep, currentRequisition.Id);
+                    var employee = await db.EmployeeBkps
+                      .Where(d => d.PayrollNo == currentRequisition.PayrollNo)
+                      .Select(e => new { e.EmailAddress, e.Fullname })
+                      .FirstOrDefaultAsync();
+
+                    var currentApprover = await db.EmployeeBkps
+                        .Where(d => d.PayrollNo == currentApproval.PayrollNo)
+                        .Select(e => e.Fullname)
+                        .FirstOrDefaultAsync();
+                    if (employee != null && currentApprover != null)
+                    {
+                        string currentStep = $"{currentApproval.StepNumber}. {currentApproval.ApprovalStep}";
+                        await _emailService.SendApprovalMadeNotificationAsync(employee.EmailAddress, currentApprover, currentStep, currentRequisition.Id);
                     }
+
                 }
 
                 // 2. Get the next approval in the flow
@@ -299,42 +314,44 @@ namespace Workflows.Controllers
 
                 if (nextApproval != null)
                 {
-                // 3.Update the next approval status to "Pending"
+                    // 3.Update the next approval status to "Pending"
                     nextApproval.ApprovalStatus = "Pending";
                     nextApproval.UpdatedAt = DateTime.Now;
                     _context.Update(nextApproval);
                     await _context.SaveChangesAsync();
 
-                // 4.Send email notification for approval pending
-                    using (var db = new KtdaleaveContext())
+                    // 4.Send email notification for approval pending
+
+                    var approverEmail = await db.EmployeeBkps
+                    .Where(d => d.PayrollNo == nextApproval.PayrollNo)
+                    .Select(e => e.EmailAddress)
+                    .FirstOrDefaultAsync();
+
+                    if (approverEmail != null)
                     {
-                     //   var approver = await db.EmployeeBkps.FindAsync(nextApproval.PayrollNo);
-                        var approver = db.EmployeeBkps.FirstOrDefault(d => d.PayrollNo == nextApproval.PayrollNo);
-                        if (approver != null)
-                        {
-                            await _emailService.SendApprovalPendingNotificationAsync(approver.EmailAddress, nextApproval.Requisition_id);
-                        }
+                        await _emailService.SendApprovalPendingNotificationAsync(approverEmail, nextApproval.Requisition_id);
                     }
+
                 }
                 else
                 {
-                // 5.This is the last approval, update the requisition status to "Active"
+                    // 5.This is the last approval, update the requisition status to "Active"
                     var requisition = await _context.Requisition.FindAsync(currentApproval.Requisition_id);
                     if (requisition != null)
                     {
                         requisition.Status = "Active";
                         requisition.UpdatedAt = DateTime.Now;
                         _context.Update(requisition);
-                 // 6.Update the intern status to "Active"
+                        // 6.Update the intern status to "Active"
                         var intern = await _context.Intern.FindAsync(requisition.Intern_id);
                         if (intern != null)
                         {
                             intern.Status = "Active";
-                            intern.UpdatedAt = DateTime.Now;  
+                            intern.UpdatedAt = DateTime.Now;
                             _context.Update(intern);
                         }
                     }
-                    
+
                 }
                 await _context.SaveChangesAsync();
             }
@@ -344,14 +361,15 @@ namespace Workflows.Controllers
                 if (currentRequisition != null)
                 {
 
-                    using (var db = new KtdaleaveContext())
-                    {
-                        //   var employee = await db.EmployeeBkps.FindAsync(requisition.PayrollNo);
-                        var employee = db.EmployeeBkps.FirstOrDefault(d => d.PayrollNo == currentRequisition.PayrollNo);
+                    //   var employee = await db.EmployeeBkps.FindAsync(requisition.PayrollNo);
+                    var employee = await db.EmployeeBkps
+                      .Where(d => d.PayrollNo == currentRequisition.PayrollNo)
+                      .Select(e => new { e.EmailAddress, e.Fullname })
+                      .FirstOrDefaultAsync();
 
-                        var requesterEmail = employee.EmailAddress;
-                        await _emailService.SendApprovalRejectedNotificationAsync(requesterEmail, currentRequisition.Id);
-                    }
+                  //  var requesterEmail = employee.EmailAddress;
+                    await _emailService.SendApprovalRejectedNotificationAsync(employee.EmailAddress, currentRequisition.Id);
+
                 }
 
                 // 8. Cancel all subsequent approvals

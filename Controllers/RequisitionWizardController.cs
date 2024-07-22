@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Workflows.Services;
 using Workflows.ViewModels;
 using Workflows.Attributes;
+using Microsoft.EntityFrameworkCore;
 
 namespace Workflows.Controllers
 {
@@ -16,6 +17,7 @@ namespace Workflows.Controllers
     {
         private readonly WorkflowsContext _context;
         private const string RequisitionWizardViewPath = "~/Views/Wizards/RequisitionWizard.cshtml";
+        private const string RequisitionWizardCheckDepartment = "~/Views/Wizards/CheckDepartment.cshtml";
         private readonly IApprovalService _approvalService;
         //   private readonly IDocumentService _documentService;
         private readonly IEmailService _emailService;
@@ -34,19 +36,10 @@ namespace Workflows.Controllers
         {
             return new List<string> { "Intern", "Requisition", "Documents", "Approvals", "Summary" };
         }
-        //////////////////////////////////////////////// Step 1: Create Intern ///////////////////////////////////
-        [HttpGet]
-        public IActionResult Intern(Intern? intern = null)
-        {
-           
-            // Check if the request method is GET to clear validation errors on initial load
-            if (HttpContext.Request.Method.Equals("GET", StringComparison.OrdinalIgnoreCase))
-            {
-                ModelState.Clear();
-            }
-            //Load the session data if its available or create new
-            intern = HttpContext.Session.GetObject<Intern>("WizardIntern") ?? new Intern();
 
+        [HttpGet]
+        public IActionResult checkDepartment()
+        {
             using (var db = new KtdaleaveContext())
             {
                 var departments = db.Departments.ToList();
@@ -57,6 +50,72 @@ namespace Workflows.Controllers
 
                 // Pass the SelectList to ViewBag
                 ViewBag.DepartmentItems = departmentItems;
+
+               
+                return View(RequisitionWizardCheckDepartment);
+            }
+           
+        }
+        // POST: Requisition/CheckDepartment
+        [HttpPost]
+        public async Task<IActionResult> CheckDepartment(CheckDepartmentViewModel department)
+        {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.ErrorMessage = "Please select a department.";
+                return View(RequisitionWizardCheckDepartment);
+            }
+
+            // Get the max number of active requisitions for the department
+            var maxRequisitionsSetting = await _context.Setting.FirstOrDefaultAsync(s => s.DepartmentCode == department.DepartmentCode && s.Key == "noOfInterns");
+
+            if (maxRequisitionsSetting == null || !int.TryParse(maxRequisitionsSetting.Value, out int maxRequisitions))
+            {
+                ViewBag.ErrorMessage =  "Unable to determine maximum requisitions for this department.";
+                ModelState.AddModelError("", "Unable to determine maximum requisitions for this department.");
+                return View(RequisitionWizardCheckDepartment);
+            }
+
+            // Count active requisitions for the department
+            var activeRequisitionsCount = await _context.Requisition
+                .CountAsync(r => r.DepartmentCode == department.DepartmentCode && r.Status == "Active");
+
+            Console.WriteLine($"activeRequisitionsCount: {activeRequisitionsCount}"); // Log the activeRequisitionsCount
+            Console.WriteLine($"maxRequisitions: {maxRequisitions}"); // Log the activeRequisitionsCount
+
+            if (activeRequisitionsCount >= maxRequisitions)
+            {
+                ViewBag.ErrorMessage = "This department has reached the maximum number of active requisitions.";
+                ModelState.AddModelError("", $"This department has reached the maximum number of active requisitions ({maxRequisitions}).");
+                return View(department);
+            }
+            HttpContext.Session.SetObject("WizardDepartment", department); // Save to session
+
+            // If we've passed all checks, proceed to the intern function
+            return RedirectToAction("Intern");
+        }
+
+        //////////////////////////////////////////////// Step 1: Create Intern ///////////////////////////////////
+        [HttpGet]
+        public IActionResult Intern(Intern? intern = null)
+        {
+            var departmentcode = HttpContext.Session.GetObject<CheckDepartmentViewModel>("WizardDepartment");
+            // Check if the request method is GET to clear validation errors on initial load
+            if (HttpContext.Request.Method.Equals("GET", StringComparison.OrdinalIgnoreCase))
+            {
+                ModelState.Clear();
+            }
+            //Load the session data if its available or create new
+            intern = HttpContext.Session.GetObject<Intern>("WizardIntern") ?? new Intern();
+
+            using (var db = new KtdaleaveContext())
+            {
+                var department = db.Departments.FirstOrDefault(d => d.DepartmentCode == departmentcode.DepartmentCode);
+
+
+                // Pass the SelectList to ViewBag
+                ViewBag.DepartmentCode = department.DepartmentCode;
+                ViewBag.DepartmentName = department.DepartmentName;
 
                 ViewBag.Steps = GetSteps();
                 ViewBag.CurrentStep = "Intern";
@@ -450,6 +509,7 @@ namespace Workflows.Controllers
 
 
                 // Clear the session
+                HttpContext.Session.Remove("WizardDepartment");
                 HttpContext.Session.Remove("WizardRequisition");
                 HttpContext.Session.Remove("WizardIntern");
                 HttpContext.Session.Remove("WizardApprovalSteps");

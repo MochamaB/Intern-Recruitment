@@ -1,0 +1,31 @@
+﻿@model Workflows.ViewModels.CheckDepartmentViewModel
+@{
+    ViewData["Title"] = "CheckDepartment";
+}
+
+<hr />
+
+<br/>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-asp-controller="RequisitionWizard" asp-action="checkDepartment" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="DepartmentCode" class="control-label">Select Department</label><span class="requiredlabel">*</span>
+                <select asp-for="DepartmentCode" class="formcontrol2" asp-items="ViewBag.DepartmentItems">
+                    <option value="">   -- Select Department --</option>
+                </select>
+            </div>
+           
+            <div class="form-group">
+                <input type="submit" value="Check Status" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    
+</div>
+
