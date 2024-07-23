@@ -40,7 +40,20 @@ namespace Workflows.Models
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
 
-      
+        // Non-mapped properties for related data
+        [NotMapped]
+        public Intern? Intern { get; set; }
+
+        [NotMapped]
+        public Department? Department { get; set; }
+
+        [NotMapped]
+        public EmployeeBkp? Employee { get; set; }
+
+        [NotMapped]
+        public List<Approval>? Approvals { get; set; }
+
+
 
     }
 }

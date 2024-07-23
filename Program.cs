@@ -21,7 +21,10 @@ builder.Services.AddScoped<IApprovalService,ApprovalService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IAuthorizationHandler, ApprovalViewHandler>();
+builder.Services.AddSingleton<IAuthorizationHandler, CustomRoleHandler>();
+builder.Services.AddSingleton<CustomAuthorizationService>();
 builder.Services.AddScoped<IAuthorizationService, CustomAuthorizationService>();
+builder.Services.AddScoped<IRelationshipService, RelationshipService>();
 
 builder.Services.AddAuthorization(options =>
 {

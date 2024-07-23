@@ -2,64 +2,98 @@
 
 @{
     ViewData["Title"] = "Edit";
+    /// Roles allowed to view admin functions///
+    var rolesArray = new[] { "Admin","HR" };
+    var roles = string.Join(",", rolesArray);
 }
 
-<h1>Edit</h1>
-
-<h4>Requisition</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
-                <label asp-for="DepartmentCode" class="control-label"></label>
-                <input asp-for="DepartmentCode" class="form-control" />
+                <label asp-for="DepartmentCode" class="control-label"></label><span class="requiredlabel">*</span>
+                <input type="hidden" asp-for="DepartmentCode" class="form-control" />
+                @if (Model.Department != null)
+                {
+                    <br />
+                    <h5>
+                        <small class="text-muted" style="text-transform: capitalize;">
+                            @Model.Department.DepartmentName
+                        </small>
+                    </h5>
+                }
                 <span asp-validation-for="DepartmentCode" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Intern_id" class="control-label"></label>
-                <input asp-for="Intern_id" class="form-control" />
+                <label asp-for="Intern_id" class="control-label"></label><span class="requiredlabel">*</span>
+                <input type="hidden" asp-for="Intern_id" class="form-control" />
+                @if (Model.Intern != null)
+                {
+                    <br/>
+                    <h5>
+                        <small class="text-muted" style="text-transform: capitalize;">
+                            @Model.Intern.Firstname @Model.Intern.Lastname
+                        </small>
+                    </h5>
+                }
                 <span asp-validation-for="Intern_id" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="PayrollNo" class="control-label"></label>
-                <input asp-for="PayrollNo" class="form-control" />
+                <label asp-for="PayrollNo" class="control-label"></label><span class="requiredlabel">*</span>
+                <input type="hidden" asp-for="PayrollNo" class="form-control" />
+                @if (Model.Employee != null)
+                {
+                    <br />
+                    <h5>
+                        <small class="text-muted" style="text-transform: capitalize;">
+                            @Model.Employee.Fullname
+                        </small>
+                    </h5>
+                }
                 <span asp-validation-for="PayrollNo" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Station" class="control-label"></label>
-                <input asp-for="Station" class="form-control" />
+            <div asp-authorize-role="@roles" class="form-group">
+                <label asp-for="Station" class="control-label"></label><span class="requiredlabel">*</span>
+                <select asp-for="Station" class="formcontrol2">
+                    <option value="">   -- Select Station --</option>
+                    <option value="HQ">HQ</option>
+                    <option value="Factory">Factory</option>
+                </select>
                 <span asp-validation-for="Station" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <input asp-for="Status" class="form-control" />
+            <div asp-authorize-role="@roles" class="form-group">
+                <label asp-for="Status" class="control-label"></label><span class="requiredlabel">*</span>
+                <select asp-for="Status" class="formcontrol2">
+                    <option value=""> - Select a status - </option>
+                    <option value="Internship ended">Internship Period Ended</option>
+                    <option value="Inactive">In Active</option>
+                   
+                </select>
                 <span asp-validation-for="Status" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Start_Date" class="control-label"></label>
-                <input asp-for="Start_Date" class="form-control" />
+                <input type="hidden" asp-for="Start_Date" class="form-control" />
                 <span asp-validation-for="Start_Date" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="End_Date" class="control-label"></label>
+            <div asp-authorize-role="@roles" class="form-group">
+                <label asp-for="End_Date" class="control-label">End Date (Increase Requisition Period)</label><span class="requiredlabel">*</span>
                 <input asp-for="End_Date" class="form-control" />
                 <span asp-validation-for="End_Date" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="CreatedAt" class="control-label"></label>
-                <input asp-for="CreatedAt" class="form-control" />
+                <input type="hidden" asp-for="CreatedAt" class="form-control" />
                 <span asp-validation-for="CreatedAt" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="UpdatedAt" class="control-label"></label>
-                <input asp-for="UpdatedAt" class="form-control" />
+               
+                <input type="hidden" asp-for="UpdatedAt" class="form-control" />
                 <span asp-validation-for="UpdatedAt" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+            <div asp-authorize-role="@roles" class="form-group">
+                <input type="submit" value="Edit Requistion" class="btn btn-primary" />
             </div>
         </form>
     </div>

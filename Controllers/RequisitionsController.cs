@@ -10,6 +10,7 @@ using Workflows.Models;
 using Workflows.Attributes;
 using Workflows.ViewModels;
 using Microsoft.AspNetCore.Html;
+using Workflows.Services;
 
 namespace Workflows.Controllers
 {
@@ -17,10 +18,12 @@ namespace Workflows.Controllers
     public class RequisitionsController : Controller
     {
         private readonly WorkflowsContext _context;
+        private readonly IRelationshipService _relationshipService;
 
-        public RequisitionsController(WorkflowsContext context)
+        public RequisitionsController(WorkflowsContext context, IRelationshipService relationshipService)
         {
             _context = context;
+            _relationshipService = relationshipService;
         }
 
         // GET: Requisitions
@@ -267,7 +270,7 @@ namespace Workflows.Controllers
                 return NotFound();
             }
 
-            var requisition = await _context.Requisition.FindAsync(id);
+            var requisition = await _relationshipService.GetRequisitionWithRelatedDataAsync((int)id);
             if (requisition == null)
             {
                 return NotFound();

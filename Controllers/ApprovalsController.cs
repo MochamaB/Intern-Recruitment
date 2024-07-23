@@ -20,14 +20,18 @@ namespace Workflows.Controllers
         private readonly IEmailService _emailService;
         private readonly IAuthorizationService _authorizationService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IApprovalService _approvalService;
+        private readonly IRelationshipService _relationshipService;
 
-        public ApprovalsController(WorkflowsContext context, IEmailService emailService,
-            IAuthorizationService authorizationService, IHttpContextAccessor httpContextAccessor)
+        public ApprovalsController(WorkflowsContext context, IEmailService emailService, IRelationshipService relationshipService,
+            IAuthorizationService authorizationService, IHttpContextAccessor httpContextAccessor, IApprovalService approvalService)
         {
             _context = context;
             _emailService = emailService;
             _authorizationService = authorizationService;
             _httpContextAccessor = httpContextAccessor;
+            _approvalService = approvalService;
+            _relationshipService = relationshipService;
         }
 
         // GET: Approvals
@@ -124,7 +128,7 @@ namespace Workflows.Controllers
                 return NotFound();
             }
 
-            var approval = await _context.Approval.FindAsync(id);
+            var approval = await _relationshipService.GetApprovalWithRelatedDataAsync((int)id);
             if (approval == null)
             {
                 return NotFound();
@@ -251,7 +255,8 @@ namespace Workflows.Controllers
                     await _context.SaveChangesAsync();
 
                     // Call the method or service to handle the approval flow
-                    await HandleApprovalFlow(approval);
+                    // Call the service to handle the approval flow
+                    await _approvalService.HandleApprovalFlow(approval);
 
                 }
                 catch (DbUpdateConcurrencyException)
@@ -272,122 +277,7 @@ namespace Workflows.Controllers
         }
 
 
-        private async Task HandleApprovalFlow(Approval currentApproval)
-        {
-            //1. Send Email to the employee that made the requisition
-            //2. Get the next approval in the sequence
-            //3. Update the next approval status to "Pending"
-            //4. Send email notification for approval pending to the next approver
-            //5. if it is the last approval, update the requisition status to "Active"
-            //6. If it is the last approval. Update the intern status to "Active"
-            //7. If the approval is rejected. send email to the employee who requested rejecting the requisition
-            using var db = new KtdaleaveContext();
-            var currentRequisition = await _context.Requisition.FindAsync(currentApproval.Requisition_id);
-            if (currentApproval.ApprovalStatus == "Approved")
-            {
-                // 1.Send email notification to employee that made the requisition
-                //   var currentRequisition = await _context.Requisition.FindAsync(currentApproval.Requisition_id);
-                if (currentRequisition != null)
-                {
-
-                    var employee = await db.EmployeeBkps
-                      .Where(d => d.PayrollNo == currentRequisition.PayrollNo)
-                      .Select(e => new { e.EmailAddress, e.Fullname })
-                      .FirstOrDefaultAsync();
-
-                    var currentApprover = await db.EmployeeBkps
-                        .Where(d => d.PayrollNo == currentApproval.PayrollNo)
-                        .Select(e => e.Fullname)
-                        .FirstOrDefaultAsync();
-                    if (employee != null && currentApprover != null)
-                    {
-                        string currentStep = $"{currentApproval.StepNumber}. {currentApproval.ApprovalStep}";
-                        await _emailService.SendApprovalMadeNotificationAsync(employee.EmailAddress, currentApprover, currentStep, currentRequisition.Id);
-                    }
-
-                }
-
-                // 2. Get the next approval in the flow
-                var nextApproval = await _context.Approval
-                    .Where(a => a.Requisition_id == currentApproval.Requisition_id && a.StepNumber == currentApproval.StepNumber + 1)
-                    .FirstOrDefaultAsync();
-
-                if (nextApproval != null)
-                {
-                    // 3.Update the next approval status to "Pending"
-                    nextApproval.ApprovalStatus = "Pending";
-                    nextApproval.UpdatedAt = DateTime.Now;
-                    _context.Update(nextApproval);
-                    await _context.SaveChangesAsync();
-
-                    // 4.Send email notification for approval pending
-
-                    var approverEmail = await db.EmployeeBkps
-                    .Where(d => d.PayrollNo == nextApproval.PayrollNo)
-                    .Select(e => e.EmailAddress)
-                    .FirstOrDefaultAsync();
-
-                    if (approverEmail != null)
-                    {
-                        await _emailService.SendApprovalPendingNotificationAsync(approverEmail, nextApproval.Requisition_id);
-                    }
-
-                }
-                else
-                {
-                    // 5.This is the last approval, update the requisition status to "Active"
-                    var requisition = await _context.Requisition.FindAsync(currentApproval.Requisition_id);
-                    if (requisition != null)
-                    {
-                        requisition.Status = "Active";
-                        requisition.UpdatedAt = DateTime.Now;
-                        _context.Update(requisition);
-                        // 6.Update the intern status to "Active"
-                        var intern = await _context.Intern.FindAsync(requisition.Intern_id);
-                        if (intern != null)
-                        {
-                            intern.Status = "Active";
-                            intern.UpdatedAt = DateTime.Now;
-                            _context.Update(intern);
-                        }
-                    }
-
-                }
-                await _context.SaveChangesAsync();
-            }
-            else if (currentApproval.ApprovalStatus == "Rejected")
-            {
-                // 7. send email to the employee who requested rejecting the requisition
-                if (currentRequisition != null)
-                {
-
-                    //   var employee = await db.EmployeeBkps.FindAsync(requisition.PayrollNo);
-                    var employee = await db.EmployeeBkps
-                      .Where(d => d.PayrollNo == currentRequisition.PayrollNo)
-                      .Select(e => new { e.EmailAddress, e.Fullname })
-                      .FirstOrDefaultAsync();
-
-                  //  var requesterEmail = employee.EmailAddress;
-                    await _emailService.SendApprovalRejectedNotificationAsync(employee.EmailAddress, currentRequisition.Id);
-
-                }
-
-                // 8. Cancel all subsequent approvals
-                var subsequentApprovals = await _context.Approval
-                    .Where(a => a.Requisition_id == currentApproval.Requisition_id && a.StepNumber > currentApproval.StepNumber)
-                    .ToListAsync();
-
-                foreach (var approval in subsequentApprovals)
-                {
-                    approval.ApprovalStatus = "Cancelled";
-                    approval.UpdatedAt = DateTime.Now;
-                    _context.Update(approval);
-                }
-
-                await _context.SaveChangesAsync();
-            }
-        }
-
+     
 
         // GET: Approvals/Delete/5
         public async Task<IActionResult> Delete(int? id)

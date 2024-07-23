@@ -36,5 +36,12 @@ namespace Workflows.Models
         [Display(Name = "Updated On")]
         [DataType(DataType.Date)]
         public DateTime? UpdatedAt { get; set; }
+
+
+        [NotMapped]
+        public Department? Department { get; set; }
+
+        [NotMapped]
+        public EmployeeBkp? Employee { get; set; }
     }
 }

@@ -62,7 +62,10 @@ namespace Workflows.Models
         public string? School { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
-    
+
+        [NotMapped]
+        public List<Requisition>? Requisition { get; set; }
+
 
     }
 }

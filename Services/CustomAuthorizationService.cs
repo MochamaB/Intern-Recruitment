@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Workflows.Authorization;
 
 namespace Workflows.Services
 {
@@ -21,9 +22,12 @@ namespace Workflows.Services
             return authContext.HasSucceeded ? AuthorizationResult.Success() : AuthorizationResult.Failed();
         }
 
-        public Task<AuthorizationResult> AuthorizeAsync(ClaimsPrincipal user, object resource, string policyName)
+        public async Task<AuthorizationResult> AuthorizeAsync(ClaimsPrincipal user, object resource, string policyName)
         {
-            throw new NotImplementedException();
+            var requirement = new CustomRoleRequirement(policyName.Split(','));
+            return await AuthorizeAsync(user, resource, new[] { requirement });
         }
+
+       
     }
 }

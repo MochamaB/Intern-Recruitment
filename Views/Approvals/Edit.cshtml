@@ -2,6 +2,10 @@
 
 @{
     ViewData["Title"] = "Edit";
+    // Roles allowed to view admin functions. Add roles below to the roles Array//
+    // Roles available are "Admin","HR", "Hod", "supervisor","user","2_step_mgrs","2_step_secs","FieldUser","FieldSupervisor"
+    var rolesArray = new[] { "HR" };
+    var roles = string.Join(",", rolesArray);
 }
 
 
@@ -18,8 +22,17 @@
                 <span asp-validation-for="Requisition_id" class="text-danger"></span>
             </div>
             <div class="form-group">
-               
+                <label asp-for="DepartmentCode" class="control-label"></label><span class="requiredlabel">*</span>
                 <input type="hidden" asp-for="DepartmentCode" class="form-control" readonly />
+                @if (Model.Department != null)
+                {
+                    <br />
+                    <h5>
+                        <small class="text-muted" style="text-transform: capitalize;">
+                            @Model.Department.DepartmentName
+                        </small>
+                    </h5>
+                }
                 <span asp-validation-for="DepartmentCode" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -28,8 +41,17 @@
                 <span asp-validation-for="StepNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
-              
+                <label asp-for="ApprovalStep" class="control-label"></label>
                 <input type="hidden" asp-for="ApprovalStep" class="form-control" readonly />
+                @if (Model != null)
+                {
+                    <br />
+                    <h5>
+                        <small class="text-muted" style="text-transform: capitalize;">
+                            @Model.ApprovalStep
+                        </small>
+                    </h5>
+                }
                 <span asp-validation-for="ApprovalStep" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -51,7 +73,7 @@
             </div>
           
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Change Approver" class="btn btn-primary" />
             </div>
         </form>
     </div>
