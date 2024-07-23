@@ -10,6 +10,7 @@ namespace Workflows.Services
         Task<Intern> GetInternWithRelatedDataAsync(int internId);
         Task<IEnumerable<Approval>> GetApprovalsForRequisitionAsync(int requisitionId);
         Task<Approval> GetApprovalWithRelatedDataAsync(int approvalId);
+        Task<Document> GetDocumentWithRelatedDataAsync(int documentId);
     }
 
     public class RelationshipService : IRelationshipService
@@ -71,6 +72,20 @@ namespace Workflows.Services
                 approval.Employee = db.EmployeeBkps.FirstOrDefault(e => e.PayrollNo == approval.PayrollNo);
 
                 return approval;
+            }
+        }
+
+        public async Task<Document> GetDocumentWithRelatedDataAsync(int documentId)
+        {
+            using (var db = new KtdaleaveContext())
+            {
+                var document = await _context.Document.FindAsync(documentId);
+                if (document == null) return null;
+
+                document.Intern = await _context.Intern.FindAsync(document.Intern_id);
+
+
+                return document;
             }
         }
     }

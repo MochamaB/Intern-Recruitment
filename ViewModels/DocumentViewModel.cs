@@ -8,5 +8,11 @@ namespace Workflows.ViewModels
         public Document Document { get; set; }
         public DocumentType DocumentType { get; set; }
 
+
+        public Intern? Intern { get; set; }
+
+        // Additional property for DepartmentName
+        public string? DepartmentName { get; set; }
+
     }
 }

@@ -197,6 +197,19 @@ namespace Workflows.Controllers
                     approval.UpdatedAt = DateTime.Now;
                     _context.Update(approval);
                     await _context.SaveChangesAsync();
+                    //Send Email to the Changed Approver
+                    using (var db = new KtdaleaveContext())
+                    {
+                        var approverEmail = await db.EmployeeBkps
+                        .Where(d => d.PayrollNo == approval.PayrollNo)
+                        .Select(e => e.EmailAddress)
+                        .FirstOrDefaultAsync();
+
+                        if (approverEmail != null)
+                        {
+                            await _emailService.SendApprovalPendingNotificationAsync(approverEmail, approval.Requisition_id);
+                        }
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -229,7 +242,7 @@ namespace Workflows.Controllers
                 return NotFound();
             }
 
-            var approval = await _context.Approval.FindAsync(id);
+            var approval = await _relationshipService.GetApprovalWithRelatedDataAsync((int)id);
             if (approval == null)
             {
                 return NotFound();

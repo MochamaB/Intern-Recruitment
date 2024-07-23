@@ -22,13 +22,31 @@
                
             <div class="form-group">
                 <label asp-for="ApprovalStep" class="control-label"></label>
-                <input asp-for="ApprovalStep" class="form-control" readonly />
+                <input type="hidden" asp-for="ApprovalStep" class="form-control" readonly />
+                @if (Model != null)
+                {
+                    <br />
+                    <h5>
+                        <small class="text-muted" style="text-transform: capitalize;">
+                            @Model.ApprovalStep
+                        </small>
+                    </h5>
+                }
                 <span asp-validation-for="ApprovalStep" class="text-danger"></span>
             </div>
             <div class="form-group">
-               
+                <label asp-for="PayrollNo" class="control-label"></label>
                 <input type="hidden" asp-for="PayrollNo" class="form-control" readonly />
-              
+                @if (Model.Employee != null)
+                {
+                    <br />
+                    <h5>
+                        <small class="text-muted" style="text-transform: capitalize;">
+                            @Model.Employee.Fullname
+                        </small>
+                    </h5>
+                }
+                <span asp-validation-for="PayrollNo" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="ApprovalStatus" class="control-label"></label>

@@ -16,6 +16,11 @@ namespace Workflows.Models
 
         public int DocumentTypeId { get; set; }
 
+        [Column("departmentCode")]
+        [Display(Name = "Department")]
+        public int DepartmentCode { get; set; }
+
+
         [Display(Name = "File Name")]
         public string FileName { get; set; }
 
@@ -37,6 +42,9 @@ namespace Workflows.Models
         public IFormFile File { get; set; }
 
         // Navigation property
+        [NotMapped]
+        public Intern? Intern { get; set; }
+
         public DocumentType DocumentType { get; set; }
     }
 }

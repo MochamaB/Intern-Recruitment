@@ -9,6 +9,7 @@ using Workflows.Services;
 using Workflows.ViewModels;
 using Workflows.Attributes;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.Intrinsics.X86;
 
 namespace Workflows.Controllers
 {
@@ -308,14 +309,17 @@ namespace Workflows.Controllers
                                 Requisition_id = requisition.Id,
                                 Intern_id = requisition.Intern_id,
                                 DocumentTypeId = documentType.Id,
+                                DepartmentCode = requisition.DepartmentCode,
                                 FileName = file.FileName,
                                 FileType = file.ContentType,
                                 FileSize = file.Length,
                                 CreatedAt = DateTime.Now,
                                 UpdatedAt = DateTime.Now
                             };
+                    // Use Console.WriteLine to output the document details
+                    Console.WriteLine($"Document created: {document.Requisition_id}, {document.Intern_id}, {document.DepartmentCode}");
 
-                            documentList.Add(document);
+                    documentList.Add(document);
             
                     }
                 }
@@ -453,6 +457,7 @@ namespace Workflows.Controllers
                 // Update the Requisition_id for each document
                 documentList.ForEach(d => d.Requisition_id = requisition.Id);
 
+
                 // Move the temporary files to a permanent location
                 int DepartmentCode = requisition.DepartmentCode;
                 using (var db = new KtdaleaveContext())
@@ -482,6 +487,7 @@ namespace Workflows.Controllers
 
                             // Update the file path in the document object
                             document.FilePath = tempFilePath;
+                            document.Intern_id = requisition.Intern_id;
                         }
                     }
                 }

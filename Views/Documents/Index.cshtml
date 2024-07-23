@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Workflows.Models.Document>
+﻿@model IEnumerable<Workflows.ViewModels.DocumentViewModel>
 
 @{
     ViewData["Title"] = "Index";
@@ -34,65 +34,114 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Requisition_id)
+                Req ID
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Intern_id)
+                Department - Intern
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.DocumentType)
+               Type
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FileName)
+                @Html.DisplayNameFor(model => model.Document.FileName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.FileType)
+                @Html.DisplayNameFor(model => model.Document.FileSize)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FileSize)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedAt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UpdatedAt)
-            </th>
+           
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+         @foreach (var grouping in Model.GroupBy(a => a.Document.Requisition_id))
+        {
+            int rowSpan = grouping.Count();
+            var firstItem = grouping.First();
+            int stepCounter = 1; // Initialize the counter for approval steps
+            var lastRowStyle = "border-bottom:3px solid #b0b7bd";  // Style to apply to the last row of each group
+
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Requisition_id)
+                <td rowspan="@rowSpan" style="border-right:2px solid #dee2e6">
+                    @Html.DisplayFor(modelItem => firstItem.Document.Requisition_id)
+            </td>
+                <td rowspan="@rowSpan" style="border-right:2px solid #dee2e6">
+                    @Html.DisplayFor(modelItem => firstItem.DepartmentName)
+                    <br/><br/>
+                    @Html.DisplayFor(modelItem => firstItem.Intern.Firstname) @Html.DisplayFor(modelItem => firstItem.Intern.Lastname)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Intern_id)
+                    @stepCounter. @Html.DisplayFor(modelItem => firstItem.DocumentType.DocumentName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.DocumentType)
+                    <a href="#" class="document-link" data-document-id="@firstItem.Document.Id" data-filename="@firstItem.Document.FileName">
+                        @Html.DisplayFor(modelItem => firstItem.Document.FileName)
+                    </a>
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.FileName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FileType)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FileSize)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UpdatedAt)
+                    @Html.DisplayFor(modelItem => firstItem.Document.FileSize)
             </td>
                 <td>
-                    <a asp-action="Details" asp-route-id="@item.Id"><i class="mdi mdi-eye mdi-24px text-warning"></i></a>
-                    <a asp-action="Edit" asp-route-id="@item.Id"><i class="mdi mdi-lead-pencil mdi-24px text-primary"></i></a>
-                    <a asp-action="Delete" asp-route-id="@item.Id"><i class="mdi mdi-delete mdi-24px text-danger"></i></a>
+                    <a asp-action="Details" asp-route-id="@firstItem.Document.Id"><i class="mdi mdi-eye mdi-24px text-warning"></i></a>
+                    <a asp-action="Edit" asp-route-id="@firstItem.Document.Id"><i class="mdi mdi-lead-pencil mdi-24px text-primary"></i></a>
+                    <a asp-action="Delete" asp-route-id="@firstItem.Document.Id"><i class="mdi mdi-delete mdi-24px text-danger"></i></a>
                 </td>
         </tr>
+            @foreach (var item in grouping.Skip(1))
+            { 
+                stepCounter++; // Increment the counter for each subsequent item
+                <tr style="@(item == grouping.Last() ? lastRowStyle : "")">
+                    <td>
+                        @stepCounter. @Html.DisplayFor(modelItem => item.DocumentType.DocumentName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Document.FileName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Document.FileSize)
+                    </td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.Document.Id"><i class="mdi mdi-eye mdi-24px text-warning"></i></a>
+                        <a asp-action="Edit" asp-route-id="@item.Document.Id"><i class="mdi mdi-lead-pencil mdi-24px text-primary"></i></a>
+                        <a asp-action="Delete" asp-route-id="@item.Document.Id"><i class="mdi mdi-delete mdi-24px text-danger"></i></a>
+                    </td>
+
+                </tr>
+            }
 }
     </tbody>
 </table>
+<div class="modal fade" id="documentModal" tabindex="-1" role="dialog" aria-labelledby="documentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="documentModalLabel">Document Preview</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <iframe id="documentViewer" style="width: 100%; height: 500px;" frameborder="0"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+@section Scripts {
+    <script>
+        $(function () {
+            $('.document-link').on('click', function (e) {
+                e.preventDefault();
+                alert('Clicked!'); // Ensure alert() shows
+
+                var documentId = $(this).data('document-id');
+                var fileName = $(this).data('filename');
+
+                $('#documentModalLabel').text(fileName);
+                $('#documentViewer').attr('src', '/Documents/GetDocument/' + documentId);
+                $('#documentModal').modal('show');
+            });
+        });
+    </script>
+}
+
