@@ -73,7 +73,8 @@
                     @stepCounter. @Html.DisplayFor(modelItem => firstItem.DocumentType.DocumentName)
             </td>
             <td>
-                    <a href="#" class="document-link" data-document-id="@firstItem.Document.Id" data-filename="@firstItem.Document.FileName">
+                    <a href="#" class="document-link" data-bs-toggle="modal" data-bs-target="#documentModal"
+                       data-document-url="@Url.Action("GetDocument", "Documents", new { id = firstItem.Document.Id })">
                         @Html.DisplayFor(modelItem => firstItem.Document.FileName)
                     </a>
             </td>
@@ -94,7 +95,10 @@
                         @stepCounter. @Html.DisplayFor(modelItem => item.DocumentType.DocumentName)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Document.FileName)
+                        <a href="#" class="document-link" data-bs-toggle="modal" data-bs-target="#documentModal" 
+                        data-document-url="@Url.Action("GetDocument", "Documents", new { id = item.Document.Id })">
+                            @Html.DisplayFor(modelItem => item.Document.FileName)
+                        </a>
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Document.FileSize)
@@ -110,38 +114,43 @@
 }
     </tbody>
 </table>
-<div class="modal fade" id="documentModal" tabindex="-1" role="dialog" aria-labelledby="documentModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+<div class="modal fade" id="documentModal" tabindex="-1" aria-labelledby="documentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="documentModalLabel">Document Preview</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <h5 class="modal-title" id="documentModalLabel">Document Viewer</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <iframe id="documentViewer" style="width: 100%; height: 500px;" frameborder="0"></iframe>
+                <iframe id="documentViewer" src="" frameborder="0" style="width: 100%; height: 500px;"></iframe>
             </div>
         </div>
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 @section Scripts {
     <script>
-        $(function () {
-            $('.document-link').on('click', function (e) {
-                e.preventDefault();
-                alert('Clicked!'); // Ensure alert() shows
+        if (typeof jQuery == 'undefined') {
+            console.log('jQuery is not loaded');
+        } else {
+            $(document).ready(function () {
+                console.log("Script section loaded");
 
-                var documentId = $(this).data('document-id');
-                var fileName = $(this).data('filename');
+                // Use event delegation to attach event handler
+                $(document).on("click", ".document-link", function (e) {
+                    e.preventDefault();
+                    console.log("Link clicked");
 
-                $('#documentModalLabel').text(fileName);
-                $('#documentViewer').attr('src', '/Documents/GetDocument/' + documentId);
-                $('#documentModal').modal('show');
+                    var documentUrl = $(this).data('document-url');
+                    console.log(documentUrl);
+
+                    $('#documentViewer').attr('src', documentUrl);
+                });
             });
-        });
+        }
     </script>
 }
 
+
+ 

@@ -27,8 +27,12 @@ namespace Workflows.Models
         [Display(Name = "File Type")]
         public string? FileType { get; set; }
 
+        [Display(Name = "MIME Type")]
+        public string? MimeType { get; set; }
+
         [Display(Name = "Size")]
         public long FileSize { get; set; } = 0;
+
 
         [Display(Name = "File Path")]
         public string? FilePath { get; set; }

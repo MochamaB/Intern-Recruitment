@@ -312,6 +312,7 @@ namespace Workflows.Controllers
                                 DepartmentCode = requisition.DepartmentCode,
                                 FileName = file.FileName,
                                 FileType = file.ContentType,
+                                MimeType = file.ContentType,
                                 FileSize = file.Length,
                                 CreatedAt = DateTime.Now,
                                 UpdatedAt = DateTime.Now

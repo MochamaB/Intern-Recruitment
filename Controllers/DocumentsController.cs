@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic.FileIO;
 using Workflows.Data;
 using Workflows.Models;
 using Workflows.Services;
@@ -48,6 +50,8 @@ namespace Workflows.Controllers
 
             return View(viewModel);
         }
+
+       
 
         // GET: Documents/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -189,29 +193,74 @@ namespace Workflows.Controllers
             return _context.Document.Any(e => e.Id == id);
         }
 
-        public IActionResult GetDocument(int id)
+        // View PDF Files in the browser ///////
+        [HttpGet]
+        public async Task<IActionResult> GetDocument(int id)
         {
-            var document = _context.Document.FirstOrDefault(d => d.Id == id);
+            var document = await _context.Document.FindAsync(id);
             if (document == null)
+            {
                 return NotFound();
+            }
 
-            // Assuming the document is stored as a file on the server
-            var filePath = Path.Combine(_webHostEnvironment.WebRootPath, "documents", document.FileName);
-
+            var filePath = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", document.FileName);
             if (!System.IO.File.Exists(filePath))
+            {
                 return NotFound();
+            }
+            byte[] fileBytes = await System.IO.File.ReadAllBytesAsync(filePath);
+           
+            var contentType = GetContentType(filePath, document.FileType, document.MimeType);
 
-            return File(System.IO.File.OpenRead(filePath), GetContentType(filePath), document.FileName);
+            // Use Console.WriteLine to output the document details
+            Console.WriteLine($"ContentType: {contentType}");
+
+            // For PDFs and images, try to display inline
+            if (contentType.StartsWith("image/") || contentType == "application/pdf")
+            {
+                Console.WriteLine($"View: {contentType}");
+                Response.Headers.Append("Content-Disposition", new ContentDispositionHeaderValue("inline")
+                {
+                    FileName = document.FileName
+                }.ToString());
+
+                return File(fileBytes, contentType);
+            }
+            else
+            {
+                Console.WriteLine($"Download: {contentType}");
+                // For other file types, force download
+                return PhysicalFile(filePath, contentType, document.FileName);
+            }
         }
 
-        private string GetContentType(string filePath)
+        private string GetContentType(string path, string fileType, string mimeType) 
         {
-            var provider = new FileExtensionContentTypeProvider();
-            if (!provider.TryGetContentType(filePath, out var contentType))
+            // Use the provided mimeType if available
+            if (!string.IsNullOrEmpty(mimeType))
             {
-                contentType = "application/octet-stream";
+                return mimeType;
             }
-            return contentType;
+            var types = GetMimeTypes();
+            var ext = Path.GetExtension(path).ToLowerInvariant();
+            return types.GetValueOrDefault(ext, "application/octet-stream");
+        }
+        private Dictionary<string, string> GetMimeTypes()
+        {
+            return new Dictionary<string, string>
+            {
+                { ".txt", "text/plain" },
+                { ".pdf", "application/pdf" },
+                { ".doc", "application/vnd.ms-word" },
+                { ".docx", "application/vnd.ms-word" },
+                { ".xls", "application/vnd.ms-excel" },
+                { ".xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" },
+                { ".png", "image/png" },
+                { ".jpg", "image/jpeg" },
+                { ".jpeg", "image/jpeg" },
+                { ".gif", "image/gif" },
+                { ".csv", "text/csv" }
+            };
         }
     }
 
