@@ -101,18 +101,37 @@ namespace Workflows.Controllers
                 return NotFound();
             }
 
-            var document = await _context.Document.FindAsync(id);
+            var document = await _relationshipService.GetDocumentWithRelatedDataAsync((int)id);
             if (document == null)
             {
                 return NotFound();
             }
+
+            var viewModel = new DocumentEditViewModel
+            {
+                Id = document.Id,
+                Requisition_id = document.Requisition_id,
+                Intern_id = document.Intern_id,
+                DocumentTypeId = document.DocumentTypeId,
+                DepartmentCode = document.DepartmentCode,
+                FileName = document.FileName,
+                FileType = document.FileType,   
+                MimeType = document.MimeType,
+                FileSize = document.FileSize,
+                CreatedAt = document.CreatedAt,
+                UpdatedAt = DateTime.Now,
+                DepartmentName = document.Department?.DepartmentName,
+                Firstname = document.Intern?.Firstname,
+                Lastname = document.Intern?.Lastname,
+                DocType = document.DocumentType?.DocumentName
+            };
 
             if (!string.IsNullOrEmpty(returnUrl))
             {
                 TempData["ReturnUrl"] = returnUrl;
             }
 
-            return View(document);
+            return View(viewModel);
         }
 
         // POST: Documents/Edit/5
@@ -120,39 +139,63 @@ namespace Workflows.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Requisition_id,Intern_id,DocumentType,DepartmentCode,FileName,FileType,FileSize,CreatedAt,UpdatedAt")] Document document)
+        public async Task<IActionResult> Edit(DocumentEditViewModel model)
         {
-            if (id != document.Id)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
-                try
+                var document = await _context.Document.FindAsync(model.Id);
+                if (document == null)
                 {
-                    _context.Update(document);
-                    await _context.SaveChangesAsync();
+                    return NotFound();
                 }
-                catch (DbUpdateConcurrencyException)
+
+                if (model.NewFile != null && model.NewFile.Length > 0)
                 {
-                    if (!DocumentExists(document.Id))
+                    var oldFilePath = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", document.FileName);
+
+                    // Delete old file
+                    if (System.IO.File.Exists(oldFilePath))
                     {
-                        return NotFound();
+                        System.IO.File.Delete(oldFilePath);
                     }
-                    else
+
+                    // Save new file
+                    var newFilePath = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", model.NewFile.FileName);
+                    using (var stream = new FileStream(newFilePath, FileMode.Create))
                     {
-                        throw;
+                        await model.NewFile.CopyToAsync(stream);
                     }
+
+                    // Update document properties
+                    document.FileName = model.NewFile.FileName;
+                    document.FileType = model.NewFile.ContentType;
+                    document.MimeType = model.NewFile.ContentType;
+                    document.FileSize = model.NewFile.Length;
                 }
+
+                document.Requisition_id = model.Requisition_id;
+                document.Intern_id = model.Intern_id;
+                document.DocumentTypeId = model.DocumentTypeId;
+                document.DepartmentCode = model.DepartmentCode;
+                document.CreatedAt = model.CreatedAt;
+                document.UpdatedAt = DateTime.Now;
+
+                _context.Update(document);
+                await _context.SaveChangesAsync();
+
+
                 // Returns to the where the edit function was called
                 if (TempData.TryGetValue("ReturnUrl", out object returnUrl))
                 {
+                    TempData["SuccessMessage"] = "New Document uploaded successfully!";
                     return Redirect(returnUrl.ToString());
                 }
+                TempData["SuccessMessage"] = "New Document uploaded successfully!";
                 return RedirectToAction(nameof(Index));
             }
-            return View(document);
+
+            ViewBag.ErrorMessage = "Please check the page for validation errors.";
+            return View(model);
         }
 
         // GET: Documents/Delete/5

@@ -79,10 +79,13 @@ namespace Workflows.Services
         {
             using (var db = new KtdaleaveContext())
             {
-                var document = await _context.Document.FindAsync(documentId);
+                var document = await _context.Document
+                    .Include(d => d.DocumentType)
+                   .FirstOrDefaultAsync(d => d.Id == documentId);
                 if (document == null) return null;
 
                 document.Intern = await _context.Intern.FindAsync(document.Intern_id);
+                document.Department = db.Departments.FirstOrDefault(d => d.DepartmentCode == document.DepartmentCode);
 
 
                 return document;

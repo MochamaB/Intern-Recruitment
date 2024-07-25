@@ -50,5 +50,9 @@ namespace Workflows.Models
         public Intern? Intern { get; set; }
 
         public DocumentType DocumentType { get; set; }
+
+        // Navigation property
+        [NotMapped]
+        public Department? Department { get; set; }
     }
 }

@@ -12,51 +12,84 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
-                <label asp-for="Requisition_id" class="control-label"></label>
-                <input asp-for="Requisition_id" class="form-control" />
+                <input type="hidden" asp-for="Requisition_id" class="form-control" />
                 <span asp-validation-for="Requisition_id" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Intern_id" class="control-label"></label>
-                <input asp-for="Intern_id" class="form-control" />
+                <label asp-for="DepartmentCode" class="control-label"> Department</label><span class="requiredlabel">*</span>
+                <input type="hidden" asp-for="DepartmentCode" class="form-control" />
+                @if (Model.DepartmentName != null)
+                {
+                    <br />
+                    <h5>
+                        <small class="text-muted" style="text-transform: capitalize;">
+                            @Model.DepartmentName
+                        </small>
+                    </h5>
+                }
+                <span asp-validation-for="DepartmentCode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Intern_id" class="control-label"> Intern</label><span class="requiredlabel">*</span>
+                <input type="hidden" asp-for="Intern_id" class="form-control" />
+                @if (Model.Firstname != null)
+                {
+                    <br />
+                    <h5>
+                        <small class="text-muted" style="text-transform: capitalize;">
+                            @Model.Firstname @Model.Lastname
+                        </small>
+                    </h5>
+                }
+                
                 <span asp-validation-for="Intern_id" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="DocumentTypeId" class="control-label"></label>
-                <input asp-for="DocumentTypeId" class="form-control" />
+                <label asp-for="DocumentTypeId" class="control-label">Document Type</label><span class="requiredlabel">*</span>
+                <input type="hidden" asp-for="DocumentTypeId" class="form-control" />
+                <br />
+                <h5>
+                    @if (Model.DocType != null)
+                {
+                    <small class="text-muted" style="text-transform: capitalize;">
+                       @Model.DocType
+                    </small>
+                }
+                </h5>
                 <span asp-validation-for="DocumentTypeId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="NewFile"></label>
-                <input asp-for="NewFile" class="form-control-file" />
+                <label asp-for="NewFile" class="control-label"></label><span class="requiredlabel">*</span>
+                <input type="file" id="Newfile" asp-for="NewFile" class="form-control" />
+                <span id="Errospan" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="FileType" class="control-label"></label>
-                <input asp-for="FileType" class="form-control" />
+               
+                <input type="hidden" asp-for="FileType" class="form-control" />
                 <span asp-validation-for="FileType" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="MimeType" class="control-label"></label>
-                <input asp-for="MimeType" class="form-control" />
+               
+                <input type="hidden" asp-for="MimeType" class="form-control" />
                 <span asp-validation-for="MimeType" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="FileSize" class="control-label"></label>
-                <input asp-for="FileSize" class="form-control" />
+                <input type="hidden" asp-for="FileSize" class="form-control" />
                 <span asp-validation-for="FileSize" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="CreatedAt" class="control-label"></label>
-                <input asp-for="CreatedAt" class="form-control" />
+                
+                <input type="hidden" asp-for="CreatedAt" class="form-control" />
                 <span asp-validation-for="CreatedAt" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="UpdatedAt" class="control-label"></label>
-                <input asp-for="UpdatedAt" class="form-control" />
+               
+                <input type="hidden" asp-for="UpdatedAt" class="form-control" />
                 <span asp-validation-for="UpdatedAt" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Upload New File" class="btn btn-primary" />
             </div>
         </form>
     </div>
@@ -65,4 +98,22 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+<script>
+    function validateFiles() {
+        var isValid = true;
+       
 
+      
+            var fileInput = document.getElementById('Newfile');
+            var errorSpan = document.getElementById('Errorspan');
+
+            if (fileInput && fileInput.files.length === 0) {
+                isValid = false;
+                errorSpan.textContent = 'Please upload a document.';
+            } else {
+                errorSpan.textContent = '';
+      
+
+        return isValid;
+    }
+</script>

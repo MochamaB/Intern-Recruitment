@@ -5,7 +5,7 @@
 <form asp-controller="RequisitionWizard" asp-action="CreateIntern">
 <div class="row">
     <div class="col-md-6">
-            <h4><b>   Personal Details</b></h4><hr />
+            <h4><b>   Personal Details</b></h4><hr style="border:2px solid black"/>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
 
@@ -47,7 +47,7 @@
                 <span asp-validation-for="PhoneNumber" class="text-danger"></span>
             </div>
 
-            <h4><b>   Proffesional Details</b></h4><hr />
+            <h4><b>   Proffesional Details</b></h4><hr style="border:2px solid black" />
             <div class="form-group">
                 <label asp-for="Certification" class="control-label"></label><span class="requiredlabel">*</span>
                 <select asp-for="Certification" class="formcontrol2">

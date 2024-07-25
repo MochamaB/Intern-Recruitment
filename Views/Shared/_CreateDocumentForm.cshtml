@@ -32,14 +32,24 @@
     function validateFiles() {
         var isValid = true;
         var documentTypes = @Html.Raw(documentTypesJson);
+        var fileNames = new Set();
 
-        documentTypes.forEach(function(docType) {
+        documentTypes.forEach(function (docType) {
             var fileInput = document.getElementById('file_' + docType.Id);
             var errorSpan = document.getElementById('error_file_' + docType.Id);
 
             if (fileInput && fileInput.files.length === 0) {
                 isValid = false;
                 errorSpan.textContent = 'Please upload the ' + docType.DocumentName + ' document.';
+            } else if (fileInput && fileInput.files.length > 0) {
+                var fileName = fileInput.files[0].name;
+                if (fileNames.has(fileName)) {
+                    isValid = false;
+                    errorSpan.textContent = 'A file with the name "' + fileName + '" has already been selected. Please choose a different file.';
+                } else {
+                    fileNames.add(fileName);
+                    errorSpan.textContent = '';
+                }
             } else {
                 errorSpan.textContent = '';
             }

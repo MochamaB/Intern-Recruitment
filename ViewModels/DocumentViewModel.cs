@@ -24,13 +24,20 @@ namespace Workflows.ViewModels
         public int Intern_id { get; set; }
         public int DocumentTypeId { get; set; }
         public int DepartmentCode { get; set; }
-        public string FileName { get; set; }
-        public string FileType { get; set; }
+        public string? FileName { get; set; }
+        public string? FileType { get; set; }
         public string? MimeType { get; set; }
-        public long FileSize { get; set; }
+        public long? FileSize { get; set; }
         public string? FilePath { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public IFormFile NewFile { get; set; }
+
+        public string? DepartmentName { get; set; }
+        public string? Firstname { get; set; }
+        public string? Lastname { get; set; }
+        public string? DocType { get; set; }
+
+
     }
 }
