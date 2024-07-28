@@ -10,19 +10,19 @@
     
     <h4 style="color:#326408;font-weight:700;">1. Intern Details</h4>
     <hr />
-    <div class="col-md-6">
+    <div class="col-md-6 pb-1">
         <h6><strong>First Name: </strong>  @Model.Intern.Firstname</h6>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-6 pb-1">
         <h6><strong>Last Name: </strong>  @Model.Intern.Lastname</h6>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-6 pb-1">
         <h6><strong>ID Number:</strong>  @Model.Intern.Idnumber</h6>
     </div>
     <div class="col-md-6">
         <h6><strong>Email:</strong>  @Model.Intern.Email</h6>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-6 pb-1">
         <h6><strong>Phone Number:</strong> @Model.Intern.PhoneNumber</h6>
     </div>
     <hr style="visibility:hidden;" />
@@ -30,16 +30,16 @@
 
     <h4 style="color:#326408;font-weight:700;">2. Requisition Details</h4>
     <hr />
-    <div class="col-md-6">
+    <div class="col-md-6 pb-1">
         <h6><strong>Department:</strong>  @Model.DepartmentName</h6>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-6 pb-1">
         <h6><strong>Station:</strong>  @Model.Requisition.Station</h6>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-6 pb-1">
         <h6><strong>Start Date:</strong> @Model.Requisition.Start_Date.ToShortDateString()</h6>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-6 pb-1">
         <h6><strong>End Date:</strong> @Model.Requisition.End_Date.ToShortDateString()</h6>
      </div>
     <hr style="visibility:hidden;" />
@@ -57,7 +57,7 @@
                 <th style="font-size: 1rem; font-weight: bold; margin: 0;">No.</th>
                 <th style="font-size: 1rem; font-weight: bold; margin: 0;">Document Type</th>
                 <th style="font-size: 1rem; font-weight: bold; margin: 0;">Document Name</th>
-                <th style="font-size: 1rem; font-weight: bold; margin: 0;">Action</th>
+                
             </tr>
         </thead>
         <tbody>
@@ -70,7 +70,7 @@
                     <td>@(docCount++)</td>
                     <td>@doc.DocumentType?.DocumentName</td>
                     <td>@doc.Document.FileName</td>
-                    <td> </td>
+                    
                 </tr>
             }
         </tbody>
@@ -87,7 +87,7 @@
                     <th style="font-size: 1rem; font-weight: bold; margin: 0;">Approval Step</th>
                     <th style="font-size: 1rem; font-weight: bold; margin: 0;">Status</th>
                     <th style="font-size: 1rem; font-weight: bold; margin: 0;">Employee</th>
-                    <th style="font-size: 1rem; font-weight: bold; margin: 0;">Action</th>
+                    
                 </tr>
             </thead>
             <tbody>
@@ -98,7 +98,7 @@
                         <td>@approvalViewModel.Approval.ApprovalStep</td>
                         <td> @approvalViewModel.Approval.ApprovalStatus</td>
                         <td>@approvalViewModel.EmployeeName</td>
-                        <td></td>
+                       
                     </tr>
                 }
             </tbody>

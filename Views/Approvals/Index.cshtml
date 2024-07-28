@@ -39,7 +39,7 @@
     <thead>
         <tr>
             <th>
-                Req ID
+                ID
             </th>
             <th>
                Department - Intern
@@ -53,6 +53,9 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.ApprovalStatus)
+            </th>
+            <th>
+                Action
             </th>
             
             <th>
@@ -107,13 +110,7 @@
                         })">
                         @Html.DisplayFor(modelItem => firstItem.ApprovalStatus)
                     </span>
-                        <!-- SHOW THE APPROVAL OPTION IF STATUS IS PENDING-->
-                        @if (firstItem.ApprovalStatus == "Pending")
-                        {
-                        <a class="text-primary" asp-controller="Requisitions" asp-action="Details" asp-route-id="@firstItem.Requisition_id" data-bs-toggle="tooltip" data-placement="top" data-bs-original-title="Make Approval">
-                            <i class="mdi mdi-check-circle mdi-24px text-primary" style="vertical-align: middle;"></i> APPROVE
-                            </a>
-                        }
+                       
                     @if (firstItem.ApprovalStatus == "Rejected")
                     {
                     <br />
@@ -125,10 +122,20 @@
                     }
                   
                 </td>
+                <td>
+                    <!-- SHOW THE APPROVAL OPTION IF STATUS IS PENDING-->
+                    @if (firstItem.ApprovalStatus == "Pending")
+                    {
+                        <a class="text-primary" asp-controller="Requisitions" asp-action="Details" asp-route-id="@firstItem.Requisition_id" data-bs-toggle="tooltip" data-placement="top" data-bs-original-title="Make Approval">
+                            <i class="mdi mdi-check-circle mdi-24px text-primary" style="vertical-align: middle;"></i> APPROVE
+                        </a>
+                    }
+                </td>
                 
                 <td>
                     @Html.DisplayFor(modelItem => firstItem.UpdatedAt)
                 </td>
+               
                 <td>
                    
                     <a asp-action="Details" asp-route-id="@firstItem.Id"><i class="mdi mdi-eye mdi-24px text-warning"></i></a>
@@ -161,13 +168,7 @@
                         })">
                             @Html.DisplayFor(modelItem => item.ApprovalStatus)
                         </span>
-                        <!-- SHOW THE APPROVAL OPTION IF STATUS IS PENDING-->
-                        @if (item.ApprovalStatus == "Pending")
-                        {
-                            <a class="text-primary" asp-controller="Requisitions" asp-action="Details" asp-route-id="@item.Requisition_id" data-bs-toggle="tooltip" data-placement="top" data-bs-original-title="Make Approval">
-                                <i class="mdi mdi-check-circle mdi-24px text-primary" style="vertical-align: middle;"> </i> APPROVE
-                            </a>
-                        }
+                       
                         @if (firstItem.ApprovalStatus == "Rejected")
                         {
                         <br />
@@ -175,6 +176,15 @@
                            style="width:200px;" >
                             @Html.DisplayFor(modelItem => item.ApprovalComment)
                         </p>
+                        }
+                    </td>
+                    <td>
+                        <!-- SHOW THE APPROVAL OPTION IF STATUS IS PENDING-->
+                        @if (item.ApprovalStatus == "Pending")
+                        {
+                            <a class="text-primary" asp-controller="Requisitions" asp-action="Details" asp-route-id="@item.Requisition_id" data-bs-toggle="tooltip" data-placement="top" data-bs-original-title="Make Approval">
+                                <i class="mdi mdi-check-circle mdi-24px text-primary" style="vertical-align: middle;"></i> APPROVE
+                            </a>
                         }
                     </td>
                     <td>

@@ -11,7 +11,10 @@
         <!-- partial -->
         <div class="container-fluid page-body-wrapper">
             <!-- partial:../../partials/_sidebar.html -->
-            <partial name="_Sidebar" />
+            <div id="dynamicSidebar">
+                <partial name="_Sidebar" ,Model.SidebarViewModel />
+            </div>
+           
             <!-- partial -->
             <div class="main-panel">
                 <div class="content-wrapper" >
@@ -41,6 +44,9 @@
         </div>
         <!-- page-body-wrapper ends -->
     </div>
+   
+       
+    
     <!-- container-scroller -->
     <!-- plugins:js -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -49,6 +55,31 @@
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl)
         })
+    </script>
+    <script>
+        if (typeof jQuery == 'undefined') {
+            console.log('jQuery is not loaded');
+        } else {
+            $(document).ready(function () {
+                console.log("Script section loaded");
+
+                // Use event delegation to attach event handler
+                $(document).on("click", ".document-link", function (e) {
+                    e.preventDefault();
+                    console.log("Link clicked");
+
+                    var documentName = $(this).data('document-name');
+
+                    // Set the modal title and body content
+                    $('#documentModalLabel').text(documentName);
+
+                    var documentUrl = $(this).data('document-url');
+                    console.log(documentUrl);
+
+                    $('#documentViewer').attr('src', documentUrl);
+                });
+            });
+        }
     </script>
 
     <script src="~/vendors/js/vendor.bundle.base.js"></script>

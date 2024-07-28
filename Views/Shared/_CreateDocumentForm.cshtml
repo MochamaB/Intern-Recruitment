@@ -40,21 +40,39 @@
 
             if (fileInput && fileInput.files.length === 0) {
                 isValid = false;
+                // Set the input border to red
+                fileInput.style.border = '1px solid red';
                 errorSpan.textContent = 'Please upload the ' + docType.DocumentName + ' document.';
             } else if (fileInput && fileInput.files.length > 0) {
                 var fileName = fileInput.files[0].name;
                 if (fileNames.has(fileName)) {
                     isValid = false;
-                    errorSpan.textContent = 'A file with the name "' + fileName + '" has already been selected. Please choose a different file.';
+                    // Set the input border to red
+                    fileInput.style.border = '1px solid red';
+                    errorSpan.textContent = 'A file with the name "' + fileName + '" has already been selected.';
                 } else {
                     fileNames.add(fileName);
                     errorSpan.textContent = '';
                 }
             } else {
                 errorSpan.textContent = '';
+                fileInput.style.border = '1px solid #dee2e6'; // Removes the red border
+
             }
         });
 
         return isValid;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var documentTypes = @Html.Raw(documentTypesJson);
+            documentTypes.forEach(function (docType) {
+                var fileInput = document.getElementById('file_' + docType.Id);
+                if (fileInput) {
+                    fileInput.addEventListener('change', function () {
+                        document.getElementById('error_file_' + docType.Id).textContent = '';
+                    });
+                }
+            });
+        });
     }
 </script>

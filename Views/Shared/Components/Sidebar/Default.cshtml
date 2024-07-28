@@ -1,0 +1,12 @@
+﻿@model Workflows.ViewModels.SidebarViewModel
+
+<li class="nav-item">
+    <a class="nav-link" href="/Approvals/">
+        <i class="mdi mdi-check-circle menu-icon"></i>
+        <span class="menu-title" style="text-transform: uppercase;">Approvals</span>
+        @if (Model.ApprovalCount > 0)
+            {
+            <div class="badge badge-pill nav-badge">@Model.ApprovalCount</div>
+            }
+    </a>
+</li>

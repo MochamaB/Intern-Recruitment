@@ -19,17 +19,38 @@ namespace Workflows.Controllers
     {
         private readonly WorkflowsContext _context;
         private readonly IRelationshipService _relationshipService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public RequisitionsController(WorkflowsContext context, IRelationshipService relationshipService)
+        public RequisitionsController(WorkflowsContext context, IRelationshipService relationshipService, 
+            IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _relationshipService = relationshipService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         // GET: Requisitions
         public async Task<IActionResult> Index()
         {
-            var requisitions = await _context.Requisition.OrderByDescending(e => e.Id).ToListAsync();
+            var httpContext = _httpContextAccessor.HttpContext;
+            var userRole = httpContext.Session.GetString("EmployeeRole");
+            var userPayroll = httpContext.Session.GetString("EmployeePayrollNo");
+            var sessionDepartmentID = httpContext.Session.GetString("EmployeeDepartmentID");
+          
+
+            using var ktdaContext = new KtdaleaveContext();
+            var departmentCode = await ktdaContext.Departments
+                 .Where(d => d.DepartmentId == sessionDepartmentID)
+                .Select(e => e.DepartmentCode)
+                .FirstOrDefaultAsync();
+
+            Console.WriteLine($"sessionDepartmentID: {sessionDepartmentID}");
+              Console.WriteLine($"departmentCode: {departmentCode}");
+
+            var requisitions = await _context.Requisition
+                .Where(r => userRole == "Admin" || userRole == "HR" || r.DepartmentCode == departmentCode)
+                .OrderByDescending(e => e.Id).Take(50).ToListAsync();
+
             // Get the list of departments from the KtdaleaveContext
             var employeeName = new Dictionary<string, string>();
             var internName = new Dictionary<int, string>();
@@ -41,9 +62,11 @@ namespace Workflows.Controllers
             var approvalComment = new Dictionary<int, string>();
             var today = DateTime.Today;
             var daysLeftDictionary = new Dictionary<int, int>();
-            using (var ktdaContext = new KtdaleaveContext())
-            {
+           
                 departments = await ktdaContext.Departments.ToListAsync();
+              
+                // QUery to Get Requisitions ////
+
                 foreach (var requisition in requisitions)
                 {
                     var employee = ktdaContext.EmployeeBkps.FirstOrDefault(d => d.PayrollNo == requisition.PayrollNo);
@@ -108,7 +131,7 @@ namespace Workflows.Controllers
                         }
                     }
                 }
-            }
+            
 
             // Pass both sets of data to the view
             ViewBag.EmployeeNames = employeeName;
@@ -183,7 +206,7 @@ namespace Workflows.Controllers
             new TabViewModel.TabItem
             {
                 Id = "tab-1",
-                Title = "Summary",
+                Title = "1. View Summary",
                 PartialViewName = "_RequisitionSummary",
                 Model = requisitionDetails,
                 IsActive = true
@@ -191,7 +214,7 @@ namespace Workflows.Controllers
             new TabViewModel.TabItem
             {
                 Id = "tab-2",
-                Title = "Intern",
+                Title = "2. Intern Details",
                 PartialViewName = "_RequisitionIntern",
                 Model = requisitionDetails,
                 IsActive = false
@@ -199,7 +222,7 @@ namespace Workflows.Controllers
             new TabViewModel.TabItem
             {
                 Id = "tab-3",
-                Title = "Documents",
+                Title = "3. Review Documents",
                 PartialViewName = "_RequisitionDocument",
                 Model = requisitionDetails,
                 IsActive = false
@@ -207,7 +230,7 @@ namespace Workflows.Controllers
             new TabViewModel.TabItem
             {
                 Id = "tab-4",
-                Title = "Approvals",
+                Title = "4. Make Approval",
                 PartialViewName = "_RequisitionApproval",
                 Model = requisitionDetails,
                 IsActive = false

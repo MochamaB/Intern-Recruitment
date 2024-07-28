@@ -12,8 +12,8 @@
     {
         <li>
 
-            <div class="d-flex justify-content-between">
-                <div class="col-md-6">
+            <div class="col-md-8 d-flex justify-content-between">
+                <div class="col-md-10">
                     <h5 class="text-information"><b>@approvalStep.StepNumber. Approval Step:</b> @approvalStep.ApprovalStep </h5>
                     <hr />
                     <p class="text-muted mb-2 fw-bold"><b>UPDATED ON:</b> @approvalStep.CreatedAt </p>
@@ -27,13 +27,35 @@
                                         @approvalStep.PayrollNo
                                     }
                         </p>
+                                <div class="col-md-8">
+                                    @if (approvalStep.StepNumber == 1)
+                                    {
+                                        <div class="form-group">
+                                   
+                                            @if (ViewBag.EmployeeSelects.ContainsKey(approvalStep.ApprovalStep))
+                                            {
+                                                @Html.DropDownList($"ApprovalSteps[{approvalStep.ApprovalStep}].PayrollNo",
+                                                         (SelectList)ViewBag.EmployeeSelects[approvalStep.ApprovalStep],
+                                                         new { @class = "formcontrol2" })
+                                            }
+                                            else
+                                            {
+                                                <input type="text" class="form-control" value="@approvalStep.PayrollNo" readonly />
+                                            }
+                                            
+                                        </div>
+                                    }
+                                </div>
                     <p class="text-muted"><b>STATUS:</b>  @approvalStep.ApprovalStatus </p>
                 </div>
                 <div class="d-flex">
-                                
-               
-                        
-                </div>
+                                @if (approvalStep.StepNumber == 1)
+                                {
+                                    <a href="" id="ëdit" class=""><i class="mdi mdi-lead-pencil mdi-24px text-primary"></i></a>
+                                }
+
+
+                            </div>
             </div>
         </li>
         }
@@ -45,18 +67,5 @@
 </div>
 </form>
 <!-- Modal -->
-<div class="modal fade" id="editApproverModal" tabindex="-1" role="dialog" aria-labelledby="editApproverModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editApproverModalLabel">Edit Approver</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <!-- Form will be loaded here -->
-            </div>
-        </div>
-    </div>
-</div>
+
+

@@ -22,8 +22,9 @@ namespace Workflows.Controllers
         private readonly IApprovalService _approvalService;
         //   private readonly IDocumentService _documentService;
         private readonly IEmailService _emailService;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public RequisitionWizardController(WorkflowsContext context, IApprovalService approvalService,
+        public RequisitionWizardController(WorkflowsContext context, IApprovalService approvalService, IWebHostEnvironment webHostEnvironment,
           IEmailService emailService //   IDocumentService documentService
             )
         {
@@ -31,6 +32,7 @@ namespace Workflows.Controllers
             _approvalService = approvalService;
             //   _documentService = documentService;
             _emailService = emailService;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         private List<string> GetSteps()
@@ -267,10 +269,10 @@ namespace Workflows.Controllers
         {
             // Retrieve the requisition object from the session
             var requisition = HttpContext.Session.GetObject<Requisition>("WizardRequisition");
-           
+            var intern = HttpContext.Session.GetObject<Intern>("WizardIntern");
             var documentTypes = _context.DocumentType.ToList();
             var documentList = new List<Document>();
-
+           
 
             if (files.Count != documentTypes.Count)
             {
@@ -292,8 +294,11 @@ namespace Workflows.Controllers
 
                     if (file != null && file.Length > 0)
                     {
-                        // Save the file temporarily
-                        var tempFilePath = Path.Combine("wwwroot/uploads/", file.FileName);
+                    // Generate the new filename
+                    string newFileName = $"{intern.Firstname}_{intern.Lastname}_{documentType.DocumentName}{Path.GetExtension(file.FileName)}";
+
+                    // Save the file temporarily
+                    var tempFilePath = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", newFileName);
                     // Ensure the temporary directory exists
                //     if (!Directory.Exists(tempFilePath))
                  //   {
@@ -310,7 +315,7 @@ namespace Workflows.Controllers
                                 Intern_id = requisition.Intern_id,
                                 DocumentTypeId = documentType.Id,
                                 DepartmentCode = requisition.DepartmentCode,
-                                FileName = file.FileName,
+                                FileName = newFileName,
                                 FileType = file.ContentType,
                                 MimeType = file.ContentType,
                                 FileSize = file.Length,
@@ -349,6 +354,10 @@ namespace Workflows.Controllers
             // Create a dictionary to hold the employee names
             var employeeName = new Dictionary<string, string>();
 
+            var employeeSelects = new Dictionary<string, SelectList>();
+            // HR Department Code. To be changed later to get it through name and not hardcoded.
+            int HRDepartmentCode = 104;
+            string HRdepartmentCodeString = HRDepartmentCode.ToString();
             using (var db = new KtdaleaveContext())
             {
                 foreach (var approvalStep in approvalSteps)
@@ -359,9 +368,29 @@ namespace Workflows.Controllers
                     {
                         employeeName[approvalStep.PayrollNo] = employee.Fullname;
                     }
+                    List<EmployeeBkp> employees;
+                    if (approvalStep.ApprovalStep == "HOD Approval")
+                    {
+                        var department = db.Departments.FirstOrDefault(d => d.DepartmentCode == approvalStep.DepartmentCode);
+                        // Fetch employees in the same department as the approval
+                        employees = db.EmployeeBkps.Where(e => e.Department == department.DepartmentId &&
+                        e.EmpisCurrActive == 0).OrderBy(e => e.Fullname).ToList();
+                    }
+                    else if (approvalStep.ApprovalStep == "HR Officer Approval" || approvalStep.ApprovalStep == "HOH Approval")
+                    {
+                        employees = db.EmployeeBkps.Where(e => e.Department == HRdepartmentCodeString &&
+                        e.EmpisCurrActive == 0).OrderBy(e => e.Fullname).ToList();
+                    }
+                    else
+                    {
+                        employees = new List<EmployeeBkp>();
+                    }
+                    employeeSelects[approvalStep.ApprovalStep] = new SelectList(employees, "PayrollNo", "Fullname", approvalStep.PayrollNo);
+
                 }
             }
             ViewBag.EmployeeNames = employeeName;
+            ViewBag.EmployeeSelects = employeeSelects;
             ViewBag.Steps = GetSteps();
             ViewBag.CurrentStep = "Approvals";
             return View(RequisitionWizardViewPath, approvalSteps);
@@ -369,8 +398,33 @@ namespace Workflows.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateApproval(Approval approval)
+        public IActionResult CreateApproval(IFormCollection form)
         {
+            // Retrieve the approval steps from the session
+            var approvalSteps = HttpContext.Session.GetObject<List<Approval>>("WizardApprovalSteps");
+            if (approvalSteps != null)
+            {
+                // Find the approval step to update (HOD Approval or step 1)
+                var stepToUpdate = approvalSteps.FirstOrDefault(step => step.StepNumber == 1 || step.ApprovalStep == "HOD Approval");
+
+                if (stepToUpdate != null)
+                {
+                    string key = $"ApprovalSteps[{stepToUpdate.ApprovalStep}].PayrollNo";
+                    if (form.ContainsKey(key))
+                    {
+                        string newPayrollNo = form[key];
+                        if (!string.IsNullOrEmpty(newPayrollNo))
+                        {
+                            // Update the PayrollNo
+                            stepToUpdate.PayrollNo = newPayrollNo;
+
+                            // Save the updated list back to the session
+                            HttpContext.Session.SetObject("WizardApprovalSteps", approvalSteps);
+                        }
+                    }
+                }
+            }
+
 
             //  HttpContext.Session.Set("Approval", approval);
             TempData["SuccessMessage"] = "All approval levels created successfully!";

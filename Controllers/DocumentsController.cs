@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic.FileIO;
+using Workflows.Attributes;
 using Workflows.Data;
 using Workflows.Models;
 using Workflows.Services;
@@ -16,26 +18,44 @@ using Workflows.ViewModels;
 
 namespace Workflows.Controllers
 {
+    [CustomAuthorize]
     public class DocumentsController : Controller
     {
         private readonly WorkflowsContext _context;
         private readonly IRelationshipService _relationshipService;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        public DocumentsController(WorkflowsContext context,IRelationshipService relationshipService, IWebHostEnvironment webHostEnvironment)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public DocumentsController(WorkflowsContext context,IRelationshipService relationshipService, IWebHostEnvironment webHostEnvironment, 
+            IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _relationshipService = relationshipService;
             _webHostEnvironment = webHostEnvironment;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         // GET: Documents
         public async Task<IActionResult> Index()
         {
-            var documents = await _context.Document.ToListAsync();
+            var httpContext = _httpContextAccessor.HttpContext;
+            var userRole = httpContext.Session.GetString("EmployeeRole");
+            var userPayroll = httpContext.Session.GetString("EmployeePayrollNo");
+            var sessionDepartmentID = httpContext.Session.GetString("EmployeeDepartmentID");
+
+            using var db = new KtdaleaveContext();
+            var departmentCode = await db.Departments
+                .Where(d => d.DepartmentId == sessionDepartmentID)
+               .Select(e => e.DepartmentCode)
+               .FirstOrDefaultAsync();
+
+            var documents = await _context.Document
+               .Where(r => userRole == "Admin" || userRole == "HR" || r.DepartmentCode == departmentCode)
+                .OrderByDescending(e => e.Id).Take(50).ToListAsync();
+
             var documentTypes = _context.DocumentType.ToDictionary(dt => dt.Id);
             var interns = _context.Intern.ToDictionary(i => i.Id);
           
-            using var db = new KtdaleaveContext();
+          
             var departments = db.Departments.ToDictionary(d => d.DepartmentCode);
 
             var viewModel = documents.Select(document => new DocumentViewModel
@@ -143,7 +163,7 @@ namespace Workflows.Controllers
         {
             if (ModelState.IsValid)
             {
-                var document = await _context.Document.FindAsync(model.Id);
+                var document = await _relationshipService.GetDocumentWithRelatedDataAsync(model.Id);
                 if (document == null)
                 {
                     return NotFound();
@@ -159,15 +179,18 @@ namespace Workflows.Controllers
                         System.IO.File.Delete(oldFilePath);
                     }
 
+                    // Generate the new filename
+                    string newFileName = model.FileName;
+
                     // Save new file
-                    var newFilePath = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", model.NewFile.FileName);
+                    var newFilePath = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", newFileName);
                     using (var stream = new FileStream(newFilePath, FileMode.Create))
                     {
                         await model.NewFile.CopyToAsync(stream);
                     }
 
                     // Update document properties
-                    document.FileName = model.NewFile.FileName;
+                    document.FileName = newFileName;
                     document.FileType = model.NewFile.ContentType;
                     document.MimeType = model.NewFile.ContentType;
                     document.FileSize = model.NewFile.Length;

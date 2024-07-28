@@ -15,4 +15,9 @@ namespace Workflows.ViewModels
             public bool IsActive { get; set; }
         }
     }
+
+    public class SidebarViewModel
+    {
+        public int? ApprovalCount { get; set; }
+    }
 }

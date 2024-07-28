@@ -47,7 +47,7 @@ namespace Workflows.Controllers.Auth
                     HttpContext.Session.SetObject("Employee", employee);
                     HttpContext.Session.SetString("EmployeeName", employee.Fullname);
                     HttpContext.Session.SetString("EmployeePayrollNo", employee.PayrollNo);
-                    HttpContext.Session.SetString("EmployeeDepartment", employee.Department);
+                    HttpContext.Session.SetString("EmployeeDepartmentID", employee.Department);
                     HttpContext.Session.SetString("EmployeeRole", employee.Role);
 
 

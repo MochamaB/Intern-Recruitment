@@ -73,7 +73,7 @@
                     @stepCounter. @Html.DisplayFor(modelItem => firstItem.DocumentType.DocumentName)
             </td>
             <td>
-                    <a href="#" class="document-link" data-bs-toggle="modal" data-bs-target="#documentModal"
+                    <a href="#" class="document-link" data-bs-toggle="modal" data-bs-target="#documentModal" data-document-name="@firstItem.Document.FileName"
                        data-document-url="@Url.Action("GetDocument", "Documents", new { id = firstItem.Document.Id })">
                         @Html.DisplayFor(modelItem => firstItem.Document.FileName)
                     </a>
@@ -95,7 +95,7 @@
                         @stepCounter. @Html.DisplayFor(modelItem => item.DocumentType.DocumentName)
                     </td>
                     <td>
-                        <a href="#" class="document-link" data-bs-toggle="modal" data-bs-target="#documentModal" 
+                        <a href="#" class="document-link" data-bs-toggle="modal" data-bs-target="#documentModal" data-document-name="@item.Document.FileName"
                         data-document-url="@Url.Action("GetDocument", "Documents", new { id = item.Document.Id })">
                             @Html.DisplayFor(modelItem => item.Document.FileName)
                         </a>
@@ -141,6 +141,11 @@
                 $(document).on("click", ".document-link", function (e) {
                     e.preventDefault();
                     console.log("Link clicked");
+
+                    var documentName = $(this).data('document-name');
+
+                    // Set the modal title and body content
+                    $('#documentModalLabel').text(documentName);
 
                     var documentUrl = $(this).data('document-url');
                     console.log(documentUrl);

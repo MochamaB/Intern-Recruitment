@@ -1,7 +1,10 @@
 ﻿@model Workflows.ViewModels.RequisitionDetailsViewModel
+@{
 
-
-    @{
+    // Roles allowed to view admin functions. Add roles below to the roles Array//
+    // Roles available are "Admin","HR", "Hod", "supervisor","user","2_step_mgrs","2_step_secs","FieldUser","FieldSupervisor"
+    var rolesArray = new[] { "Admin", "HR" };
+    var roles = string.Join(",", rolesArray);
         var count = 1;
     }
     
@@ -28,7 +31,7 @@
             <th></th>
             <th> Document Type</th>
             <th>File Name</th>
-            <th>File Path</th>
+            <th>Size</th>
             <th></th>
         </tr>
     </thead>
@@ -38,15 +41,64 @@
             <tr>
                 <td> @(count++)</td>
                 <td> @document.DocumentType.DocumentName </td>
-                <td> @document.Document.FileName </td>
-                <td>  @document.Document.FilePath </td>
+                <td>
+                    <a href="#" class="document-link" data-bs-toggle="modal" data-bs-target="#documentModal" data-document-name="@document.Document.FileName"
+                       data-document-url="@Url.Action("GetDocument", "Documents", new { id = document.Document.Id })">
+                        @document.Document.FileName
+                    </a>
+                   
+
+                </td>
+                <td>  @document.Document.FileSize </td>
                 <td>
                     <a asp-controller="Documents" asp-action="Details" asp-route-id="@document.Document.Id"><i class="mdi mdi-eye mdi-24px text-warning"></i></a>
-                    <a asp-controller="Documents" asp-action="Edit" asp-route-id="@document.Document.Id" asp-route-returnUrl="@Url.Action("Details", "Requisitions", new { id = Model.Requisition.Id }, Context.Request.Scheme)"><i class="mdi mdi-lead-pencil mdi-24px text-primary"></i></a>
-                    <a asp-controller="Documents" asp-action="Delete" asp-route-id="@document.Document.Id"><i class="mdi mdi-delete mdi-24px text-danger"></i></a>
+                    <a asp-authorize-role="@roles" asp-controller="Documents" asp-action="Edit" asp-route-id="@document.Document.Id" asp-route-returnUrl="@Url.Action("Details", "Requisitions", new { id = Model.Requisition.Id }, Context.Request.Scheme)"><i class="mdi mdi-lead-pencil mdi-24px text-primary"></i></a>
+                    <a asp-authorize-role="@roles" asp-controller="Documents" asp-action="Delete" asp-route-id="@document.Document.Id"><i class="mdi mdi-delete mdi-24px text-danger"></i></a>
                 </td>
             </tr>
             }
 
     </tbody>
 </table>
+<div class="modal fade" id="documentModal" tabindex="-1" aria-labelledby="documentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="documentModalLabel">Document Viewer</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="padding:0px 2px">
+                <iframe id="documentViewer" src="" frameborder="0" style="width: 100%; height: 750px;"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        if (typeof jQuery == 'undefined') {
+            console.log('jQuery is not loaded');
+        } else {
+            $(document).ready(function () {
+                console.log("Script section loaded");
+
+                // Use event delegation to attach event handler
+                $(document).on("click", ".document-link", function (e) {
+                    e.preventDefault();
+                    console.log("Link clicked");
+
+                    var documentName = $(this).data('document-name');
+
+                    // Set the modal title and body content
+                    $('#documentModalLabel').text(documentName);
+
+                    var documentUrl = $(this).data('document-url');
+                    console.log(documentUrl);
+
+                    $('#documentViewer').attr('src', documentUrl);
+                });
+            });
+        }
+    </script>
+}

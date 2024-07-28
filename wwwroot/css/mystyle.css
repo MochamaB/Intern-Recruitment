@@ -147,11 +147,11 @@ a.text-primary:hover {
     text-decoration: underline; /* Add underline on hover */
     font-size: 1.015rem;
 }
-}
+
 .text-danger {
-    font-weight: 700;
-    color: rgba(var(--bs-danger-rgb), var(--bs-text-opacity)) !important;
-    font-size: 0.815rem;
+    font-weight: 600 !important;
+    color: red !important;
+    font-size: 0.915rem !important;
 }
 .text-error {
     font-weight: 700;
@@ -164,6 +164,15 @@ a.text-primary:hover {
     font-size: 0.815rem;
 }
 
+.nav-item .nav-badge {
+    color: #324721 !important;
+    border: 2px solid #324721 !important;
+}
+.nav-item.active .nav-badge {
+    color: #324721 ; /* Example: white text when active */
+    background-color: #fcb900; /* Example: blue background when active */
+    border-color: #fcb900; /* Example: blue border when active */
+}
 
 .form-control, .asColorPicker-input, .dataTables_wrapper select, .select2-container--default .select2-selection--single, .select2-container--default .select2-selection--single .select2-search__field, .typeahead, .tt-query, .tt-hint {
     border: 1px solid #dee2e6;

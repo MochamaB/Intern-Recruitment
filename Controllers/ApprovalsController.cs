@@ -45,6 +45,7 @@ namespace Workflows.Controllers
             var approvals = await _context.Approval
                  .Where(a => userRole == "Admin" || userRole == "HR" || a.PayrollNo == userPayroll)
                 .OrderByDescending(a => a.Requisition_id)
+                .Take(50)
                 .ToListAsync();
 
             // Get the list of departments from the KtdaleaveContext
