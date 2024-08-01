@@ -88,9 +88,9 @@ namespace Workflows.Controllers
 
             if (activeRequisitionsCount >= maxRequisitions)
             {
-                ViewBag.ErrorMessage = "This department has reached the maximum number of active requisitions.";
-                ModelState.AddModelError("", $"This department has reached the maximum number of active requisitions ({maxRequisitions}).");
-                return View(department);
+                ViewBag.ErrorMessage = "A requisition for this department cannot be added.";
+                ModelState.AddModelError("", $"This department has reached the maximum number of active requisitions ({maxRequisitions}). Contact HR Department for assistance");
+                return View(RequisitionWizardCheckDepartment);
             }
             HttpContext.Session.SetObject("WizardDepartment", department); // Save to session
 

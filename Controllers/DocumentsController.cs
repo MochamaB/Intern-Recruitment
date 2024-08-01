@@ -3,22 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic.FileIO;
-using Workflows.Attributes;
 using Workflows.Data;
 using Workflows.Models;
 using Workflows.Services;
 using Workflows.ViewModels;
+using Workflows.Attributes;
 
 namespace Workflows.Controllers
 {
-    [CustomAuthorize]
+     [CustomAuthorize]
     public class DocumentsController : Controller
     {
         private readonly WorkflowsContext _context;
@@ -163,7 +163,7 @@ namespace Workflows.Controllers
         {
             if (ModelState.IsValid)
             {
-                var document = await _relationshipService.GetDocumentWithRelatedDataAsync(model.Id);
+                var document = await _context.Document.FindAsync(model.Id);
                 if (document == null)
                 {
                     return NotFound();
@@ -179,18 +179,16 @@ namespace Workflows.Controllers
                         System.IO.File.Delete(oldFilePath);
                     }
 
-                    // Generate the new filename
-                    string newFileName = model.FileName;
 
                     // Save new file
-                    var newFilePath = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", newFileName);
+                    var newFilePath = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", model.NewFile.FileName);
                     using (var stream = new FileStream(newFilePath, FileMode.Create))
                     {
                         await model.NewFile.CopyToAsync(stream);
                     }
 
                     // Update document properties
-                    document.FileName = newFileName;
+                    document.FileName = model.NewFile.FileName;
                     document.FileType = model.NewFile.ContentType;
                     document.MimeType = model.NewFile.ContentType;
                     document.FileSize = model.NewFile.Length;
@@ -208,11 +206,11 @@ namespace Workflows.Controllers
 
 
                 // Returns to the where the edit function was called
-                if (TempData.TryGetValue("ReturnUrl", out object returnUrl))
-                {
-                    TempData["SuccessMessage"] = "New Document uploaded successfully!";
-                    return Redirect(returnUrl.ToString());
-                }
+               // if (TempData.TryGetValue("ReturnUrl", out object returnUrl))
+              //  {
+              //      TempData["SuccessMessage"] = "New Document uploaded successfully!";
+               //     return Redirect(returnUrl.ToString());
+             //   }
                 TempData["SuccessMessage"] = "New Document uploaded successfully!";
                 return RedirectToAction(nameof(Index));
             }

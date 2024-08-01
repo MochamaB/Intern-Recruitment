@@ -2,6 +2,11 @@
 
 @{
     ViewData["Title"] = "Index";
+    // Roles allowed to view admin functions. Add roles below to the roles Array//
+    // Roles available are "Admin","HR", "Hod", "supervisor","user","2_step_mgrs","2_step_secs","FieldUser","FieldSupervisor"
+    var rolesArray = new[] { "Admin", "HR" };
+    var roles = string.Join(",", rolesArray);
+
 }
 
 
@@ -90,8 +95,8 @@
             </td>
             <td>
                     <a asp-action="Details" asp-route-id="@item.Id"><i class="mdi mdi-eye mdi-24px text-warning"></i></a>
-                    <a asp-action="Edit" asp-route-id="@item.Id"><i class="mdi mdi-lead-pencil mdi-24px text-primary"></i></a> 
-                    <a asp-action="Delete" asp-route-id="@item.Id"> <i class="mdi mdi-delete mdi-24px text-danger"></i></a>
+                    <a asp-authorize-role="@roles" asp-action="Edit" asp-route-id="@item.Id"><i class="mdi mdi-lead-pencil mdi-24px text-primary"></i></a> 
+                    <a asp-authorize-role="@roles" asp-action="Delete" asp-route-id="@item.Id"> <i class="mdi mdi-delete mdi-24px text-danger"></i></a>
             </td>
         </tr>
 }

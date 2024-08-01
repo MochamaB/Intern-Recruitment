@@ -45,29 +45,29 @@
                 <span class="menu-title" style="text-transform: uppercase;">Department Reports</span>
             </a>
         </li>
-        <li class="nav-item nav-category">Administration</li>
+        <li asp-authorize-role="Admin" class="nav-item nav-category">Administration</li>
 
 
-        <li class="nav-item">
+        <li class="nav-item" asp-authorize-role="Admin">
             <a class="nav-link" href="/Settings/">
                 <i class="menu-icon mdi mdi mdi-settings"></i>
                 <span class="menu-title" style="text-transform: uppercase;">Settings</span>
             </a>
         </li>
 
-        <li class="nav-item">
+        <li class="nav-item" asp-authorize-role="Admin">
             <a class="nav-link" href="/Departments/">
                 <i class="menu-icon mdi mdi-account-multiple "></i>
                 <span class="menu-title" style="text-transform: uppercase;">Departments</span>
             </a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" asp-authorize-role="Admin">
             <a class="nav-link" href="/EmployeeBkps/">
                 <i class="menu-icon mdi mdi-account-card-details "></i>
                 <span class="menu-title" style="text-transform: uppercase;">Employees</span>
             </a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" asp-authorize-role="Admin">
             <a class="nav-link" href="/Roles/">
                 <i class="menu-icon mdi mdi-account-key "></i>
                 <span class="menu-title" style="text-transform: uppercase;">Roles</span>

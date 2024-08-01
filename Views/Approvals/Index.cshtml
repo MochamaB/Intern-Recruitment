@@ -10,7 +10,7 @@
 
 
 
-<a asp-action="Create" class="btn btn-primary text-white mb-0 me-0  float-end">
+<a asp-authorize-role="@roles" asp-action="Create" class="btn btn-primary text-white mb-0 me-0  float-end">
     <div style="display: flex; align-items: center;">
         <i class="mdi mdi-plus-circle-outline" style="margin-right: 5px;"></i>
         <span>  Create New</span>
