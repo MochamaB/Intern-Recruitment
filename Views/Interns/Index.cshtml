@@ -1,5 +1,4 @@
-﻿@model IEnumerable<Workflows.Models.Intern>
-
+﻿@model Workflows.ViewModels.InternIndexViewModel
 @{
     ViewData["Title"] = "Index";
     // Roles allowed to view admin functions. Add roles below to the roles Array//
@@ -11,8 +10,8 @@
 
 
   
-
-
+<div class=" table-responsive" id="dataTable">
+ <partial name="_FilterIntern" model="Model.Filter" />
 <table id="table"
        data-toggle="table"
        data-icon-size="sm"
@@ -59,7 +58,7 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var item in Model.Interns) {
         <tr>
             <td>
                     @foreach (var department in ViewBag.Departments)
@@ -102,3 +101,4 @@
 }
     </tbody>
 </table>
+</div>

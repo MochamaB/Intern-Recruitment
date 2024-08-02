@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Workflows.Models.Requisition>
+﻿@model Workflows.ViewModels.RequisitionIndexViewModel
 
 @{
     ViewData["Title"] = "Index";
@@ -16,7 +16,11 @@
     </div>
 </a>
 <div style="clear: both;"></div>
+
+
+
 <div class=" table-responsive" id="dataTable">
+    <partial name="_FilterRequisition" model="Model.Filter" />
     <table id="table"
            data-toggle="table"
            data-icon-size="sm"
@@ -42,31 +46,31 @@
                     ID
                 </th>
                 <th data-sortable="true">
-                    @Html.DisplayNameFor(model => model.DepartmentCode)
+                    Department
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Intern_id)
+                   Intern
                 </th>
                 <th>
                     Start - End Date
                 </th>
 
                 <th data-sortable="true">
-                    @Html.DisplayNameFor(model => model.Status)
+                    Status
                 </th>
                 <th data-sortable="true">Approvals</th>
                
                 <th>
-                    @Html.DisplayNameFor(model => model.Station)
+                    Station
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.PayrollNo)
+                    Added By
                 </th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
+            @foreach (var item in Model.Requisitions)
             {
                 <tr>
                     <td>

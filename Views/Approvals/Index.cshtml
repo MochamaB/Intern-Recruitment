@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Workflows.Models.Approval>
+﻿@model Workflows.ViewModels.ApprovalIndexViewModel
 
 @{
     ViewData["Title"] = "Index";
@@ -17,7 +17,8 @@
     </div>
 </a>
 <div style="clear: both;"></div>
-
+<div class=" table-responsive" id="dataTable">
+<partial name="_FilterApproval" model="Model.Filter" />
 <table id="table"
        data-toggle="table"
        data-icon-size="sm"
@@ -46,26 +47,26 @@
             </th>
 
             <th>
-                @Html.DisplayNameFor(model => model.ApprovalStep)
+                Approval Step
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PayrollNo)
+                Approver
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ApprovalStatus)
+                Status
             </th>
             <th>
                 Action
             </th>
             
             <th>
-                @Html.DisplayNameFor(model => model.UpdatedAt)
+               Approval Date
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var grouping in Model.GroupBy(a => a.Requisition_id))
+        @foreach (var grouping in Model.Approvals.GroupBy(a => a.Requisition_id))
         {
             int rowSpan = grouping.Count();
             var firstItem = grouping.First();
@@ -201,6 +202,7 @@
     </tbody>
 
 </table>
+</div>
 <script>
     $(document).ready(function(){
         $('[data-bs-toggle="tooltip"]').tooltip();

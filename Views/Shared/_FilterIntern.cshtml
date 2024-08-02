@@ -1,0 +1,47 @@
+﻿ @model Workflows.ViewModels.InternFilterViewModel
+
+@{
+
+    // Roles allowed to view admin functions. Add roles below to the roles Array//
+    // Roles available are "Admin","HR", "Hod", "supervisor","user","2_step_mgrs","2_step_secs","FieldUser","FieldSupervisor"
+    var rolesArray = new[] { "Admin", "HR" };
+    var roles = string.Join(",", rolesArray);
+}
+<br />
+
+<div class="filter">
+    <form asp-action="Index" method="get">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label asp-for="DepartmentCode" class="filterlabel">Department</label>
+                    <select asp-for="DepartmentCode" asp-items="Model.DepartmentList" class="formcontrol2">
+                        <option value=""> --- All Departments --- </option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label asp-for="Status" class="filterlabel">Status</label>
+                    <select asp-for="Status" asp-items="Model.StatusList" class="formcontrol2">
+                        <option value=""> --- All Statuses --- </option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label asp-for="Status" class="filterlabel">Status</label>
+                    <select asp-for="Status" asp-items="Model.SchoolList" class="formcontrol2">
+                        <option value=""> --- All Schools --- </option>
+                    </select>
+                </div>
+            </div>
+           
+            <div class="col-md-2 ms-auto text-end pt-4">
+                <button type="submit" class="btn btn-hazard mt-0 me-0">
+                    <i class="mdi mdi-filter mdi-24" style=""> </i>Apply Filter
+                </button>
+            </div>
+        </div>
+    </form>
+</div>

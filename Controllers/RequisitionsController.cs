@@ -30,7 +30,7 @@ namespace Workflows.Controllers
         }
 
         // GET: Requisitions
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(RequisitionFilterViewModel filter)
         {
             var httpContext = _httpContextAccessor.HttpContext;
             var userRole = httpContext.Session.GetString("EmployeeRole");
@@ -46,10 +46,34 @@ namespace Workflows.Controllers
 
             Console.WriteLine($"sessionDepartmentID: {sessionDepartmentID}");
               Console.WriteLine($"departmentCode: {departmentCode}");
+            var query = _context.Requisition
+            .Where(r => userRole == "Admin" || userRole == "HR" || r.DepartmentCode == departmentCode);
 
-            var requisitions = await _context.Requisition
-                .Where(r => userRole == "Admin" || userRole == "HR" || r.DepartmentCode == departmentCode)
-                .OrderByDescending(e => e.Id).Take(50).ToListAsync();
+            ///FILTERS
+            ///
+            if (filter.DepartmentCode.HasValue)
+            {
+                query = query.Where(r => r.DepartmentCode == filter.DepartmentCode.Value);
+            }
+            if (!string.IsNullOrEmpty(filter.Status))
+            {
+                query = query.Where(r => r.Status == filter.Status);
+            }
+
+            if (filter.StartDate.HasValue)
+            {
+                query = query.Where(r => r.Start_Date >= filter.StartDate.Value);
+            }
+
+            if (filter.EndDate.HasValue)
+            {
+                query = query.Where(r => r.End_Date <= filter.EndDate.Value);
+            }
+
+            var requisitions = await query
+             .OrderByDescending(e => e.Id)
+             .Take(50)
+             .ToListAsync();
 
             // Get the list of departments from the KtdaleaveContext
             var employeeName = new Dictionary<string, string>();
@@ -143,7 +167,21 @@ namespace Workflows.Controllers
             ViewBag.ApprovalStep = approvalStep;
             ViewBag.ApprovalComment = approvalComment;
             ViewBag.DaysLeftDictionary = daysLeftDictionary;
-            return View(requisitions);
+            var viewModel = new RequisitionIndexViewModel
+            {
+                Filter = filter,
+                Requisitions = requisitions
+            };
+            viewModel.Filter.StatusList = await _context.Requisition
+            .Select(r => r.Status)
+            .Distinct()
+            .Select(s => new SelectListItem { Value = s, Text = s })
+            .ToListAsync();
+            viewModel.Filter.DepartmentList = await ktdaContext.Departments
+              .Select(d => new SelectListItem { Value = d.DepartmentCode.ToString(), Text = d.DepartmentName })
+              .ToListAsync();
+
+            return View(viewModel);
         }
 
         // GET: Requisitions/Details/5

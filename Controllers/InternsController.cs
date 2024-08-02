@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Workflows.Attributes;
 using Workflows.Data;
 using Workflows.Models;
+using Workflows.ViewModels;
 
 namespace Workflows.Controllers
 {
@@ -16,30 +17,81 @@ namespace Workflows.Controllers
     {
         private readonly WorkflowsContext _context;
         private readonly KtdaleaveContext _ktdaleavecontext;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public InternsController(WorkflowsContext context, KtdaleaveContext ktdaleavecontext)
+
+        public InternsController(WorkflowsContext context, KtdaleaveContext ktdaleavecontext, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _ktdaleavecontext = ktdaleavecontext ?? throw new ArgumentNullException(nameof(ktdaleavecontext));
+            _httpContextAccessor = httpContextAccessor;
         }
 
         // GET: Interns
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(InternFilterViewModel filter)
         {
+            var httpContext = _httpContextAccessor.HttpContext;
+            var userRole = httpContext.Session.GetString("EmployeeRole");
+            var userPayroll = httpContext.Session.GetString("EmployeePayrollNo");
+            var sessionDepartmentID = httpContext.Session.GetString("EmployeeDepartmentID");
+
+            using var ktdaContext = new KtdaleaveContext();
+            var departmentCode = await ktdaContext.Departments
+                .Where(d => d.DepartmentId == sessionDepartmentID)
+               .Select(e => e.DepartmentCode)
+               .FirstOrDefaultAsync();
+            // FILTERS
+            var query = _context.Intern
+            .Where(r => userRole == "Admin" || userRole == "HR" || r.DepartmentCode == departmentCode);
+
+            if (filter.DepartmentCode.HasValue)
+            {
+                query = query.Where(r => r.DepartmentCode == filter.DepartmentCode.Value);
+            }
+            if (!string.IsNullOrEmpty(filter.Status))
+            {
+                query = query.Where(r => r.Status == filter.Status);
+            }
+            if (!string.IsNullOrEmpty(filter.School))
+            {
+                query = query.Where(r => r.School == filter.School);
+            }
             // Get the list of interns from the WorkflowContext
-            var interns = await _context.Intern.ToListAsync();
+            var interns = await query
+             .OrderByDescending(e => e.Id)
+             .Take(50)
+             .ToListAsync();
 
             // Get the list of departments from the KtdaleaveContext
             List<Department> departments;
-            using (var ktdaContext = new KtdaleaveContext())
-            {
+          
                 departments = await ktdaContext.Departments.ToListAsync();
-            }
+            
 
             // Pass both sets of data to the view
             ViewBag.Departments = departments;
+            var viewModel = new InternIndexViewModel
+            {
+                Filter = filter,
+                Interns = interns
+            };
+            viewModel.Filter.DepartmentList = await ktdaContext.Departments
+            .Select(d => new SelectListItem { Value = d.DepartmentCode.ToString(), Text = d.DepartmentName })
+            .ToListAsync();
 
-            return View(interns);
+            viewModel.Filter.StatusList = await _context.Intern
+              .Select(r => r.Status)
+              .Distinct()
+              .Select(s => new SelectListItem { Value = s, Text = s })
+              .ToListAsync();
+
+            viewModel.Filter.SchoolList = await _context.Intern
+            .Select(r => r.School)
+            .Distinct()
+            .Select(s => new SelectListItem { Value = s, Text = s })
+            .ToListAsync();
+
+            return View(viewModel);
         }
 
         // GET: Interns/Details/5

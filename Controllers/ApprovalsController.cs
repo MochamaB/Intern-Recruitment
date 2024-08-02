@@ -10,6 +10,7 @@ using Workflows.Attributes;
 using Workflows.Data;
 using Workflows.Models;
 using Workflows.Services;
+using Workflows.ViewModels;
 
 namespace Workflows.Controllers
 {
@@ -35,15 +36,33 @@ namespace Workflows.Controllers
         }
 
         // GET: Approvals
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(ApprovalFilterViewModel filter)
         {
             var httpContext = _httpContextAccessor.HttpContext;
             var userRole = httpContext.Session.GetString("EmployeeRole");
             var userPayroll = httpContext.Session.GetString("EmployeePayrollNo");
 
+            using var ktdaContext = new KtdaleaveContext();
+
+            // FILTERS
+            var query = _context.Approval
+            .Where(r => userRole == "Admin" || userRole == "HR" || r.PayrollNo == userPayroll);
+
+            if (filter.DepartmentCode.HasValue)
+            {
+                query = query.Where(r => r.DepartmentCode == filter.DepartmentCode.Value);
+            }
+            if (!string.IsNullOrEmpty(filter.Status))
+            {
+                query = query.Where(r => r.ApprovalStatus == filter.Status);
+            }
+            if (!string.IsNullOrEmpty(filter.ApprovalStep))
+            {
+                query = query.Where(r => r.ApprovalStep == filter.ApprovalStep);
+            }
+
             //// FILTER: Loggedin User can only see approvals assigned to them unless HR or Admin Roles
-            var approvals = await _context.Approval
-                 .Where(a => userRole == "Admin" || userRole == "HR" || a.PayrollNo == userPayroll)
+            var approvals = await query
                 .OrderByDescending(a => a.Requisition_id)
                 .Take(50)
                 .ToListAsync();
@@ -52,8 +71,7 @@ namespace Workflows.Controllers
             List<Department> departments;
             var employeeName = new Dictionary<string, string>();
             var internName = new Dictionary<int, string>();
-            using (var ktdaContext = new KtdaleaveContext())
-            {
+            
                 departments = await ktdaContext.Departments.ToListAsync();
 
                 foreach (var approvalStep in approvals)
@@ -72,13 +90,35 @@ namespace Workflows.Controllers
                     }
                 }
 
-            }
+            
 
             // Pass both sets of data to the view
             ViewBag.EmployeeNames = employeeName;
             ViewBag.InternNames = internName;
             ViewBag.Departments = departments;
-            return View(approvals);
+
+            var viewModel = new ApprovalIndexViewModel
+            {
+                Filter = filter,
+                Approvals = approvals
+            };
+
+            viewModel.Filter.DepartmentList = await ktdaContext.Departments
+           .Select(d => new SelectListItem { Value = d.DepartmentCode.ToString(), Text = d.DepartmentName })
+           .ToListAsync();
+
+            viewModel.Filter.StatusList = await _context.Approval
+              .Select(r => r.ApprovalStatus)
+              .Distinct()
+              .Select(s => new SelectListItem { Value = s, Text = s })
+              .ToListAsync();
+
+            viewModel.Filter.ApprovalStepList = await _context.Approval
+            .Select(r => r.ApprovalStep)
+            .Distinct()
+            .Select(s => new SelectListItem { Value = s, Text = s })
+            .ToListAsync();
+            return View(viewModel);
         }
 
         // GET: Approvals/Details/5

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Workflows.ViewModels.DocumentViewModel>
+﻿@model Workflows.ViewModels.DocumentIndexViewModel
 
 @{
     ViewData["Title"] = "Index";
@@ -16,7 +16,8 @@
     </div>
 </a>
 <div style="clear: both;"></div>
-
+<div class=" table-responsive" id="dataTable">
+    <partial name="_FilterDocument" model="Model.Filter" />
 <table id="table"
        data-toggle="table"
        data-icon-size="sm"
@@ -47,17 +48,17 @@
                Type
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Document.FileName)
+               Filename
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Document.FileSize)
+                Size
             </th>
            
             <th></th>
         </tr>
     </thead>
     <tbody>
-         @foreach (var grouping in Model.GroupBy(a => a.Document.Requisition_id))
+         @foreach (var grouping in Model.Documents.GroupBy(a => a.Document.Requisition_id))
         {
             int rowSpan = grouping.Count();
             var firstItem = grouping.First();
@@ -118,6 +119,7 @@
 }
     </tbody>
 </table>
+</div>
 <div class="modal fade" id="documentModal" tabindex="-1" aria-labelledby="documentModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">

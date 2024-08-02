@@ -15,6 +15,7 @@ using Workflows.Models;
 using Workflows.Services;
 using Workflows.ViewModels;
 using Workflows.Attributes;
+using System.ComponentModel;
 
 namespace Workflows.Controllers
 {
@@ -35,7 +36,7 @@ namespace Workflows.Controllers
         }
 
         // GET: Documents
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(DocumentFilterViewModel filter)
         {
             var httpContext = _httpContextAccessor.HttpContext;
             var userRole = httpContext.Session.GetString("EmployeeRole");
@@ -47,9 +48,21 @@ namespace Workflows.Controllers
                 .Where(d => d.DepartmentId == sessionDepartmentID)
                .Select(e => e.DepartmentCode)
                .FirstOrDefaultAsync();
+            // FILTERS
+            var query = _context.Document
+            .Where(r => userRole == "Admin" || userRole == "HR" || r.DepartmentCode == departmentCode);
 
-            var documents = await _context.Document
-               .Where(r => userRole == "Admin" || userRole == "HR" || r.DepartmentCode == departmentCode)
+            if (filter.DepartmentCode.HasValue)
+            {
+                query = query.Where(r => r.DepartmentCode == filter.DepartmentCode.Value);
+            }
+            if (filter.DocumentTypeId.HasValue)
+            {
+                query = query.Where(r => r.DocumentTypeId == filter.DocumentTypeId);
+            }
+            
+
+            var documents = await query
                 .OrderByDescending(e => e.Id).Take(50).ToListAsync();
 
             var documentTypes = _context.DocumentType.ToDictionary(dt => dt.Id);
@@ -58,7 +71,7 @@ namespace Workflows.Controllers
           
             var departments = db.Departments.ToDictionary(d => d.DepartmentCode);
 
-            var viewModel = documents.Select(document => new DocumentViewModel
+            var documentViewModels = documents.Select(document => new DocumentViewModel
             {
                 Document = document,
                 DocumentType = documentTypes.GetValueOrDefault(document.DocumentTypeId),
@@ -67,6 +80,19 @@ namespace Workflows.Controllers
                 ? department.DepartmentName
                 : null
             }).ToList();
+            // Create the combined view model
+            var viewModel = new DocumentIndexViewModel
+            {
+                Filter = filter,
+                Documents = documentViewModels
+            };
+            viewModel.Filter.DepartmentList = await db.Departments
+             .Select(d => new SelectListItem { Value = d.DepartmentCode.ToString(), Text = d.DepartmentName })
+             .ToListAsync();
+
+            viewModel.Filter.TypeList = await _context.DocumentType
+            .Select(dt => new SelectListItem { Value = dt.Id.ToString(), Text = dt.DocumentName })
+            .ToListAsync();
 
             return View(viewModel);
         }
