@@ -5,23 +5,39 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Workflows.Attributes;
 using Workflows.Models;
 
 namespace Workflows.Controllers
 {
+    [CustomAuthorize] /// Used to ensure authenticated users view this class/pages
     public class EmployeeBkpsController : Controller
     {
         private readonly KtdaleaveContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public EmployeeBkpsController(KtdaleaveContext context)
+        public EmployeeBkpsController(KtdaleaveContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         // GET: EmployeeBkps
         public async Task<IActionResult> Index()
         {
-            return View(await _context.EmployeeBkps.ToListAsync());
+            var httpContext = _httpContextAccessor.HttpContext;
+            var userRole = httpContext.Session.GetString("EmployeeRole");
+            var userPayroll = httpContext.Session.GetString("EmployeePayrollNo");
+            var sessionDepartmentID = httpContext.Session.GetString("EmployeeDepartmentID");
+
+            var query = _context.EmployeeBkps
+           .Where(r => userRole == "Admin" || userRole == "HR" || r.Department == sessionDepartmentID);
+
+            var employees = await query
+           .OrderByDescending(e => e.LastPay)
+           .Take(100)
+           .ToListAsync();
+            return View(employees);
         }
 
         // GET: EmployeeBkps/Details/5

@@ -16,5 +16,8 @@ namespace Workflows.Models
         public string? Value { get; set; }
       
         public string? Description { get; set; }
+
+        [NotMapped]
+        public Department? Department { get; set; }
     }
 }

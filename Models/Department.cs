@@ -37,6 +37,9 @@ public partial class Department
     [Unicode(false)]
     public string? OrgCode { get; set; }
 
+    [NotMapped]
+    public EmployeeBkp? Employee { get; set; }
+
     // Navigation property for the Interns associated with this Department
-  //  public ICollection<Intern> Interns { get; set; }
+    //  public ICollection<Intern> Interns { get; set; }
 }

@@ -11,6 +11,8 @@ namespace Workflows.Services
         Task<IEnumerable<Approval>> GetApprovalsForRequisitionAsync(int requisitionId);
         Task<Approval> GetApprovalWithRelatedDataAsync(int approvalId);
         Task<Document> GetDocumentWithRelatedDataAsync(int documentId);
+        Task<Setting> GetSettingWithRelatedDataAsync(int settingID);
+        Task<Department> GetDepartmentWithRelatedDataAsync(int settingID);
     }
 
     public class RelationshipService : IRelationshipService
@@ -89,6 +91,34 @@ namespace Workflows.Services
 
 
                 return document;
+            }
+        }
+
+        public async Task<Setting> GetSettingWithRelatedDataAsync(int settingID)
+        {
+            using (var db = new KtdaleaveContext())
+            {
+                var setting = await _context.Setting.FindAsync(settingID);
+                if (setting == null) return null;
+
+                setting.Department = db.Departments.FirstOrDefault(d => d.DepartmentCode == setting.DepartmentCode);
+              
+
+                return setting;
+            }
+        }
+
+        public async Task<Department> GetDepartmentWithRelatedDataAsync(int departmentCode)
+        {
+            using (var db = new KtdaleaveContext())
+            {
+                var department = await db.Departments.FindAsync(departmentCode);
+                if (department == null) return null;
+
+                department.Employee = db.EmployeeBkps.FirstOrDefault(e => e.PayrollNo == department.DepartmentHd);
+
+
+                return department;
             }
         }
     }

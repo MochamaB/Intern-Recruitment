@@ -4,28 +4,46 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+
 
 <h4>Setting</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
                 <label asp-for="Category" class="control-label"></label>
-                <input asp-for="Category" class="form-control" />
+                <input type="hidden" asp-for="Category" class="form-control" />
+                @if (Model.Category != null)
+                {
+                    <br />
+                    <h5>
+                        <small class="text-muted" style="text-transform: capitalize;">
+                            @Model.Category
+                        </small>
+                    </h5>
+                }
                 <span asp-validation-for="Category" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="DepartmentCode" class="control-label"></label>
-                <input asp-for="DepartmentCode" class="form-control" />
+                <input type="hidden" asp-for="DepartmentCode" class="form-control" />
+                @if (Model.Department != null)
+                {
+                    <br />
+                    <h5>
+                        <small class="text-muted" style="text-transform: capitalize;">
+                            @Model.Department.DepartmentName
+                        </small>
+                    </h5>
+                }
                 <span asp-validation-for="DepartmentCode" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Key" class="control-label"></label>
-                <input asp-for="Key" class="form-control" />
+            
+                <input type="hidden" asp-for="Key" class="form-control" />
                 <span asp-validation-for="Key" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -34,12 +52,12 @@
                 <span asp-validation-for="Value" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
+              
+                <input type="hidden" asp-for="Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Edit Setting" class="btn btn-primary" />
             </div>
         </form>
     </div>

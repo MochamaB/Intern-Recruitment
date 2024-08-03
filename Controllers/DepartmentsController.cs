@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Workflows.Attributes;
 using Workflows.Models;
 
 namespace Workflows.Controllers
 {
+    [CustomAuthorize] /// Used to ensure authenticated users view this class/pages
     public class DepartmentsController : Controller
     {
         private readonly KtdaleaveContext _context;
@@ -77,6 +79,13 @@ namespace Workflows.Controllers
             {
                 return NotFound();
             }
+            // Get the list of departments from the KtdaleaveContext
+            List<EmployeeBkp> employees = new List<EmployeeBkp>();
+           
+            employees = await _context.EmployeeBkps.Where(e => e.Department == department.DepartmentId &&
+                    e.EmpisCurrActive == 0).OrderBy(e => e.Fullname).ToListAsync();
+
+            ViewBag.Employees = new SelectList(employees, "PayrollNo", "Fullname", department.DepartmentHd);
             return View(department);
         }
 

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Workflows.Attributes;
 using Workflows.Data;
 using Workflows.Models;
+using Workflows.Services;
 
 namespace Workflows.Controllers
 {
@@ -16,11 +17,13 @@ namespace Workflows.Controllers
     {
         private readonly WorkflowsContext _context;
         private readonly KtdaleaveContext _ktdaleavecontext;
+        private readonly IRelationshipService _relationshipService;
 
-        public SettingsController(WorkflowsContext context, KtdaleaveContext ktdaleavecontext)
+        public SettingsController(WorkflowsContext context, KtdaleaveContext ktdaleavecontext, IRelationshipService relationshipService)
         {
             _context = context;
             _ktdaleavecontext = ktdaleavecontext ?? throw new ArgumentNullException(nameof(ktdaleavecontext));
+            _relationshipService = relationshipService;
         }
 
         // GET: Settings
@@ -97,7 +100,7 @@ namespace Workflows.Controllers
                 return NotFound();
             }
 
-            var setting = await _context.Setting.FindAsync(id);
+            var setting = await _relationshipService.GetSettingWithRelatedDataAsync((int)id);
             if (setting == null)
             {
                 return NotFound();
@@ -135,6 +138,7 @@ namespace Workflows.Controllers
                         throw;
                     }
                 }
+                TempData["SuccessMessage"] = "The setting has been edited successfully!";
                 return RedirectToAction(nameof(Index));
             }
             return View(setting);
