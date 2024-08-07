@@ -3,9 +3,14 @@
 
 
 <form asp-controller="RequisitionWizard" asp-action="CreateIntern">
-<div class="row">
-    <div class="col-md-6">
-            <h4><b>   Personal Details</b></h4><hr style="border:2px solid black"/>
+    <div class="row">
+        <!-- Personal Details Section -->
+        <div class="col-md-10">
+            <h4><b>Enter Personal Details</b></h4>
+            <hr style="border:2px solid black" />
+        </div>
+        <div class="col-md-6">
+          
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
 
@@ -46,8 +51,15 @@
                 <input asp-for="PhoneNumber" class="form-control" />
                 <span asp-validation-for="PhoneNumber" class="text-danger"></span>
             </div>
+        </div>
+        <!-- Professional Details Section -->
+        <div class="col-md-10">
+            <h4><b> Enter Professional Details</b></h4>
+            <hr style="border:2px solid black" />
+        </div>
+        <div class="col-md-6">
 
-            <h4><b>   Proffesional Details</b></h4><hr style="border:2px solid black" />
+          
             <div class="form-group">
                 <label asp-for="Certification" class="control-label"></label><span class="requiredlabel">*</span>
                 <select asp-for="Certification" class="formcontrol2">
@@ -68,11 +80,10 @@
                 <input asp-for="School" class="form-control" />
                 <span asp-validation-for="School" class="text-danger"></span>
             </div>
-          
 
-       
+        </div>
+
     </div>
-        <!-- Add the wizard buttons-->
-        <partial name="_WizardBottom" />
+    <!-- Add the wizard buttons-->
+    <partial name="_WizardBottom" />
 </form>
-</div>

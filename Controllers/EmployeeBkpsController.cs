@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Workflows.Attributes;
 using Workflows.Models;
+using Workflows.ViewModels;
 
 namespace Workflows.Controllers
 {
@@ -23,7 +24,7 @@ namespace Workflows.Controllers
         }
 
         // GET: EmployeeBkps
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(EmployeeFilterViewModel filter)
         {
             var httpContext = _httpContextAccessor.HttpContext;
             var userRole = httpContext.Session.GetString("EmployeeRole");
@@ -33,11 +34,69 @@ namespace Workflows.Controllers
             var query = _context.EmployeeBkps
            .Where(r => userRole == "Admin" || userRole == "HR" || r.Department == sessionDepartmentID);
 
+            if (!string.IsNullOrEmpty(filter.Department))
+            {
+                query = query.Where(r => r.Department == filter.Department);
+            }
+            if (!string.IsNullOrEmpty(filter.Scale))
+            {
+                query = query.Where(r => r.Scale == filter.Scale);
+            }
+            if (!string.IsNullOrEmpty(filter.Role))
+            {
+                query = query.Where(r => r.Role == filter.Role);
+            }
+
             var employees = await query
            .OrderByDescending(e => e.LastPay)
            .Take(100)
            .ToListAsync();
-            return View(employees);
+
+            var departments = await _context.Departments.GroupBy(d => d.DepartmentId).ToDictionaryAsync(g => g.Key, g => g.First().DepartmentName);
+           
+            var employeeViewModels = employees.Select(e => new EmployeeViewModel
+            {
+                Fullname = e.Fullname,
+                Username = e.Username,
+                Designation = e.Designation,
+                EmailAddress = e.EmailAddress,
+                PayrollNo = e.PayrollNo,
+                Station = e.Station,
+                RoleName = e.Role,
+                Scale = e.Scale,
+                EmployeId = e.EmployeId,
+                ContractEnd = e.ContractEnd,
+                HireDate = e.HireDate,
+                LastPay = e.LastPay,
+                EmpisCurrActive = e.EmpisCurrActive,
+                Hod = e.Hod,
+                Supervisor = e.Supervisor,
+                DepartmentName = e.Department != null && departments.TryGetValue(e.Department, out var departmentName) ? departmentName : null
+            }).ToList();
+
+            var viewModel = new EmployeeIndexViewModel
+            {
+                Filter = filter,
+                Employees = employeeViewModels
+            };
+
+            viewModel.Filter.DepartmentList = await _context.Departments
+           .Select(d => new SelectListItem { Value = d.DepartmentCode.ToString(), Text = d.DepartmentName })
+           .ToListAsync();
+
+            viewModel.Filter.ScaleList = await _context.EmployeeBkps
+              .Select(r => r.Scale)
+              .Distinct()
+              .Select(s => new SelectListItem { Value = s, Text = s })
+              .ToListAsync();
+
+            viewModel.Filter.RoleList = await _context.EmployeeBkps
+            .Select(r => r.Role)
+            .Distinct()
+            .Select(s => new SelectListItem { Value = s, Text = s })
+            .ToListAsync();
+
+            return View(viewModel);
         }
 
         // GET: EmployeeBkps/Details/5

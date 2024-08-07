@@ -64,4 +64,22 @@ namespace Workflows.ViewModels
         public DocumentFilterViewModel Filter { get; set; }
         public List<DocumentViewModel> Documents { get; set; }
     }
+
+    public class EmployeeFilterViewModel
+    {
+        public string? Department { get; set; }
+        public string? Station { get; set; }
+        public string? Role { get; set; }
+        public string? Scale { get; set; }
+
+        public List<SelectListItem>? DepartmentList { get; set; }
+        public List<SelectListItem>? StationList { get; set; }
+        public List<SelectListItem>? RoleList { get; set; }
+        public List<SelectListItem>? ScaleList { get; set; }
+    }
+    public class EmployeeIndexViewModel
+    {
+        public EmployeeFilterViewModel Filter { get; set; }
+        public List<EmployeeViewModel> Employees { get; set; }
+    }
 }

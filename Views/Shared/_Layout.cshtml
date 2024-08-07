@@ -60,7 +60,7 @@
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl)
         })
-        @await RenderSectionAsync("Scripts", required: false)
+     
         
     </script>
     <script>
@@ -70,6 +70,7 @@
             $(document).ready(function () {
                 console.log("Script section loaded");
 
+                //// SCRIPT TO VIEW DOCUMENT /////
                 // Use event delegation to attach event handler
                 $(document).on("click", ".document-link", function (e) {
                     e.preventDefault();
@@ -85,9 +86,29 @@
 
                     $('#documentViewer').attr('src', documentUrl);
                 });
+
+                /// SCRIPT TO PRINT PAGE///
+                $(document).on("click", ".printbutton", function (e) {
+                    e.preventDefault();
+                    printDiv('printableArea');
+                    
+                });
+                function printDiv(divClass) {
+                    var printContents = document.querySelector('.' + divClass);
+                    if (printContents) {
+                        var originalContents = document.body.innerHTML;
+                        document.body.innerHTML = printContents.innerHTML;
+                        window.print();
+                        document.body.innerHTML = originalContents;
+                    } else {
+                        console.error('Element with class "' + divClass + '" not found.');
+                    }
+                }
+
             });
         }
     </script>
+ 
 
     <script src="~/vendors/js/vendor.bundle.base.js"></script>
     <script src="~/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
@@ -110,6 +131,7 @@
     <!-- Custom js for this page-->
     <script src="~/js/profile-demo.js"></script>
     <!-- End custom js for this page-->
+    @await RenderSectionAsync("Scripts", required: false)
    
 </body>
 

@@ -4,53 +4,58 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
 
-<h4>Approval</h4>
+<h4>Add Approval Level</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
+    <div class="col-md-6">
+        <form asp-action="Create" id="approvalForm">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Requisition_id" class="control-label"></label>
+                <label asp-for="Requisition_id" class="control-label">Enter the Requisition ID</label>
                 <input asp-for="Requisition_id" class="form-control" />
                 <span asp-validation-for="Requisition_id" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="DepartmentCode" class="control-label"></label>
-                <input asp-for="DepartmentCode" class="form-control" />
-                <span asp-validation-for="DepartmentCode" class="text-danger"></span>
+                <button type="button" id="loadDetailsBtn" class="btn btn-primary">Load Details</button>
             </div>
-            <div class="form-group">
-                <label asp-for="ApprovalStep" class="control-label"></label>
-                <input asp-for="ApprovalStep" class="form-control" />
-                <span asp-validation-for="ApprovalStep" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PayrollNo" class="control-label"></label>
-                <input asp-for="PayrollNo" class="form-control" />
-                <span asp-validation-for="PayrollNo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ApprovalStatus" class="control-label"></label>
-                <input asp-for="ApprovalStatus" class="form-control" />
-                <span asp-validation-for="ApprovalStatus" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ApprovalComment" class="control-label"></label>
-                <input asp-for="ApprovalComment" class="form-control" />
-                <span asp-validation-for="ApprovalComment" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreatedAt" class="control-label"></label>
-                <input asp-for="CreatedAt" class="form-control" />
-                <span asp-validation-for="CreatedAt" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UpdatedAt" class="control-label"></label>
-                <input asp-for="UpdatedAt" class="form-control" />
-                <span asp-validation-for="UpdatedAt" class="text-danger"></span>
+            <hr>
+            <div id="additionalFields" style="display:none;">
+                <div class="form-group">
+                    <label asp-for="DepartmentCode" class="control-label"></label>
+                    <input asp-for="DepartmentCode" class="form-control" />
+                    <span asp-validation-for="DepartmentCode" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ApprovalStep" class="control-label"></label>
+                    <input asp-for="ApprovalStep" class="form-control" />
+                    <span asp-validation-for="ApprovalStep" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PayrollNo" class="control-label"></label>
+                    <input asp-for="PayrollNo" class="form-control" />
+                    <span asp-validation-for="PayrollNo" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ApprovalStatus" class="control-label"></label>
+                    <input asp-for="ApprovalStatus" class="form-control" />
+                    <span asp-validation-for="ApprovalStatus" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ApprovalComment" class="control-label"></label>
+                    <input asp-for="ApprovalComment" class="form-control" />
+                    <span asp-validation-for="ApprovalComment" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="CreatedAt" class="control-label"></label>
+                    <input asp-for="CreatedAt" class="form-control" />
+                    <span asp-validation-for="CreatedAt" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="UpdatedAt" class="control-label"></label>
+                    <input asp-for="UpdatedAt" class="form-control" />
+                    <span asp-validation-for="UpdatedAt" class="text-danger"></span>
+                </div>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
@@ -62,4 +67,26 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#loadDetailsBtn").click(function () {
+                var requisitionId = $("#RequisitionIdInput").val();
+
+                if (requisitionId) {
+                    // Optional: Add validation or AJAX call to verify requisitionId
+
+                    // Show the additional fields
+                    $("#additionalFields").show();
+
+                    // Optionally, hide the load details button
+                    $(this).hide();
+                } else {
+                    alert("Please enter a valid Requisition ID.");
+                }
+            });
+        });
+    </script>
+}
+
 

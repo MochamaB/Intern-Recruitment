@@ -50,8 +50,8 @@
             var steps = @Html.Raw(Json.Serialize(ViewBag.Steps));
             var currentStep = steps.indexOf('@ViewBag.CurrentStep');
 
-
-
+           
+            console.log("WizardScript section loaded");
             // Set the active tab initially
             $("#step" + currentStep).addClass("active");
             // Add 'complete' class to all previous steps

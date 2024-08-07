@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Workflows.Models.EmployeeBkp>
+﻿@model Workflows.ViewModels.EmployeeIndexViewModel
 
 @{
     ViewData["Title"] = "Index";
@@ -39,97 +39,80 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Designation)
+               Department
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.EmailAddress)
+                    Fullname
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.SurName)
+                    Username
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.OtherNames)
+                    Designation
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Station)
+                    EmailAddress
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PasswordP)
+                    PayrollNo
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Hod)
+                    Station
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Supervisor)
+                    Hod
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Role)
+                    Supervisor
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.OtherName)
+                    User Role
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Department)
+                    Scale
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.EmployeId)
+                    EmployeId
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ContractEnd)
+                    ContractEnd
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.HireDate)
+                HireDate
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ServiceYears)
+                    LastPay
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Username)
+                    EmpisCurrActive
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.RetireDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Pass)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LastPay)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Scale)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EmpisCurrActive)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.OrgGroup)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Fullname)
-            </th>
+           
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var item in Model.Employees) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Designation)
+                @Html.DisplayFor(modelItem => item.DepartmentName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.EmailAddress)
+                @Html.DisplayFor(modelItem => item.Fullname)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.SurName)
+                        @Html.DisplayFor(modelItem => item.Username)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.OtherNames)
+                        @Html.DisplayFor(modelItem => item.Designation)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Station)
+                        @Html.DisplayFor(modelItem => item.EmailAddress)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.PasswordP)
+                        @Html.DisplayFor(modelItem => item.PayrollNo)
+            </td>
+            <td>
+                        @Html.DisplayFor(modelItem => item.Station)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Hod)
@@ -138,54 +121,30 @@
                 @Html.DisplayFor(modelItem => item.Supervisor)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Role)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.OtherName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Department)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EmployeId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ContractEnd)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.HireDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ServiceYears)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Username)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RetireDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Pass)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastPay)
+                @Html.DisplayFor(modelItem => item.RoleName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Scale)
             </td>
             <td>
+                @Html.DisplayFor(modelItem => item.EmployeId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.HireDate)
+            </td>
+    
+            <td>
+                @Html.DisplayFor(modelItem => item.LastPay)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.EmpisCurrActive)
             </td>
+           
             <td>
-                @Html.DisplayFor(modelItem => item.OrgGroup)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Fullname)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                        <a asp-action="Details" asp-route-payrollNo="@item.PayrollNo"><i class="mdi mdi-eye mdi-24px text-warning"></i></a>
+                        <a asp-authorize-role="@roles" asp-action="Edit" asp-route-id="@item.PayrollNo"><i class="mdi mdi-lead-pencil mdi-24px text-primary"></i></a>
+                        <a asp-authorize-role="@roles" asp-action="Delete" asp-route-id="@item.PayrollNo"> <i class="mdi mdi-delete mdi-24px text-danger"></i></a>
+              
             </td>
         </tr>
 }
