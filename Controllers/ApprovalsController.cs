@@ -245,10 +245,17 @@ namespace Workflows.Controllers
                         .Where(d => d.PayrollNo == approval.PayrollNo)
                         .Select(e => e.EmailAddress)
                         .FirstOrDefaultAsync();
-
+                        /// SEND EMAIL ///
                         if (approverEmail != null)
                         {
-                            await _emailService.SendApprovalPendingNotificationAsync(approverEmail, approval.Requisition_id);
+                            try
+                            {
+                                await _emailService.SendApprovalPendingNotificationAsync(approverEmail, approval.Requisition_id);
+                            }
+                            catch (ApplicationException ex)
+                            {
+                                TempData["ErrorMessage"] = "Email was not sent.Contact Webmaster ICT and notify the intended person(s) manually";
+                            }
                         }
                     }
                 }

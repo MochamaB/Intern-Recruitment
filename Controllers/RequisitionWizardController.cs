@@ -43,6 +43,13 @@ namespace Workflows.Controllers
         [HttpGet]
         public IActionResult checkDepartment()
         {
+            // Clear the session data when the wizard is started
+            HttpContext.Session.Remove("WizardDepartment");
+            HttpContext.Session.Remove("WizardRequisition");
+            HttpContext.Session.Remove("WizardIntern");
+            HttpContext.Session.Remove("WizardApprovalSteps");
+            HttpContext.Session.Remove("WizardDocumentList");
+
             using (var db = new KtdaleaveContext())
             {
                 var departments = db.Departments.ToList();
@@ -57,6 +64,7 @@ namespace Workflows.Controllers
                
                 return View(RequisitionWizardCheckDepartment);
             }
+
            
         }
         // POST: Requisition/CheckDepartment
@@ -558,7 +566,15 @@ namespace Workflows.Controllers
                     // Get Employee who raised requisition.
                     var requester = db.EmployeeBkps.FirstOrDefault(d => d.PayrollNo == requisition.PayrollNo);
                     var requesterEmail = requester.EmailAddress;
-                    await _emailService.SendRequistionCreatedNotificationAsync(requesterEmail, requisition.Id);
+                  
+                    try
+                    {
+                        await _emailService.SendRequistionCreatedNotificationAsync(requesterEmail, requisition.Id);
+                    }
+                    catch (ApplicationException ex)
+                    {
+                        TempData["ErrorMessage"] = "Email was not sent.Contact Webmaster ICT and notify the intended person(s) manually";
+                    }
 
                     // Get the first approval's payroll number
                     var firstApprovalPayrollNo = approvalSteps[0].PayrollNo;

@@ -101,7 +101,9 @@ namespace Workflows.Services
             if (currentApprover != null)
             {
                 string currentStep = $"{currentApproval.StepNumber}. {currentApproval.ApprovalStep}";
+
                 await _emailService.SendApprovalMadeNotificationAsync(employee.EmailAddress, currentApprover, currentStep, currentRequisition.Id);
+
             }
 
             var nextApproval = await _context.Approval

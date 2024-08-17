@@ -111,7 +111,7 @@
                     <td>
                         <a asp-action="Details" asp-route-id="@item.Document.Id"><i class="mdi mdi-eye mdi-24px text-warning"></i></a>
                         <a asp-authorize-role="@roles" asp-action="Edit" asp-route-id="@item.Document.Id"><i class="mdi mdi-lead-pencil mdi-24px text-primary"></i></a>
-                        <a asp-authorize-role="@roles" asp-action="Delete" asp-route-id="@item.Document.Id"><i class="mdi mdi-delete mdi-24px text-danger"></i></a>
+                        <a asp-authorize-role="Admin" asp-action="Delete" asp-route-id="@item.Document.Id"><i class="mdi mdi-delete mdi-24px text-danger"></i></a>
                     </td>
 
                 </tr>

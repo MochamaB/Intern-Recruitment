@@ -24,26 +24,34 @@ namespace Workflows.Services
 
         public async Task SendEmailAsync(string toEmail, string subject, string body)
         {
-            // Implement email sending logic here
-            // You can use a third-party email service or configure your own SMTP server
-            var smtpServer = _configuration["SMTP:Server"];
-            var smtpPort = int.Parse(_configuration["SMTP:Port"]);
-            var smtpUsername = _configuration["SMTP:Username"];
-            var smtpPassword = _configuration["SMTP:Password"];
-            var smtpUseSsl = bool.Parse(_configuration["SMTP:UseSsl"]);
-            var fromEmail = _configuration["SMTP:FromEmail"];
-
-            using (var client = new SmtpClient(smtpServer, smtpPort))
+            try
             {
-                client.Credentials = new NetworkCredential(smtpUsername, smtpPassword);
-                client.EnableSsl = smtpUseSsl;
+                var smtpServer = _configuration["SMTP:Server"];
+                var smtpPort = int.Parse(_configuration["SMTP:Port"]);
+                var smtpUsername = _configuration["SMTP:Username"];
+                var smtpPassword = _configuration["SMTP:Password"];
+                var smtpUseSsl = bool.Parse(_configuration["SMTP:UseSsl"]);
+                var fromEmail = _configuration["SMTP:FromEmail"];
 
-                var mailMessage = new MailMessage(fromEmail, toEmail, subject, body);
-                mailMessage.IsBodyHtml = true;
+                using (var client = new SmtpClient(smtpServer, smtpPort))
+                {
+                    client.Credentials = new NetworkCredential(smtpUsername, smtpPassword);
+                    client.EnableSsl = smtpUseSsl;
 
-                await client.SendMailAsync(mailMessage);
+                    var mailMessage = new MailMessage(fromEmail, toEmail, subject, body);
+                    mailMessage.IsBodyHtml = true;
+
+                    await client.SendMailAsync(mailMessage);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception details if needed
+                // Throw a custom exception with a user-friendly message
+                throw new ApplicationException("There was a problem sending the email. Please try again later.", ex);
             }
         }
+
 
         public async Task SendRequistionCreatedNotificationAsync(string requesterEmail, int requisitionId)
         {
